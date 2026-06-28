@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 
 export default function Schedule() {
   const days = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์'];
@@ -8,10 +9,16 @@ export default function Schedule() {
     '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '18:00-19:00'
   ];
 
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700;900&display=swap';
+    document.head.appendChild(link);
+  }, []);
+
   return (
     <>
-      <div className="min-h-screen bg-[#090909] text-[#e0e0e0] p-6 md:p-12 font-['Prompt',_sans-serif] antialiased selection:bg-[#ff5c00] selection:text-white">
-
+      <div className="min-h-screen bg-[#090909] text-[#e0e0e0] p-6 md:p-12 antialiased selection:bg-[#ff5c00] selection:text-white" style={{ fontFamily: "'Prompt', sans-serif" }}>
         {/* Header */}
         <div className="max-w-[1400px] mx-auto mb-8 border-b-2 border-[#222222] pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
