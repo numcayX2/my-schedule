@@ -10,15 +10,6 @@ export default function Schedule() {
 
   return (
     <>
-      {/* Importing the Prompt font directly. 
-        Note: In a standard Next.js App Router project, it is highly recommended to do this via next/font/google in your layout.tsx instead. 
-      */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700;900&display=swap');
-        `
-      }} />
-
       <div className="min-h-screen bg-[#090909] text-[#e0e0e0] p-6 md:p-12 font-['Prompt',_sans-serif] antialiased selection:bg-[#ff5c00] selection:text-white">
 
         {/* Header */}
