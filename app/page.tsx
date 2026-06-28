@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -15,31 +15,123 @@ interface ClassCardProps {
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const DAYS = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์'];
+const DAYS = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
 
 const TIMES = [
-  '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00',
-  '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '18:00-19:00',
+  "09:00-10:00",
+  "10:00-11:00",
+  "11:00-12:00",
+  "12:00-13:00",
+  "13:00-14:00",
+  "14:00-15:00",
+  "15:00-16:00",
+  "16:00-17:00",
+  "17:00-18:00",
+  "18:00-19:00",
 ];
 
 const CLASSES: ClassCardProps[] = [
   // Monday (row 2)
-  { name: 'วิทยาการข้อมูล',                               code: '10301351', detail: 'บรรยาย คอม 6 | 105', row: 2, colStart: 3,  colEnd: 5  },
-  { name: 'ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ',    code: '10301364', detail: 'Lab คอม 2 | 105',    row: 2, colStart: 6,  colEnd: 8  },
-  { name: 'ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ', code: '10700320', detail: '80-501 | 147',        row: 2, colStart: 8,  colEnd: 10 },
+  {
+    name: "วิทยาการข้อมูล",
+    code: "10301351",
+    detail: "บรรยาย คอม 6 | 105",
+    row: 2,
+    colStart: 3,
+    colEnd: 5,
+  },
+  {
+    name: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
+    code: "10301364",
+    detail: "Lab คอม 2 | 105",
+    row: 2,
+    colStart: 6,
+    colEnd: 8,
+  },
+  {
+    name: "ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ",
+    code: "10700320",
+    detail: "80-501 | 147",
+    row: 2,
+    colStart: 8,
+    colEnd: 10,
+  },
   // Tuesday (row 3)
-  { name: 'ปัญญาประดิษฐ์',                               code: '10301371', detail: '3203 | 141',          row: 3, colStart: 3,  colEnd: 5  },
-  { name: 'วิทยาการข้อมูล',                               code: '10301351', detail: 'Lab คอม 2 | 105',    row: 3, colStart: 6,  colEnd: 9  },
-  { name: 'วิทยาศาสตร์เพื่อชีวิต',                       code: '10300411', detail: '3102 | 141',          row: 3, colStart: 10, colEnd: 12 },
+  {
+    name: "ปัญญาประดิษฐ์",
+    code: "10301371",
+    detail: "3203 | 141",
+    row: 3,
+    colStart: 3,
+    colEnd: 5,
+  },
+  {
+    name: "วิทยาการข้อมูล",
+    code: "10301351",
+    detail: "Lab คอม 2 | 105",
+    row: 3,
+    colStart: 6,
+    colEnd: 9,
+  },
+  {
+    name: "วิทยาศาสตร์เพื่อชีวิต",
+    code: "10300411",
+    detail: "3102 | 141",
+    row: 3,
+    colStart: 10,
+    colEnd: 12,
+  },
   // Wednesday (row 4) — empty
   // Thursday (row 5)
-  { name: 'ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ',    code: '10301364', detail: 'Lab คอม 2 | 105',    row: 5, colStart: 2,  colEnd: 5  },
-  { name: 'การประมวลผลภาษาธรรมชาติ',                      code: '10301374', detail: 'บรรยาย คอม 8 | 105', row: 5, colStart: 6,  colEnd: 8  },
-  { name: 'ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ', code: '10700320', detail: '80-501 | 147',        row: 5, colStart: 8,  colEnd: 10 },
+  {
+    name: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
+    code: "10301364",
+    detail: "Lab คอม 2 | 105",
+    row: 5,
+    colStart: 2,
+    colEnd: 5,
+  },
+  {
+    name: "การประมวลผลภาษาธรรมชาติ",
+    code: "10301374",
+    detail: "บรรยาย คอม 8 | 105",
+    row: 5,
+    colStart: 6,
+    colEnd: 8,
+  },
+  {
+    name: "ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ",
+    code: "10700320",
+    detail: "80-501 | 147",
+    row: 5,
+    colStart: 8,
+    colEnd: 10,
+  },
   // Friday (row 6)
-  { name: 'การประมวลผลภาษาธรรมชาติ',                      code: '10301374', detail: 'Lab คอม 2 | 105',    row: 6, colStart: 2,  colEnd: 5  },
-  { name: 'ปัญญาประดิษฐ์',                               code: '10301371', detail: 'Lab คอม 2 | 105',    row: 6, colStart: 6,  colEnd: 9  },
-  { name: 'วิทยาศาสตร์เพื่อชีวิต',                       code: '10300411', detail: '3102 | 141',          row: 6, colStart: 10, colEnd: 12 },
+  {
+    name: "การประมวลผลภาษาธรรมชาติ",
+    code: "10301374",
+    detail: "Lab คอม 2 | 105",
+    row: 6,
+    colStart: 2,
+    colEnd: 5,
+  },
+  {
+    name: "ปัญญาประดิษฐ์",
+    code: "10301371",
+    detail: "Lab คอม 2 | 105",
+    row: 6,
+    colStart: 6,
+    colEnd: 9,
+  },
+  {
+    name: "วิทยาศาสตร์เพื่อชีวิต",
+    code: "10300411",
+    detail: "3102 | 141",
+    row: 6,
+    colStart: 10,
+    colEnd: 12,
+  },
 ];
 
 // ─── CSS (no Tailwind dependency) ────────────────────────────────────────────
@@ -148,6 +240,9 @@ const CSS = `
     align-items: flex-end;
     justify-content: flex-end;
     border-bottom: 2px solid #ff5c00;
+    position: sticky;
+    left: 0;
+    z-index: 30;  /* สูงกว่า day column */
   }
   .schedule-corner span {
     font-size: 9px;
@@ -181,7 +276,9 @@ const CSS = `
     align-items: center;
     justify-content: center;
     padding: 12px;
-    position: relative;
+    position: sticky;
+    left: 0;
+    z-index: 20;
   }
   .schedule-day-accent {
     position: absolute;
@@ -265,11 +362,22 @@ const CSS = `
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-function ClassCard({ name, code, detail, row, colStart, colEnd }: ClassCardProps) {
+function ClassCard({
+  name,
+  code,
+  detail,
+  row,
+  colStart,
+  colEnd,
+}: ClassCardProps) {
   return (
     <div
       className="class-card"
-      style={{ gridRowStart: row, gridColumnStart: colStart, gridColumnEnd: colEnd }}
+      style={{
+        gridRowStart: row,
+        gridColumnStart: colStart,
+        gridColumnEnd: colEnd,
+      }}
     >
       <div className="class-card-accent" />
       <div className="class-card-body">
@@ -288,10 +396,12 @@ function ClassCard({ name, code, detail, row, colStart, colEnd }: ClassCardProps
 
 export default function Schedule() {
   useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = CSS;
     document.head.appendChild(style);
-    return () => { document.head.removeChild(style); };
+    return () => {
+      document.head.removeChild(style);
+    };
   }, []);
 
   return (
@@ -319,7 +429,6 @@ export default function Schedule() {
       <main className="schedule-main">
         <div className="schedule-grid-wrap">
           <div className="schedule-grid">
-
             {/* Corner */}
             <div className="schedule-corner">
               <span>Day/Time</span>
@@ -347,7 +456,10 @@ export default function Schedule() {
                   <div
                     key={colIdx}
                     className="schedule-cell"
-                    style={{ gridRowStart: rowIdx + 2, gridColumnStart: colIdx + 2 }}
+                    style={{
+                      gridRowStart: rowIdx + 2,
+                      gridColumnStart: colIdx + 2,
+                    }}
                   >
                     <div className="schedule-cell-dot" />
                   </div>
@@ -357,9 +469,11 @@ export default function Schedule() {
 
             {/* Class Cards */}
             {CLASSES.map((cls) => (
-              <ClassCard key={`${cls.code}-${cls.row}-${cls.colStart}`} {...cls} />
+              <ClassCard
+                key={`${cls.code}-${cls.row}-${cls.colStart}`}
+                {...cls}
+              />
             ))}
-
           </div>
         </div>
       </main>
