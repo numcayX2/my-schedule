@@ -47,6 +47,12 @@ const CLASSES: ClassCardProps[] = [
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700;900&display=swap');
 
+  * {
+    maring: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
   .schedule-root {
     min-height: 100vh;
     background: #090909;
