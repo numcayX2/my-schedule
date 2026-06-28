@@ -148,7 +148,7 @@ const CSS = `
     min-height: 100vh;
     background: #090909;
     color: #e0e0e0;
-    padding: 48px;
+    padding: 20px;
     font-family: 'Prompt', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
