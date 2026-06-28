@@ -145,7 +145,7 @@ const CSS = `
   }
 
   .schedule-root {
-    min-height: 100vh;
+    height: 100vh;
     background: #090909;
     color: #e0e0e0;
     padding: 20px;
