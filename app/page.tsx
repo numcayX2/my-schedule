@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import React, { useEffect } from 'react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -26,40 +27,251 @@ const CLASSES: ClassCardProps[] = [
   { name: 'วิทยาการข้อมูล',                               code: '10301351', detail: 'บรรยาย คอม 6 | 105', row: 2, colStart: 3,  colEnd: 5  },
   { name: 'ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ',    code: '10301364', detail: 'Lab คอม 2 | 105',    row: 2, colStart: 6,  colEnd: 8  },
   { name: 'ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ', code: '10700320', detail: '80-501 | 147',        row: 2, colStart: 8,  colEnd: 10 },
-
   // Tuesday (row 3)
   { name: 'ปัญญาประดิษฐ์',                               code: '10301371', detail: '3203 | 141',          row: 3, colStart: 3,  colEnd: 5  },
   { name: 'วิทยาการข้อมูล',                               code: '10301351', detail: 'Lab คอม 2 | 105',    row: 3, colStart: 6,  colEnd: 9  },
   { name: 'วิทยาศาสตร์เพื่อชีวิต',                       code: '10300411', detail: '3102 | 141',          row: 3, colStart: 10, colEnd: 12 },
-
   // Wednesday (row 4) — empty
-
   // Thursday (row 5)
   { name: 'ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ',    code: '10301364', detail: 'Lab คอม 2 | 105',    row: 5, colStart: 2,  colEnd: 5  },
   { name: 'การประมวลผลภาษาธรรมชาติ',                      code: '10301374', detail: 'บรรยาย คอม 8 | 105', row: 5, colStart: 6,  colEnd: 8  },
   { name: 'ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ', code: '10700320', detail: '80-501 | 147',        row: 5, colStart: 8,  colEnd: 10 },
-
   // Friday (row 6)
   { name: 'การประมวลผลภาษาธรรมชาติ',                      code: '10301374', detail: 'Lab คอม 2 | 105',    row: 6, colStart: 2,  colEnd: 5  },
   { name: 'ปัญญาประดิษฐ์',                               code: '10301371', detail: 'Lab คอม 2 | 105',    row: 6, colStart: 6,  colEnd: 9  },
   { name: 'วิทยาศาสตร์เพื่อชีวิต',                       code: '10300411', detail: '3102 | 141',          row: 6, colStart: 10, colEnd: 12 },
 ];
 
+// ─── CSS (no Tailwind dependency) ────────────────────────────────────────────
+
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700;900&display=swap');
+
+  .schedule-root {
+    min-height: 100vh;
+    background: #090909;
+    color: #e0e0e0;
+    padding: 48px;
+    font-family: 'Prompt', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  .schedule-header {
+    max-width: 1400px;
+    margin: 0 auto 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #222;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .schedule-eyebrow {
+    color: #ff5c00;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .schedule-eyebrow-line {
+    display: inline-block;
+    width: 16px;
+    height: 2px;
+    background: #ff5c00;
+  }
+  .schedule-title {
+    font-size: 36px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0;
+  }
+  .schedule-title span { color: #ff5c00; }
+  .schedule-badge-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .schedule-badge-label {
+    font-size: 10px;
+    color: #666;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .schedule-badge {
+    background: #e0e0e0;
+    color: #090909;
+    font-weight: 900;
+    font-size: 14px;
+    padding: 4px 12px;
+    transform: skewX(-10deg);
+  }
+  .schedule-badge-inner { transform: skewX(10deg); }
+
+  /* ── Grid Container ── */
+  .schedule-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding-bottom: 32px;
+  }
+  .schedule-grid-wrap {
+    min-width: 1100px;
+    background: #121212;
+    border: 1px solid #222;
+    box-shadow: 8px 8px 0px 0px rgba(255, 92, 0, 0.05);
+  }
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(10, 1fr);
+    gap: 1px;
+    background: #222;
+  }
+
+  /* ── Corner & Time Headers ── */
+  .schedule-corner {
+    background: #121212;
+    padding: 12px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    border-bottom: 2px solid #ff5c00;
+  }
+  .schedule-corner span {
+    font-size: 9px;
+    color: #666;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .schedule-time-header {
+    background: #121212;
+    padding: 12px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    border-bottom: 2px solid #2a2a2a;
+  }
+  .schedule-time-header span {
+    color: #a0a0a0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Day Labels ── */
+  .schedule-day {
+    background: #181818;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    position: relative;
+  }
+  .schedule-day-accent {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: #333;
+    transition: background 0.2s;
+  }
+  .schedule-day:hover .schedule-day-accent { background: #ff5c00; }
+
+  /* ── Empty Cells ── */
+  .schedule-cell {
+    background: #0f0f0f;
+    position: relative;
+  }
+  .schedule-cell-dot {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 2px;
+    height: 2px;
+    background: #1f1f1f;
+  }
+
+  /* ── Class Cards ── */
+  .class-card {
+    background: #181818;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px;
+    transition: background 0.3s;
+    cursor: crosshair;
+    z-index: 10;
+  }
+  .class-card:hover { background: #202020; }
+  .class-card-accent {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: #ff5c00;
+    transition: width 0.3s;
+  }
+  .class-card:hover .class-card-accent { width: 6px; }
+  .class-card-body { padding-left: 8px; }
+  .class-card-code {
+    display: block;
+    color: #ff5c00;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .class-card-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e0e0e0;
+    line-height: 1.3;
+    margin: 0 0 8px;
+    padding-right: 8px;
+  }
+  .class-card-detail {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .class-card-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #333;
+  }
+`;
+
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 function ClassCard({ name, code, detail, row, colStart, colEnd }: ClassCardProps) {
   return (
     <div
-      className="bg-[#181818] group relative overflow-hidden flex flex-col justify-center p-4 transition-all duration-300 hover:bg-[#202020] cursor-crosshair z-10"
+      className="class-card"
       style={{ gridRowStart: row, gridColumnStart: colStart, gridColumnEnd: colEnd }}
     >
-      <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#ff5c00] transition-all duration-300 group-hover:w-[6px]" />
-
-      <div className="pl-2">
-        <span className="block text-[#ff5c00] text-[12px] font-black tracking-widest mb-1">{code}</span>
-        <p className="text-[14px] font-bold text-[#e0e0e0] leading-tight mb-2 pr-2">{name}</p>
-        <div className="text-[12px] text-[#666] font-medium tracking-wide flex items-center gap-1">
-          <span className="inline-block w-1 h-1 rounded-full bg-[#333]" />
+      <div className="class-card-accent" />
+      <div className="class-card-body">
+        <span className="class-card-code">{code}</span>
+        <p className="class-card-name">{name}</p>
+        <div className="class-card-detail">
+          <span className="class-card-dot" />
           {detail}
         </div>
       </div>
@@ -70,53 +282,48 @@ function ClassCard({ name, code, detail, row, colStart, colEnd }: ClassCardProps
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function Schedule() {
-  // Load Prompt font via DOM injection (Tailwind arbitrary font values require JIT compiler)
   useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700;900&display=swap';
-    document.head.appendChild(link);
+    const style = document.createElement('style');
+    style.textContent = CSS;
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
   }, []);
 
   return (
-    <div
-      className="min-h-screen bg-[#090909] text-[#e0e0e0] p-6 md:p-12 antialiased selection:bg-[#ff5c00] selection:text-white"
-      style={{ fontFamily: "'Prompt', sans-serif" }}
-    >
+    <div className="schedule-root">
       {/* ── Header ── */}
-      <header className="max-w-[1400px] mx-auto mb-8 pb-4 border-b-2 border-[#222] flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <header className="schedule-header">
         <div>
-          <div className="text-[#ff5c00] text-[10px] font-bold tracking-[0.3em] uppercase mb-2 flex items-center gap-2">
-            <span className="w-4 h-[2px] bg-[#ff5c00] inline-block" />
+          <div className="schedule-eyebrow">
+            <span className="schedule-eyebrow-line" />
             Network_Sync // Active
           </div>
-          <h1 className="text-4xl font-black uppercase tracking-tight text-white">
-            Schedule<span className="text-[#ff5c00]">.</span>
+          <h1 className="schedule-title">
+            Schedule<span>.</span>
           </h1>
         </div>
-
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] text-[#666] tracking-widest uppercase">Semester</span>
-          <div className="bg-[#e0e0e0] text-[#090909] font-black text-sm px-3 py-1 skew-x-[-10deg]">
-            <div className="skew-x-[10deg]">2569 / 1</div>
+        <div className="schedule-badge-wrap">
+          <span className="schedule-badge-label">Semester</span>
+          <div className="schedule-badge">
+            <div className="schedule-badge-inner">2569 / 1</div>
           </div>
         </div>
       </header>
 
       {/* ── Grid ── */}
-      <main className="max-w-[1400px] mx-auto overflow-x-auto pb-8">
-        <div className="min-w-[1100px] bg-[#121212] border border-[#222] shadow-[8px_8px_0px_0px_rgba(255,92,0,0.05)]">
-          <div className="grid grid-cols-[80px_repeat(10,1fr)] gap-[1px] bg-[#222]">
+      <main className="schedule-main">
+        <div className="schedule-grid-wrap">
+          <div className="schedule-grid">
 
             {/* Corner */}
-            <div className="bg-[#121212] p-3 flex items-end justify-end border-b-2 border-[#ff5c00]">
-              <span className="text-[9px] text-[#666] font-bold uppercase tracking-widest">Day/Time</span>
+            <div className="schedule-corner">
+              <span>Day/Time</span>
             </div>
 
             {/* Time Headers */}
             {TIMES.map((time) => (
-              <div key={time} className="bg-[#121212] p-3 flex items-end justify-center border-b-2 border-[#2a2a2a]">
-                <span className="text-[#a0a0a0] text-[11px] font-bold tracking-wider">{time}</span>
+              <div key={time} className="schedule-time-header">
+                <span>{time}</span>
               </div>
             ))}
 
@@ -124,20 +331,20 @@ export default function Schedule() {
             {DAYS.map((day, rowIdx) => (
               <React.Fragment key={day}>
                 <div
-                  className="bg-[#181818] text-white font-bold text-sm flex items-center justify-center p-3 relative group"
+                  className="schedule-day"
                   style={{ gridRowStart: rowIdx + 2, gridColumnStart: 1 }}
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#333] group-hover:bg-[#ff5c00] transition-colors" />
+                  <div className="schedule-day-accent" />
                   {day}
                 </div>
 
                 {TIMES.map((_, colIdx) => (
                   <div
                     key={colIdx}
-                    className="bg-[#0f0f0f] relative"
+                    className="schedule-cell"
                     style={{ gridRowStart: rowIdx + 2, gridColumnStart: colIdx + 2 }}
                   >
-                    <div className="absolute inset-0 m-auto w-[2px] h-[2px] bg-[#1f1f1f]" />
+                    <div className="schedule-cell-dot" />
                   </div>
                 ))}
               </React.Fragment>
