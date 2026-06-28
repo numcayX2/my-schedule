@@ -10,7 +10,7 @@ export default function Schedule() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#090909] text-[#e0e0e0] p-6 md:p-12 font-sans antialiased selection:bg-[#ff5c00] selection:text-white">
+    <div className="min-h-screen bg-[#090909] text-[#e0e0e0] p-6 md:p-12 antialiased selection:bg-[#ff5c00] selection:text-white">
       
       {/* ZZZ Inspired Header */}
       <div className="max-w-[1400px] mx-auto mb-8 border-b-2 border-[#222222] pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
