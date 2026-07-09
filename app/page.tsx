@@ -328,7 +328,7 @@ const CSS = `
   .class-card-body { padding-left: 8px; }
   .class-card-code {
     display: block;
-    color: #ff5c00;
+    c or: #ff5c00;
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 0.1em;
