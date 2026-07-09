@@ -35,7 +35,7 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "วิทยาการข้อมูล",
     code: "10301351",
-    detail: "บรรยาย คอม 6 | 105",
+    detail: "Sec 2 | บรรยาย คอม 6 | 105",
     row: 2,
     colStart: 3,
     colEnd: 5,
@@ -43,7 +43,7 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
     code: "10301364",
-    detail: "Lab คอม 2 | 105",
+    detail: "Sec 1 | Lab คอม 2 | 105",
     row: 2,
     colStart: 6,
     colEnd: 8,
@@ -51,16 +51,17 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ",
     code: "10700320",
-    detail: "80-501 | 147",
+    detail: "Sec 2 | 80-501 | 147",
     row: 2,
     colStart: 8,
     colEnd: 10,
   },
+
   // Tuesday (row 3)
   {
     name: "ปัญญาประดิษฐ์",
     code: "10301371",
-    detail: "3203 | 141",
+    detail: "Sec 1 | 3203 | 141",
     row: 3,
     colStart: 3,
     colEnd: 5,
@@ -68,7 +69,7 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "วิทยาการข้อมูล",
     code: "10301351",
-    detail: "Lab คอม 2 | 105",
+    detail: "Sec 2 | Lab คอม 2 | 105",
     row: 3,
     colStart: 6,
     colEnd: 9,
@@ -76,17 +77,17 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "วิทยาศาสตร์เพื่อชีวิต",
     code: "10300411",
-    detail: "3102 | 141",
+    detail: "Sec 5 | 3102 | 141",
     row: 3,
     colStart: 10,
     colEnd: 12,
   },
-  // Wednesday (row 4) — empty
+
   // Thursday (row 5)
   {
     name: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
     code: "10301364",
-    detail: "Lab คอม 2 | 105",
+    detail: "Sec 1 | Lab คอม 2 | 105",
     row: 5,
     colStart: 2,
     colEnd: 5,
@@ -94,7 +95,7 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "การประมวลผลภาษาธรรมชาติ",
     code: "10301374",
-    detail: "บรรยาย คอม 8 | 105",
+    detail: "Sec 1 | บรรยาย คอม 8 | 105",
     row: 5,
     colStart: 6,
     colEnd: 8,
@@ -102,16 +103,17 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ",
     code: "10700320",
-    detail: "80-501 | 147",
+    detail: "Sec 2 | 80-501 | 147",
     row: 5,
     colStart: 8,
     colEnd: 10,
   },
+
   // Friday (row 6)
   {
     name: "การประมวลผลภาษาธรรมชาติ",
     code: "10301374",
-    detail: "Lab คอม 2 | 105",
+    detail: "Sec 1 | Lab คอม 2 | 105",
     row: 6,
     colStart: 2,
     colEnd: 5,
@@ -119,7 +121,7 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "ปัญญาประดิษฐ์",
     code: "10301371",
-    detail: "Lab คอม 2 | 105",
+    detail: "Sec 1 | Lab คอม 2 | 105",
     row: 6,
     colStart: 6,
     colEnd: 9,
@@ -127,7 +129,7 @@ const CLASSES: ClassCardProps[] = [
   {
     name: "วิทยาศาสตร์เพื่อชีวิต",
     code: "10300411",
-    detail: "3102 | 141",
+    detail: "Sec 5 | 3102 | 141",
     row: 6,
     colStart: 10,
     colEnd: 12,
