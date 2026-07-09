@@ -5,87 +5,132 @@ import React, { useEffect } from "react";
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface ClassCardProps {
-  code: string;
   name: string;
+  code: string;
   detail: string;
-  row?: number;
-  colStart?: number;
-  colEnd?: number;
-  colorVariation: "orange" | "red" | "blue" | "green" | "purple"; // Added visual distinction
+  row: number;
+  colStart: number;
+  colEnd: number;
 }
 
-// ─── Data Constants ──────────────────────────────────────────────────────
+// ─── Data ────────────────────────────────────────────────────────────────────
 
-export const TIMES = ["08:30", "12:50"]; // Adjust timing based on schedule needs
-const DAYS = [null, null]; // Mon-Fri would normally be 5 rows (index-based)
+const DAYS = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
 
-// ─── Class List Data Structure ──────────────────────────────────────────────
+const TIMES = [
+  "09:00-10:00",
+  "10:00-11:00",
+  "11:00-12:00",
+  "12:00-13:00",
+  "13:00-14:00",
+  "14:00-15:00",
+  "15:00-16:00",
+  "16:00-17:00",
+  "17:00-18:00",
+  "18:00-19:00",
+];
 
-export const CLASSES = [
+const CLASSES: ClassCardProps[] = [
+  // Monday (row 2)
   {
-    class_id: "10300411",
-    code: "SFL-2569/1", // Extracted from section + year info if needed
-    name: "วิทยาศาสตร์เพื่อชีวิต (Science for Life)",
-    detail: `ห้องบรรยายและแลปคอม, อาคาร 141 | Sec.5`,
-    row: 3, // Wednesday example placement - adjust based on actual schedule timing
-    colStart: 2,
-    colEnd: 3,
-    colorVariation: "orange" as const,
-  },
-
-  {
-    class_id: "10301351",
-    code: "DS-2569/1", // Data Science course prefix (example)
-    name: "วิทยาการข้อมูล (Data Science)",
-    detail: `ห้องบรรยายคอม. 6 & Lab คอม. 2, อาคาร 105 | Sec.2`,
-    row: 4, // Thursday example placement - adjust based on actual schedule timing  
+    name: "วิทยาการข้อมูล",
+    code: "10301351",
+    detail: "บรรยาย คอม 6 | 105",
+    row: 2,
     colStart: 3,
     colEnd: 5,
-    colorVariation: "red" as const,
   },
-
   {
-    class_id: "10301364",
-    code: "DL-2569/1", // Digital Logic course prefix (example)  
-    name: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ (Digital Logic and Smart Device)",
-    detail: `Lab คอม. 2, อาคาร 105 | Sec.1`,
-    row: 4,
-    colStart: 3,
-    colEnd: 4,  
-    colorVariation: "red" as const, 
-  },
-
-  {
-    class_id: "10301371",
-    code: "AI-2569/1", // Artificial Intelligence course prefix (example)
-    name: "ปัญญาประดิษฐ์ (Artificial Intelligence)",  
-    detail: `ห้องบรรยายคอม. 8 & Lab คอม. 2, อาคาร 141 | Sec.1`,
-    row: 3, // Adjust based on actual schedule timing
+    name: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
+    code: "10301364",
+    detail: "Lab คอม 2 | 105",
+    row: 2,
     colStart: 6,
-    colEnd: 7,
-    colorVariation: "red" as const, 
+    colEnd: 8,
   },
-
   {
-    class_id: "10301374",  
-    code: "NLP-2569/1", // Natural Language Processing course prefix (example)
-    name: `การประมวลผลภาษาธรรมชาติ (Natural Language Processing)`,
-    detail: `ห้องบรรยายคอม. 8 & Lab คอม. 2, อาคาร 105 | Sec.1`,  
-    row: 4,
-    colStart: 3, 
-    colEnd: 6,
-    colorVariation: "red" as const,
+    name: "ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ",
+    code: "10700320",
+    detail: "80-501 | 147",
+    row: 2,
+    colStart: 8,
+    colEnd: 10,
   },
-
+  // Tuesday (row 3)
   {
-    class_id: "10700320",
-    code: "ENG-2569/1", // English course prefix (example)  
-    name: `ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ`,
-    detail: `80-501, อาคาร 147 | Sec.2`, 
+    name: "ปัญญาประดิษฐ์",
+    code: "10301371",
+    detail: "3203 | 141",
     row: 3,
-    colStart: 4, 
-    colEnd: 6,
-    colorVariation: "blue" as const,  
+    colStart: 3,
+    colEnd: 5,
+  },
+  {
+    name: "วิทยาการข้อมูล",
+    code: "10301351",
+    detail: "Lab คอม 2 | 105",
+    row: 3,
+    colStart: 6,
+    colEnd: 9,
+  },
+  {
+    name: "วิทยาศาสตร์เพื่อชีวิต",
+    code: "10300411",
+    detail: "3102 | 141",
+    row: 3,
+    colStart: 10,
+    colEnd: 12,
+  },
+  // Wednesday (row 4) — empty
+  // Thursday (row 5)
+  {
+    name: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
+    code: "10301364",
+    detail: "Lab คอม 2 | 105",
+    row: 5,
+    colStart: 2,
+    colEnd: 5,
+  },
+  {
+    name: "การประมวลผลภาษาธรรมชาติ",
+    code: "10301374",
+    detail: "บรรยาย คอม 8 | 105",
+    row: 5,
+    colStart: 6,
+    colEnd: 8,
+  },
+  {
+    name: "ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ",
+    code: "10700320",
+    detail: "80-501 | 147",
+    row: 5,
+    colStart: 8,
+    colEnd: 10,
+  },
+  // Friday (row 6)
+  {
+    name: "การประมวลผลภาษาธรรมชาติ",
+    code: "10301374",
+    detail: "Lab คอม 2 | 105",
+    row: 6,
+    colStart: 2,
+    colEnd: 5,
+  },
+  {
+    name: "ปัญญาประดิษฐ์",
+    code: "10301371",
+    detail: "Lab คอม 2 | 105",
+    row: 6,
+    colStart: 6,
+    colEnd: 9,
+  },
+  {
+    name: "วิทยาศาสตร์เพื่อชีวิต",
+    code: "10300411",
+    detail: "3102 | 141",
+    row: 6,
+    colStart: 10,
+    colEnd: 12,
   },
 ];
 
@@ -283,7 +328,7 @@ const CSS = `
   .class-card-body { padding-left: 8px; }
   .class-card-code {
     display: block;
-    color: #ff5c00;
+    c or: #ff5c00;
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 0.1em;
@@ -320,10 +365,20 @@ const CSS = `
 function ClassCard({
   name,
   code,
-  detail,  
-}: Omit<ClassCardProps, 'colorVariation'>) { 
-  return ( // Updated to accept only core required props while keeping optional grid positioning via className/inline style in JSX
-    <div className="class-card">
+  detail,
+  row,
+  colStart,
+  colEnd,
+}: ClassCardProps) {
+  return (
+    <div
+      className="class-card"
+      style={{
+        gridRowStart: row,
+        gridColumnStart: colStart,
+        gridColumnEnd: colEnd,
+      }}
+    >
       <div className="class-card-accent" />
       <div className="class-card-body">
         <span className="class-card-code">{code}</span>
@@ -334,7 +389,7 @@ function ClassCard({
         </div>
       </div>
     </div>
-  ); 
+  );
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
