@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface DayNavItem {
   id: string;
@@ -16,60 +16,86 @@ interface ScheduleBottomNavProps {
 const NAV_CSS = `
   .schedule-bottom-nav {
     position: fixed;
-    bottom: 20px;
+    bottom: 24px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(20px);
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 40px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    gap: 4px;
+    padding: 6px;
+    background: rgba(13, 14, 15, 0.65);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50px;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.6), 
+      inset 0 1px 1px rgba(255, 255, 255, 0.1),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .schedule-bottom-nav.visible {
     opacity: 1;
     pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Hide native cursor to let global ink cursor take over */
+  @media (hover: hover) and (pointer: fine) {
+    .schedule-bottom-nav button {
+      cursor: none !important;
+    }
+  }
+
+  .nav-pill-indicator {
+    position: absolute;
+    height: calc(100% - 12px);
+    top: 6px;
+    background: rgba(159, 232, 38, 0.15);
+    border: 1px solid rgba(159, 232, 38, 0.4);
+    border-radius: 50px;
+    box-shadow: 0 0 12px rgba(159, 232, 38, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: left 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
   }
 
   .nav-circle-button {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
-    border: 1px solid transparent;
-    color: #ccc;
-    font-family: 'Prompt', sans-serif;
+    border: none;
+    color: #888;
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+    font-size: 13px;
+    transition: color 0.3s ease, transform 0.2s ease;
     -webkit-tap-highlight-color: transparent;
+    z-index: 2;
+    position: relative;
   }
 
   .nav-circle-button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  
+  .nav-circle-button:active {
+    transform: scale(0.9);
   }
 
   .nav-circle-button.active {
-    background: rgba(255, 92, 0, 0.25);
-    border-color: rgba(255, 92, 0, 0.6);
-    color: #ff5c00;
-    transform: scale(1.05);
+    color: #9FE826;
+    text-shadow: 0 0 8px rgba(159, 232, 38, 0.6);
   }
 
-  @media (min-width: 641px) {
+  @media (min-width: 769px) {
     .schedule-bottom-nav {
       display: none;
     }
@@ -82,48 +108,65 @@ export default function ScheduleBottomNav({
   onDayClick,
 }: ScheduleBottomNavProps) {
   const [visible, setVisible] = useState(false);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const style = document.createElement("style");
-    style.textContent = NAV_CSS;
-    document.head.appendChild(style);
-
     const handleScroll = () => {
-      if (window.innerWidth <= 640) {
+      if (window.innerWidth <= 768) {
         setVisible(true);
-        clearTimeout((handleScroll as any).timeout);
-        (handleScroll as any).timeout = setTimeout(() => setVisible(false), 2000);
+
+        if (hideTimeoutRef.current) {
+          clearTimeout(hideTimeoutRef.current);
+        }
+
+        hideTimeoutRef.current = setTimeout(() => {
+          setVisible(false);
+        }, 2500);
       }
     };
 
-    // Show nav initially on mobile
-    if (window.innerWidth <= 640) {
-      setVisible(true);
-    }
+    handleScroll();
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      document.head.removeChild(style);
-      clearTimeout((handleScroll as any).timeout);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
     };
   }, []);
 
+  const activeIndex = Math.max(
+    0,
+    days.findIndex((d) => d.id === activeDay),
+  );
+
+  const indicatorLeft = 6 + activeIndex * 44;
+  const indicatorWidth = 40;
+
   return (
-    <nav
-      className={`schedule-bottom-nav ${visible ? "visible" : ""}`}
-      aria-label="Day navigation"
-    >
-      {days.map((day) => (
-        <button
-          key={day.id}
-          className={`nav-circle-button ${activeDay === day.id ? "active" : ""}`}
-          onClick={() => onDayClick(day.id)}
-          aria-label={`Go to ${day.id}`}
-        >
-          {day.label}
-        </button>
-      ))}
-    </nav>
+    <>
+      <style>{NAV_CSS}</style>
+      <nav
+        className={`schedule-bottom-nav ${visible ? "visible" : ""}`}
+        aria-label="Day navigation"
+      >
+        <div
+          className="nav-pill-indicator"
+          style={{ left: `${indicatorLeft}px`, width: `${indicatorWidth}px` }}
+        />
+        {days.map((day) => (
+          <button
+            key={day.id}
+            className={`nav-circle-button ${activeDay === day.id ? "active" : ""}`}
+            onClick={() => onDayClick(day.id)}
+            aria-label={`Go to ${day.id}`}
+            aria-current={activeDay === day.id ? "page" : undefined}
+          >
+            {day.label}
+          </button>
+        ))}
+      </nav>
+    </>
   );
 }
