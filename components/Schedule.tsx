@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import ScheduleBottomNav from "./ScheduleBottomNav";
+import ExamStatusSection from "./ExamStatusSection";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -951,6 +952,8 @@ export default function Schedule() {
           </div>
         ))}
       </section>
+
+      <ExamStatusSection />
 
       {/* ── Floating Bottom Navigation ── */}
       <ScheduleBottomNav
