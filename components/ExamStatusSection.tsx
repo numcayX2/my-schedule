@@ -36,6 +36,7 @@ const EXAM_DAYS: ExamDay[] = [
     end: "15:00",
     code: "10301371",
     course: "ปัญญาประดิษฐ์",
+    location: "วิทย์ 2205",
     abbr: "AI",
   },
   {
@@ -68,6 +69,7 @@ const EXAM_DAYS: ExamDay[] = [
     end: "15:00",
     code: "10301364",
     course: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
+    location: "วิทย์ 2205",
     abbr: "DLI",
   },
   {
