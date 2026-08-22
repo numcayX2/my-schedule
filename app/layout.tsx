@@ -1,6 +1,8 @@
-export const metadata = {
-  title: "Schedule",
-  description: "Hardcore B&W schedule",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Schedule · ตารางเรียนและตารางสอบ",
+  description: "ตารางเรียนและตารางสอบกลางภาค ภาคการศึกษาที่ 1/2569",
 };
 
 export default function RootLayout({
@@ -9,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="th">
       <body>{children}</body>
     </html>
   );

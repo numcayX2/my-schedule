@@ -144,24 +144,43 @@ const CLASSES: ClassCardProps[] = [
 // ─── CSS ─────────────────────────────────────────────────────────────────────
 
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
-
   :root {
-    --bg: #0D0E0F;
-    --lime: #9FE826;
-    --white: #FFFFFF;
-    --gray: #1A1C1F;
-    --border: #2A2D31;
+    --bg: #151617;
+    --panel: #191a1c;
+    --surface: #202124;
+    --surface-raised: #282a2d;
+    --orange: #ff691f;
+    --lime: var(--orange);
+    --white: #f4f1ea;
+    --ink: #131415;
+    --gray: #202124;
+    --border: #34363a;
+    --line: #34363a;
+    --line-strong: #55585d;
+    --text-muted: #96999e;
+    --font-display: "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif;
+    --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
   }
+
+  * { box-sizing: border-box; }
 
   body {
     margin: 0;
     background: var(--bg);
     overflow-x: hidden;
-    font-family: 'Prompt', sans-serif;
+    font-family: var(--font-display);
+    text-rendering: optimizeLegibility;
   }
 
-  /* ── Custom Ink Cursor (Desktop Only) ── */
+  ::selection { color: var(--ink); background: var(--orange); }
+
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 3px;
+  }
+
+  /* ── Soft orbital cursor (desktop only) ── */
   .cursor-ink-dot, .cursor-ink-blob-wrapper {
     position: fixed;
     top: 0;
@@ -169,10 +188,12 @@ const CSS = `
     pointer-events: none;
     z-index: 9999;
     display: none;
+    opacity: 0;
+    transition: opacity .22s ease;
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .schedule-root * {
+    .schedule-root, .schedule-root * {
       cursor: none !important;
     }
     
@@ -180,40 +201,67 @@ const CSS = `
       display: block;
     }
 
+    .cursor-ink-dot.visible,
+    .cursor-ink-blob-wrapper.visible { opacity: 1; }
+
     .cursor-ink-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--white);
+      width: 5px;
+      height: 5px;
+      background: var(--orange);
       border-radius: 50%;
-      mix-blend-mode: difference;
+      box-shadow: 0 0 12px rgba(255, 105, 31, .75);
     }
 
     .cursor-ink-blob-inner {
-      width: 36px;
-      height: 36px;
-      border: 2px solid var(--lime);
-      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-      transition: width 0.3s, height 0.3s, background 0.3s, border-radius 0.4s, border-color 0.3s;
-      animation: ink-rotate 8s linear infinite;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(244, 241, 234, .65);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .018);
+      backdrop-filter: blur(1px);
+      box-shadow: inset 0 0 0 5px rgba(255, 255, 255, .018);
+      position: relative;
+      transition:
+        width .36s cubic-bezier(.16, 1, .3, 1),
+        height .36s cubic-bezier(.16, 1, .3, 1),
+        background .3s ease,
+        border-color .3s ease,
+        transform .3s ease;
+    }
+
+    .cursor-ink-blob-inner::before {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      top: 1px;
+      left: 50%;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 8px rgba(255, 105, 31, .65);
+      transform: translate(-50%, -50%);
+    }
+
+    .cursor-ink-blob-inner::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 105, 31, .28);
     }
 
     .cursor-ink-blob-wrapper.hovering .cursor-ink-blob-inner {
-      width: 60px;
-      height: 60px;
-      background: rgba(159, 232, 38, 0.15);
-      border-color: var(--lime);
-      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      width: 58px;
+      height: 58px;
+      background: rgba(255, 105, 31, .1);
+      border-color: var(--orange);
     }
 
     .cursor-ink-blob-wrapper.clicking .cursor-ink-blob-inner {
-      width: 24px;
-      height: 24px;
-      background: var(--lime);
-    }
-
-    @keyframes ink-rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 105, 31, .24);
+      transform: rotate(45deg);
     }
   }
 
@@ -223,28 +271,32 @@ const CSS = `
     padding: 24px;
     padding-bottom: 100px;
     position: relative;
-    background: 
-      linear-gradient(var(--bg), var(--bg)),
-      repeating-linear-gradient(90deg, transparent 0, transparent 79px, rgba(255,255,255,0.03) 79px, rgba(255,255,255,0.03) 80px);
-    background-blend-mode: normal;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+      radial-gradient(circle at 82% 4%, rgba(255,105,31,.12), transparent 23%);
+    background-size: 80px 80px, 80px 80px, auto;
   }
 
   /* Tactical Checkerboard Accent */
   .checker-strip {
-    height: 8px;
+    height: 9px;
     width: 100%;
-    background: repeating-conic-gradient(var(--lime) 0% 25%, var(--bg) 0% 50%) 50% / 12px 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    background: repeating-linear-gradient(135deg, var(--orange) 0 11px, #242528 11px 22px);
     margin-bottom: 24px;
-    border-top: 2px solid var(--white);
-    border-bottom: 2px solid var(--white);
+    border: 1px solid var(--line-strong);
   }
 
   /* ── Header ── */
   .schedule-header {
     max-width: 1400px;
     margin: 0 auto 32px;
-    border: 2px solid var(--white);
-    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    background: var(--panel);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -255,13 +307,13 @@ const CSS = `
     justify-content: space-between;
     align-items: center;
     padding: 12px 20px;
-    border-bottom: 2px solid var(--white);
+    border-bottom: 1px solid var(--line-strong);
     background: var(--lime);
-    color: var(--bg);
+    color: var(--ink);
   }
 
   .tactical-tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
     font-size: 12px;
     letter-spacing: 0.1em;
@@ -271,7 +323,7 @@ const CSS = `
   }
 
   .schedule-header-main {
-    padding: 32px;
+    padding: 38px 36px;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -300,7 +352,7 @@ const CSS = `
   }
 
   .schedule-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--lime);
     font-size: 13px;
     font-weight: 700;
@@ -316,7 +368,7 @@ const CSS = `
     letter-spacing: -0.04em;
     color: var(--white);
     margin: 0;
-    line-height: 0.85;
+    line-height: 0.88;
   }
 
   .schedule-title span { color: var(--lime); }
@@ -331,12 +383,13 @@ const CSS = `
   }
 
   .schedule-badge {
-    border: 2px solid var(--white);
-    padding: 8px 16px;
+    border: 1px solid var(--line-strong);
+    border-left: 5px solid var(--orange);
+    padding: 10px 18px;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: var(--bg);
+    background: var(--surface);
   }
 
   .schedule-badge-label {
@@ -628,6 +681,12 @@ const CSS = `
     .schedule-grid-layout { display: none; }
     .schedule-mobile-list { display: flex; }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .schedule-root, .schedule-root * { cursor: auto !important; }
+    .cursor-ink-dot, .cursor-ink-blob-wrapper { display: none !important; }
+    .class-card { transition: none; }
+  }
 `;
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
@@ -675,6 +734,8 @@ export default function Schedule() {
 
   // GSAP Mechanical Brutalist Animation
   useLayoutEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
 
@@ -752,45 +813,36 @@ export default function Schedule() {
     });
 
     const move = (e: MouseEvent) => {
+      dot.classList.add("visible");
+      blob.classList.add("visible");
+      blob.classList.toggle(
+        "hovering",
+        e.target instanceof Element &&
+          Boolean(e.target.closest('a, button, .class-card, [role="button"]')),
+      );
       xToDot(e.clientX);
       yToDot(e.clientY);
       xToBlob(e.clientX);
       yToBlob(e.clientY);
     };
 
-    const over = (e: MouseEvent) => {
-      if (
-        e.target instanceof Element &&
-        e.target.closest('a, button, .class-card, [role="button"]')
-      ) {
-        blob.classList.add("hovering");
-      }
-    };
-
-    const out = (e: MouseEvent) => {
-      if (
-        e.target instanceof Element &&
-        e.target.closest('a, button, .class-card, [role="button"]')
-      ) {
-        blob.classList.remove("hovering");
-      }
-    };
-
     const down = () => blob.classList.add("clicking");
     const up = () => blob.classList.remove("clicking");
+    const leave = () => {
+      dot.classList.remove("visible");
+      blob.classList.remove("visible", "hovering", "clicking");
+    };
 
     window.addEventListener("mousemove", move);
-    window.addEventListener("mouseover", over);
-    window.addEventListener("mouseout", out);
     window.addEventListener("mousedown", down);
     window.addEventListener("mouseup", up);
+    document.documentElement.addEventListener("mouseleave", leave);
 
     return () => {
       window.removeEventListener("mousemove", move);
-      window.removeEventListener("mouseover", over);
-      window.removeEventListener("mouseout", out);
       window.removeEventListener("mousedown", down);
       window.removeEventListener("mouseup", up);
+      document.documentElement.removeEventListener("mouseleave", leave);
     };
   }, []);
 
@@ -874,19 +926,21 @@ export default function Schedule() {
       {/* ── Header ── */}
       <header className="schedule-header">
         <div className="schedule-header-top">
-          <span className="tactical-tag">▶ TACTICAL_UI.OVERRIDE</span>
-          <span className="tactical-tag">STATUS: [ ACTIVE ]</span>
+          <span className="tactical-tag">◆ COURSE CONTROL / 01</span>
+          <span className="tactical-tag">STATUS: [ ONLINE ]</span>
         </div>
         <div className="schedule-header-main">
           <div>
-            <div className="schedule-eyebrow">// SYSTEM_SCHEDULE</div>
+            <div className="schedule-eyebrow">
+              {"// MY ACADEMIC SCHEDULE"}
+            </div>
             <h1 className="schedule-title">
-              SCHED
+              MY SCHED
               <br />
               ULE<span>.</span>
             </h1>
             <p className="schedule-subtitle">
-              Discipline is the bridge between goals and accomplishment.
+              ตารางเรียนและแผนการสอบ · วางจังหวะให้พร้อมสำหรับทุกภารกิจ
             </p>
           </div>
           <div className="schedule-badge">

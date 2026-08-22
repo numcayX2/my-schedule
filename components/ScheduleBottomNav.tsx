@@ -23,7 +23,7 @@ const NAV_CSS = `
     align-items: center;
     gap: 4px;
     padding: 6px;
-    background: rgba(13, 14, 15, 0.65);
+    background: rgba(25, 26, 28, 0.78);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -55,10 +55,10 @@ const NAV_CSS = `
     position: absolute;
     height: calc(100% - 12px);
     top: 6px;
-    background: rgba(159, 232, 38, 0.15);
-    border: 1px solid rgba(159, 232, 38, 0.4);
+    background: rgba(255, 105, 31, 0.16);
+    border: 1px solid rgba(255, 105, 31, 0.46);
     border-radius: 50px;
-    box-shadow: 0 0 12px rgba(159, 232, 38, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 16px rgba(255, 105, 31, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: left 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 1;
   }
@@ -73,7 +73,7 @@ const NAV_CSS = `
     background: transparent;
     border: none;
     color: #888;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
     font-size: 13px;
     transition: color 0.3s ease, transform 0.2s ease;
@@ -91,8 +91,8 @@ const NAV_CSS = `
   }
 
   .nav-circle-button.active {
-    color: #9FE826;
-    text-shadow: 0 0 8px rgba(159, 232, 38, 0.6);
+    color: var(--orange);
+    text-shadow: 0 0 8px rgba(255, 105, 31, 0.55);
   }
 
   @media (min-width: 769px) {

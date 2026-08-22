@@ -9,689 +9,830 @@ import React, {
 } from "react";
 import { gsap } from "gsap";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
 interface ExamDay {
   date: number;
+  day: string;
+  dayCode: string;
   start: string;
   end: string;
+  code: string;
   course: string;
+  location?: string;
   abbr: string;
 }
 
-// ─── Exam Data ───────────────────────────────────────────────────────────────
+type ExamPhase = "upcoming" | "live" | "complete";
+
+const EXAM_YEAR = 2026;
+const EXAM_MONTH = 8;
+const TIMEZONE_OFFSET = "+07:00";
+
 const EXAM_DAYS: ExamDay[] = [
   {
     date: 24,
-    start: "13:00",
-    end: "16:00",
-    course: "Data Science Exam",
-    abbr: "DSC",
+    day: "วันจันทร์",
+    dayCode: "MON",
+    start: "12:00",
+    end: "15:00",
+    code: "10301371",
+    course: "ปัญญาประดิษฐ์",
+    abbr: "AI",
   },
-  { date: 25, start: "12:00", end: "15:00", course: "AI Exam", abbr: "AIE" },
+  {
+    date: 25,
+    day: "วันอังคาร",
+    dayCode: "TUE",
+    start: "12:00",
+    end: "15:00",
+    code: "10301351",
+    course: "วิทยาการข้อมูล",
+    location: "ห้องสอบวิทย์ 60 ปี 2205",
+    abbr: "DS",
+  },
+  {
+    date: 26,
+    day: "วันพุธ",
+    dayCode: "WED",
+    start: "12:00",
+    end: "15:00",
+    code: "10301374",
+    course: "การประมวลผลภาษาธรรมชาติ",
+    location: "ชั้น 6 ห้อง Lab 2 ตึก 60 ปี คณะวิทยาศาสตร์",
+    abbr: "NLP",
+  },
   {
     date: 27,
-    start: "15:00",
-    end: "18:00",
-    course: "Digital Exam",
-    abbr: "DIG",
+    day: "วันพฤหัสบดี",
+    dayCode: "THU",
+    start: "12:00",
+    end: "15:00",
+    code: "10301364",
+    course: "ตรรกศาสตร์เชิงดิจิทัลและอุปกรณ์อัจฉริยะ",
+    abbr: "DLI",
   },
   {
     date: 28,
-    start: "15:30",
-    end: "18:30",
-    course: "Science for Life Exam",
-    abbr: "SCI",
+    day: "วันศุกร์",
+    dayCode: "FRI",
+    start: "15:00",
+    end: "18:00",
+    code: "10300411",
+    course: "วิทยาศาสตร์เพื่อชีวิต",
+    location: "Microsoft Teams",
+    abbr: "SFL",
   },
   {
     date: 29,
+    day: "วันเสาร์",
+    dayCode: "SAT",
     start: "12:00",
     end: "15:00",
-    course: "English Exam",
+    code: "10700320",
+    course: "ภาษาอังกฤษเพื่อการศึกษาต่อและการประกอบอาชีพ",
+    location: "80-305 สำรอง",
     abbr: "ENG",
   },
 ];
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-function timeToMinutes(time: string): number {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
+function examDate(exam: ExamDay, time: "start" | "end") {
+  const value = time === "start" ? exam.start : exam.end;
+  return new Date(
+    `${EXAM_YEAR}-${String(EXAM_MONTH).padStart(2, "0")}-${String(exam.date).padStart(2, "0")}T${value}:00${TIMEZONE_OFFSET}`,
+  );
 }
 
-function formatTime(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+function getPhase(exam: ExamDay, now: Date | null): ExamPhase {
+  if (!now || now < examDate(exam, "start")) return "upcoming";
+  if (now <= examDate(exam, "end")) return "live";
+  return "complete";
 }
 
-// ─── CSS ─────────────────────────────────────────────────────────────────────
+const PHASE_LABEL: Record<ExamPhase, string> = {
+  upcoming: "UP NEXT",
+  live: "IN PROGRESS",
+  complete: "COMPLETE",
+};
+
 const CSS = `
   .exam-section {
     max-width: 1400px;
-    margin: 40px auto 0;
-    background: #0D0E0F;
-    border: 2px solid #FFFFFF;
-    color: #e0e0e0;
-    font-family: 'Prompt', sans-serif;
+    margin: 48px auto 0;
+    color: var(--white);
+    border: 1px solid var(--line-strong);
+    background: var(--panel);
     position: relative;
     overflow: hidden;
+    box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.28);
   }
 
-  /* Hide native cursor to let global ink cursor take over */
-  @media (hover: hover) and (pointer: fine) {
-    .exam-section * {
-      cursor: none !important;
-    }
+  .exam-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(115deg, transparent 0 72%, rgba(255, 105, 31, 0.035) 72% 73%, transparent 73%),
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.012) 3px 4px);
+  }
+
+  .exam-stripe {
+    height: 9px;
+    border-bottom: 1px solid var(--line-strong);
+    background: repeating-linear-gradient(
+      135deg,
+      var(--orange) 0 11px,
+      #202124 11px 22px
+    );
   }
 
   .exam-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    padding: 24px;
-    border-bottom: 2px solid #FFFFFF;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 32px;
+    padding: 30px 32px 26px;
+    border-bottom: 1px solid var(--line-strong);
     position: relative;
   }
 
-  .exam-header::before {
-    content: "";
-    position: absolute;
-    left: 0; bottom: -2px;
-    width: 120px; height: 2px;
-    background: #9FE826;
+  .exam-kicker,
+  .exam-counter,
+  .exam-course-code,
+  .exam-day-code,
+  .exam-phase,
+  .exam-meta-label,
+  .exam-location-label,
+  .exam-time-label,
+  .exam-file-label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: .13em;
   }
 
-  .exam-eyebrow {
-    color: #9FE826;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .exam-kicker {
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 10px;
   }
 
   .exam-title {
-    font-size: 36px;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: #fff;
     margin: 0;
-    line-height: 1;
-    letter-spacing: -0.03em;
+    font-size: clamp(34px, 5.2vw, 66px);
+    line-height: .95;
+    letter-spacing: -.055em;
+    font-weight: 900;
   }
-  .exam-title span { color: #9FE826; }
+
+  .exam-title span { color: var(--orange); }
 
   .exam-subtitle {
-    color: #888;
-    font-size: 13px;
-    margin-top: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    margin: 14px 0 0;
+    font-size: 14px;
   }
 
-  .exam-nav {
-    display: flex;
-    align-items: stretch;
-    border: 2px solid #FFFFFF;
+  .exam-counter {
+    align-self: stretch;
+    min-width: 164px;
+    padding: 13px 16px;
+    display: grid;
+    align-content: space-between;
+    gap: 16px;
+    color: var(--text-muted);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 10px;
   }
 
-  .nav-arrow {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0D0E0F;
-    color: #fff;
-    font-size: 24px;
-    border: none;
-    transition: background 0.1s, color 0.1s;
+  .exam-counter strong {
+    color: var(--white);
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -.04em;
+  }
+
+  .exam-counter strong span { color: var(--orange); }
+
+  .exam-day-rail {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(125px, 1fr));
+    border-bottom: 1px solid var(--line-strong);
+    overflow-x: auto;
+    scrollbar-color: var(--orange) var(--surface);
+  }
+
+  .exam-day-button {
+    appearance: none;
+    min-width: 125px;
+    padding: 16px 18px 15px;
+    text-align: left;
+    color: var(--text-muted);
+    background: var(--panel);
+    border: 0;
+    border-right: 1px solid var(--line);
+    position: relative;
+    transition: color .22s ease, background .22s ease;
     -webkit-tap-highlight-color: transparent;
   }
-  .nav-arrow:not(:disabled):hover {
-    background: #9FE826;
-    color: #0D0E0F;
-  }
-  .nav-arrow:disabled {
-    color: #333;
-    opacity: 0.5;
-  }
-  .nav-arrow:first-child { border-right: 2px solid #FFFFFF; }
-  .nav-arrow:last-child { border-left: 2px solid #FFFFFF; }
 
-  .nav-date-wrapper {
-    min-width: 140px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0 16px;
-  }
+  .exam-day-button:last-child { border-right: 0; }
 
-  .nav-date {
-    font-size: 20px;
-    font-weight: 900;
-    color: #fff;
-    letter-spacing: 0.08em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-transform: uppercase;
-  }
-
-  .today-badge {
-    font-size: 9px;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    background: #9FE826;
-    color: #0D0E0F;
-    padding: 2px 6px;
-    letter-spacing: 0.1em;
-  }
-
-  .exam-congrats {
-    text-align: center;
-    padding: 80px 20px;
-    color: #fff;
-  }
-  .exam-congrats h2 {
-    font-size: 48px;
-    font-weight: 900;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    letter-spacing: -0.02em;
-  }
-  .exam-congrats h2 span { color: #9FE826; }
-  .exam-congrats p { color: #aaa; font-size: 16px; font-family: 'JetBrains Mono', monospace; }
-
-  .exam-timeline {
-    padding: 32px 24px;
-    position: relative;
-  }
-
-  .timeline-container {
-    position: relative;
-    height: 50vh;
-    max-height: 480px;
-    min-height: 380px;
-    margin: 0 20px;
-  }
-
-  .timeline-base-line {
-    position: absolute;
-    left: 120px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #FFFFFF;
-  }
-
-  .timeline-progress-line {
-    position: absolute;
-    left: 119px;
-    top: 0;
-    width: 4px;
-    background: #9FE826;
-    z-index: 1;
-    transform-origin: top center;
-  }
-
-  .timeline-milestone {
-    position: absolute;
-    left: 120px;
-    transform: translate(-50%, -50%) rotate(45deg);
-    width: 12px;
-    height: 12px;
-    background: #0D0E0F;
-    border: 2px solid #FFFFFF;
-    z-index: 3;
-  }
-
-  .timeline-milestone.highlight {
-    width: 18px;
-    height: 18px;
-    background: #9FE826;
-    border-color: #FFFFFF;
-    animation: pulse-brutalist 1.5s infinite;
-  }
-
-  @keyframes pulse-brutalist {
-    0% { box-shadow: 0 0 0 0 rgba(159, 232, 38, 0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(159, 232, 38, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(159, 232, 38, 0); }
-  }
-
-  .timeline-milestone::after {
+  .exam-day-button::after {
     content: "";
     position: absolute;
+    left: 0;
     right: 100%;
-    top: 50%;
-    width: 24px;
-    height: 2px;
-    background: #333;
-    transform: translateY(-50%);
-    z-index: 1;
-    margin-right: 4px;
+    bottom: 0;
+    height: 3px;
+    background: var(--orange);
+    transition: right .35s cubic-bezier(.16, 1, .3, 1);
   }
 
-  .timeline-label {
-    position: absolute;
-    left: 92px;
-    top: 0;
-    transform: translate(-100%, -50%);
-    font-size: 12px;
-    font-weight: 700;
-    color: #9FE826;
-    background: #0D0E0F;
-    border: 1px solid #333;
-    padding: 4px 8px;
-    z-index: 4;
-    white-space: nowrap;
-    letter-spacing: 0.05em;
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .exam-day-button:hover { color: var(--white); background: var(--surface-raised); }
+  .exam-day-button.active { color: var(--white); background: var(--surface-raised); }
+  .exam-day-button.active::after { right: 0; }
 
-  .timeline-exam-box {
-    position: absolute;
-    left: 140px;
-    right: 0;
-    background: #0D0E0F;
-    border: 2px solid #9FE826;
-    border-left: 8px solid #9FE826;
+  .exam-day-button.complete .exam-day-number { color: #777b80; }
+  .exam-day-button.live .exam-day-number { color: var(--orange); }
+
+  .exam-day-code {
     display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  .exam-day-number {
+    display: block;
+    margin: 8px 0 3px;
+    color: var(--white);
+    font: 900 30px/1 var(--font-display);
+    letter-spacing: -.04em;
+  }
+
+  .exam-day-time {
+    font: 600 11px/1.4 var(--font-mono);
+    letter-spacing: .02em;
+  }
+
+  .exam-phase-dot {
+    width: 6px;
+    height: 6px;
+    margin-top: 2px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 3px rgba(255,255,255,.04);
+  }
+
+  .exam-day-button.live .exam-phase-dot {
+    color: var(--orange);
+    animation: exam-blink 1.4s ease-in-out infinite;
+  }
+
+  .exam-detail {
+    min-height: 390px;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    position: relative;
+  }
+
+  .exam-file {
+    padding: 30px 28px;
+    border-right: 1px solid var(--line-strong);
+    background:
+      linear-gradient(155deg, rgba(255,105,31,.14), transparent 48%),
+      var(--surface);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .exam-file::after {
+    content: attr(data-index);
+    position: absolute;
+    right: -15px;
+    bottom: -37px;
+    color: rgba(255,255,255,.035);
+    font: 900 180px/1 var(--font-display);
+    letter-spacing: -.08em;
+  }
+
+  .exam-file-label {
+    color: var(--text-muted);
+    font-size: 10px;
+  }
+
+  .exam-file-date {
+    position: relative;
+    z-index: 1;
+  }
+
+  .exam-file-date strong {
+    display: block;
+    color: var(--orange);
+    font: 900 clamp(76px, 9vw, 116px)/.8 var(--font-display);
+    letter-spacing: -.08em;
+  }
+
+  .exam-file-date span {
+    display: block;
+    margin-top: 17px;
+    font: 800 13px/1.4 var(--font-mono);
+    letter-spacing: .12em;
+  }
+
+  .exam-phase {
+    width: fit-content;
+    padding: 7px 9px;
+    color: var(--white);
+    background: #292b2e;
+    border: 1px solid var(--line);
+    font-size: 9px;
+    font-weight: 800;
+    position: relative;
+    z-index: 1;
+  }
+
+  .exam-phase.live { color: var(--ink); background: var(--orange); border-color: var(--orange); }
+
+  .exam-detail-main {
+    min-width: 0;
+    padding: 32px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 30px;
+  }
+
+  .exam-course-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .exam-course-code {
+    display: inline-flex;
     align-items: center;
-    padding: 12px 20px;
-    z-index: 2;
-    overflow: hidden;
-    transition: background 0.2s, color 0.2s;
-  }
-  .timeline-exam-box:hover {
-    background: #9FE826;
-    color: #0D0E0F !important;
-  }
-  .timeline-exam-box:hover .exam-box-abbr,
-  .timeline-exam-box:hover .timeline-exam-name {
-    color: #0D0E0F;
-    border-color: #0D0E0F;
-  }
-
-  .exam-box-abbr {
+    gap: 8px;
+    color: var(--orange);
     font-size: 11px;
-    font-weight: 700;
-    color: #9FE826;
-    border: 1px solid #9FE826;
-    padding: 4px 8px;
-    margin-right: 16px;
-    letter-spacing: 0.1em;
-    flex-shrink: 0;
-    font-family: 'JetBrains Mono', monospace;
-    transition: color 0.2s, border-color 0.2s;
+    font-weight: 800;
+    margin-bottom: 9px;
   }
 
-  .timeline-exam-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: color 0.2s;
+  .exam-course-code::before {
+    content: "";
+    width: 18px;
+    height: 2px;
+    background: var(--orange);
   }
 
-  @media (max-width: 768px) {
-    .exam-section {
-      margin: 24px 12px 0;
-    }
-    .exam-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 24px;
-      padding: 16px;
-    }
-    .exam-nav {
-      width: 100%;
-      justify-content: space-between;
-    }
-    .nav-date-wrapper {
-      min-width: auto;
-      flex-grow: 1;
-    }
-    .exam-title { font-size: 28px; }
+  .exam-course-name {
+    max-width: 820px;
+    margin: 0;
+    color: var(--white);
+    font-size: clamp(25px, 3.3vw, 46px);
+    line-height: 1.12;
+    letter-spacing: -.035em;
+    font-weight: 900;
+  }
 
-    .timeline-container {
-      height: 45vh;
-      min-height: 320px;
-      margin: 0 12px;
-    }
+  .exam-abbr {
+    flex: 0 0 auto;
+    min-width: 54px;
+    height: 54px;
+    padding: 0 8px;
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+    background: var(--orange);
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    font: 900 13px/1 var(--font-mono);
+  }
 
-    .timeline-base-line, .timeline-milestone { left: 90px; }
-    .timeline-progress-line { left: 89px; }
-    .timeline-milestone::after { width: 16px; }
-    .timeline-label {
-      left: 70px;
-      font-size: 11px;
-      padding: 3px 6px;
-    }
+  .exam-meta-grid {
+    display: grid;
+    grid-template-columns: minmax(180px, .7fr) minmax(260px, 1.3fr);
+    gap: 12px;
+    align-content: start;
+  }
 
-    .timeline-exam-box {
-      left: 110px;
-      padding: 8px 12px;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
+  .exam-meta-card {
+    padding: 17px 18px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,.018);
+  }
+
+  .exam-meta-label,
+  .exam-location-label,
+  .exam-time-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 9px;
+    margin-bottom: 7px;
+  }
+
+  .exam-meta-value {
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .exam-meta-value.mono {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    letter-spacing: -.02em;
+  }
+
+  .exam-timeline {
+    padding-top: 3px;
+  }
+
+  .exam-time-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 13px;
+  }
+
+  .exam-time-head .exam-time-label { margin: 0; }
+
+  .exam-track {
+    position: relative;
+    height: 42px;
+  }
+
+  .exam-track-line,
+  .exam-track-progress {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    height: 3px;
+  }
+
+  .exam-track-line { width: 100%; background: var(--line-strong); }
+
+  .exam-track-progress {
+    background: var(--orange);
+    box-shadow: 0 0 16px rgba(255,105,31,.32);
+    transform-origin: left center;
+  }
+
+  .exam-track-tick {
+    position: absolute;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #707378;
+    background: var(--panel);
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .exam-track-tick.edge-start { transform: rotate(45deg); }
+  .exam-track-tick.edge-end { transform: translateX(-100%) rotate(45deg); }
+
+  .exam-track-tick.active {
+    border-color: var(--orange);
+    background: var(--orange);
+  }
+
+  .exam-track-label {
+    position: absolute;
+    top: 24px;
+    color: var(--text-muted);
+    font: 700 10px/1 var(--font-mono);
+    transform: translateX(-50%);
+  }
+
+  .exam-track-label.edge-start { transform: none; }
+  .exam-track-label.edge-end { transform: translateX(-100%); }
+
+  .exam-detail-nav {
+    display: flex;
+    gap: 8px;
+  }
+
+  .exam-nav-button {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    color: var(--white);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    font-size: 22px;
+    transition: color .2s ease, background .2s ease, border-color .2s ease;
+  }
+
+  .exam-nav-button:not(:disabled):hover {
+    color: var(--ink);
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  .exam-nav-button:disabled { color: #4c4e52; opacity: .55; }
+
+  @keyframes exam-blink {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 3px rgba(255,105,31,.12); }
+    50% { opacity: .45; box-shadow: 0 0 0 7px rgba(255,105,31,0); }
+  }
+
+  @media (max-width: 820px) {
+    .exam-section { margin-top: 32px; box-shadow: 7px 7px 0 rgba(0,0,0,.25); }
+    .exam-header { grid-template-columns: 1fr; padding: 24px 20px; gap: 20px; }
+    .exam-counter { min-width: 0; grid-template-columns: 1fr auto; align-items: center; }
+    .exam-detail { grid-template-columns: 138px minmax(0, 1fr); }
+    .exam-file { padding: 24px 18px; }
+    .exam-file-date strong { font-size: 72px; }
+    .exam-detail-main { padding: 24px 20px; }
+    .exam-meta-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 560px) {
+    .exam-section { margin-top: 26px; }
+    .exam-title { font-size: 34px; }
+    .exam-subtitle { font-size: 12px; }
+    .exam-detail { display: block; min-height: 0; }
+    .exam-file {
+      min-height: 116px;
+      padding: 18px 20px;
+      border-right: 0;
+      border-bottom: 1px solid var(--line-strong);
+      flex-direction: row;
+      align-items: center;
+      gap: 18px;
     }
-    .exam-box-abbr {
-      margin-right: 0;
-      font-size: 9px;
-    }
-    .timeline-exam-name {
-      font-size: 13px;
-    }
+    .exam-file-date { display: flex; align-items: center; gap: 14px; }
+    .exam-file-date strong { font-size: 66px; }
+    .exam-file-date span { margin-top: 0; }
+    .exam-file-label { display: none; }
+    .exam-file::after { font-size: 120px; bottom: -30px; }
+    .exam-detail-main { padding: 22px 20px 26px; gap: 24px; }
+    .exam-course-name { font-size: 27px; }
+    .exam-abbr { min-width: 46px; height: 46px; }
+    .exam-meta-grid { gap: 8px; }
+    .exam-meta-card { padding: 14px; }
+    .exam-detail-nav { display: none; }
+    .exam-day-rail { grid-template-columns: repeat(6, 118px); }
+    .exam-day-button { min-width: 118px; padding-inline: 15px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .exam-day-button,
+    .exam-day-button::after,
+    .exam-nav-button { transition: none; }
+    .exam-day-button.live .exam-phase-dot { animation: none; }
   }
 `;
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function ExamStatusSection() {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isCongrats, setIsCongrats] = useState(false);
-  const [progressPercent, setProgressPercent] = useState(0);
-  const [isToday, setIsToday] = useState(false);
-
-  const timelineRef = useRef<HTMLDivElement>(null);
+  const [now, setNow] = useState<Date | null>(null);
+  const detailRef = useRef<HTMLElement>(null);
   const touchStartX = useRef(0);
 
+  const selectedExam = EXAM_DAYS[selectedIndex];
+  const selectedPhase = getPhase(selectedExam, now);
+
   useEffect(() => {
-    const now = new Date();
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
+    const syncClock = () => setNow(new Date());
+    const selectCurrentExam = () => {
+      const current = new Date();
+      const activeIndex = EXAM_DAYS.findIndex(
+        (exam) => current <= examDate(exam, "end"),
+      );
 
-    if (month === 8 && day >= 30 && day <= 31) {
-      setIsCongrats(true);
-      return;
-    }
+      setNow(current);
+      setSelectedIndex(
+        activeIndex === -1 ? EXAM_DAYS.length - 1 : activeIndex,
+      );
+    };
 
-    if (month < 8 || (month === 8 && day < 24)) {
-      setSelectedIndex(0);
-    } else if (month === 8 && day >= 24 && day <= 29) {
-      const nextExamIndex = EXAM_DAYS.findIndex((exam) => exam.date >= day);
-      if (nextExamIndex !== -1) {
-        setSelectedIndex(nextExamIndex);
-      } else {
-        setSelectedIndex(EXAM_DAYS.length - 1);
-      }
-    } else {
-      setSelectedIndex(0);
-    }
+    const frame = window.requestAnimationFrame(selectCurrentExam);
+    const timer = window.setInterval(syncClock, 30_000);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearInterval(timer);
+    };
   }, []);
 
-  const selectedExam = EXAM_DAYS[selectedIndex];
+  const timeline = useMemo(() => {
+    const start = examDate(selectedExam, "start").getTime();
+    const end = examDate(selectedExam, "end").getTime();
+    const elapsed = now ? now.getTime() - start : 0;
+    const progress = Math.min(100, Math.max(0, (elapsed / (end - start)) * 100));
+    const ticks = [0, 1, 2, 3].map((hour) => ({
+      position: (hour / 3) * 100,
+      label: `${String(Number(selectedExam.start.slice(0, 2)) + hour).padStart(2, "0")}:00`,
+    }));
 
-  const timelineData = useMemo(() => {
-    if (!selectedExam) return null;
+    return { progress, ticks };
+  }, [now, selectedExam]);
 
-    const startMin = timeToMinutes(selectedExam.start);
-    const endMin = timeToMinutes(selectedExam.end);
-    const beforeMin = startMin - 60;
-    const afterMin = endMin + 60;
-    const totalSpan = afterMin - beforeMin;
-
-    const milestones = [
-      { time: beforeMin, highlight: false },
-      { time: startMin, highlight: true },
-      { time: startMin + 60, highlight: false },
-      { time: startMin + 120, highlight: false },
-      { time: endMin, highlight: true },
-      { time: afterMin, highlight: false },
-    ];
-
-    const startPercent = ((startMin - beforeMin) / totalSpan) * 100;
-    const endPercent = ((endMin - beforeMin) / totalSpan) * 100;
-
-    return { milestones, startPercent, endPercent, totalSpan, beforeMin };
-  }, [selectedExam]);
-
-  useEffect(() => {
-    if (!selectedExam || !timelineData) return;
-
-    const now = new Date();
-    const currentDay = now.getDate();
-    const currentMonth = now.getMonth() + 1;
-
-    const checkIsToday = currentMonth === 8 && currentDay === selectedExam.date;
-    setIsToday(checkIsToday);
-
-    if (checkIsToday) {
-      const currentMin = now.getHours() * 60 + now.getMinutes();
-      if (currentMin <= timelineData.beforeMin) {
-        setProgressPercent(0);
-      } else if (
-        currentMin >=
-        timelineData.beforeMin + timelineData.totalSpan
-      ) {
-        setProgressPercent(100);
-      } else {
-        const percent =
-          ((currentMin - timelineData.beforeMin) / timelineData.totalSpan) *
-          100;
-        setProgressPercent(percent);
-      }
-    } else {
-      if (currentMonth === 8 && currentDay > selectedExam.date) {
-        setProgressPercent(100);
-      } else {
-        setProgressPercent(0);
-      }
-    }
-  }, [selectedExam, selectedIndex, timelineData]);
-
-  const canPrev = selectedIndex > 0;
-  const canNext = selectedIndex < EXAM_DAYS.length - 1;
-
-  const handlePrev = () => canPrev && setSelectedIndex((prev) => prev - 1);
-  const handleNext = () => canNext && setSelectedIndex((prev) => prev + 1);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0 && canNext) handleNext();
-      else if (diff < 0 && canPrev) handlePrev();
-    }
-  };
-
-  // GSAP Brutalist Animation
   useLayoutEffect(() => {
-    if (!timelineRef.current || isCongrats || !timelineData) return;
+    if (!detailRef.current) return;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline();
-
-      tl.fromTo(
-        ".timeline-base-line",
-        { scaleY: 0, transformOrigin: "top center" },
-        { scaleY: 1, duration: 0.6, ease: "power4.out" },
-        0,
-      );
-
-      tl.fromTo(
-        ".timeline-progress-line",
-        { scaleY: 0, transformOrigin: "top center" },
-        { scaleY: progressPercent / 100, duration: 0.6, ease: "power4.out" },
-        0.1,
-      );
-
-      tl.fromTo(
-        ".timeline-exam-box",
-        { opacity: 0, x: -30, scaleY: 0.8, transformOrigin: "left center" },
-        { opacity: 1, x: 0, scaleY: 1, duration: 0.5, ease: "power4.out" },
-        0.2,
-      );
-
-      tl.fromTo(
-        ".timeline-milestone",
-        { scale: 0, opacity: 0, rotate: 0 },
+      gsap.fromTo(
+        [".exam-file-date", ".exam-course-top", ".exam-meta-card", ".exam-timeline"],
+        { opacity: 0, y: 18 },
         {
-          scale: 1,
           opacity: 1,
-          rotate: 45,
-          duration: 0.4,
-          stagger: 0.08,
-          ease: "power4.out",
+          y: 0,
+          duration: 0.5,
+          stagger: 0.055,
+          ease: "power3.out",
+          clearProps: "transform,opacity",
         },
-        0.3,
       );
-
-      tl.fromTo(
-        ".timeline-label",
-        { x: -20, opacity: 0, xPercent: -100, yPercent: -50 },
-        {
-          x: 0,
-          opacity: 1,
-          xPercent: -100,
-          yPercent: -50,
-          duration: 0.4,
-          stagger: 0.08,
-          ease: "power4.out",
-        },
-        0.3,
-      );
-
-      tl.fromTo(
-        ".nav-date-wrapper",
-        { y: 15, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.4, ease: "power4.out" },
-        0,
-      );
-    }, timelineRef);
+    }, detailRef);
 
     return () => ctx.revert();
-  }, [selectedIndex, isCongrats, timelineData, progressPercent]);
+  }, [selectedIndex]);
+
+  const selectPrevious = () =>
+    setSelectedIndex((index) => Math.max(0, index - 1));
+  const selectNext = () =>
+    setSelectedIndex((index) => Math.min(EXAM_DAYS.length - 1, index + 1));
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    const distance = touchStartX.current - event.changedTouches[0].clientX;
+    if (Math.abs(distance) < 50) return;
+    if (distance > 0) selectNext();
+    else selectPrevious();
+  };
 
   return (
     <section
       className="exam-section"
-      aria-label="Exam Schedule and Status"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      aria-labelledby="exam-section-title"
     >
       <style>{CSS}</style>
+      <div className="exam-stripe" aria-hidden="true" />
 
-      {isCongrats ? (
-        <div className="exam-congrats">
-          <h2>
-            MISSION
-            <br />
-            COMPLETE<span>.</span>
+      <header className="exam-header">
+        <div>
+          <div className="exam-kicker">● EXAM ARCHIVE / AUGUST 2026</div>
+          <h2 className="exam-title" id="exam-section-title">
+            ตารางสอบ<span>กลางภาค</span>
           </h2>
-          <p>[ SYSTEM_MSG: EXAMS_FINISHED ]</p>
+          <p className="exam-subtitle">
+            วันที่ 24–29 สิงหาคม 2569 · ภาคการศึกษาที่ 1/2569
+          </p>
         </div>
-      ) : (
-        <>
-          <div className="exam-header">
+        <div className="exam-counter" aria-label="จำนวนวันสอบทั้งหมด 6 วัน">
+          <span>TOTAL EXAM DAYS</span>
+          <strong>
+            0<span>6</span>
+          </strong>
+        </div>
+      </header>
+
+      <div className="exam-day-rail" aria-label="เลือกวันสอบ">
+        {EXAM_DAYS.map((exam, index) => {
+          const phase = getPhase(exam, now);
+          return (
+            <button
+              type="button"
+              key={exam.code}
+              className={`exam-day-button ${phase} ${index === selectedIndex ? "active" : ""}`}
+              onClick={() => setSelectedIndex(index)}
+              aria-pressed={index === selectedIndex}
+              aria-label={`${exam.day}ที่ ${exam.date} สิงหาคม วิชา ${exam.course}`}
+            >
+              <span className="exam-day-code">
+                {exam.dayCode}
+                <span className="exam-phase-dot" aria-hidden="true" />
+              </span>
+              <span className="exam-day-number">{exam.date}</span>
+              <span className="exam-day-time">
+                {exam.start}—{exam.end}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <article
+        className="exam-detail"
+        ref={detailRef}
+        aria-live="polite"
+        aria-label={`รายละเอียดสอบวิชา ${selectedExam.course}`}
+        onTouchStart={(event) => {
+          touchStartX.current = event.touches[0].clientX;
+        }}
+        onTouchEnd={handleTouchEnd}
+      >
+        <aside className="exam-file" data-index={String(selectedIndex + 1).padStart(2, "0")}>
+          <span className="exam-file-label">EXAM FILE / {String(selectedIndex + 1).padStart(2, "0")}</span>
+          <div className="exam-file-date">
+            <strong>{selectedExam.date}</strong>
+            <span>
+              AUG / 26
+              <br />
+              {selectedExam.dayCode}
+            </span>
+          </div>
+          <span className={`exam-phase ${selectedPhase}`}>
+            {PHASE_LABEL[selectedPhase]}
+          </span>
+        </aside>
+
+        <div className="exam-detail-main">
+          <div className="exam-course-top">
             <div>
-              <div className="exam-eyebrow">▶ EXAM_PROTOCOL</div>
-              <h2 className="exam-title">
-                AUG 24–29<span>.</span>
-              </h2>
-              <p className="exam-subtitle">
-                [ MID-TERM_EXAMINATIONS // 2569/1 ]
-              </p>
+              <span className="exam-course-code">{selectedExam.code}</span>
+              <h3 className="exam-course-name">{selectedExam.course}</h3>
             </div>
+            <span className="exam-abbr" aria-hidden="true">
+              {selectedExam.abbr}
+            </span>
+          </div>
 
-            <div className="exam-nav">
-              <button
-                className="nav-arrow"
-                onClick={handlePrev}
-                disabled={!canPrev}
-                aria-label="Previous exam day"
-                aria-disabled={!canPrev}
-              >
-                ‹
-              </button>
-
-              <div className="nav-date-wrapper" aria-live="polite">
-                <span className="nav-date">
-                  {selectedExam ? `${selectedExam.date} AUG` : ""}
-                  {isToday && <span className="today-badge">[ LIVE ]</span>}
-                </span>
-              </div>
-
-              <button
-                className="nav-arrow"
-                onClick={handleNext}
-                disabled={!canNext}
-                aria-label="Next exam day"
-                aria-disabled={!canNext}
-              >
-                ›
-              </button>
+          <div className="exam-meta-grid">
+            <div className="exam-meta-card">
+              <span className="exam-meta-label">DATE / TIME</span>
+              <span className="exam-meta-value mono">
+                {selectedExam.day} · {selectedExam.start}–{selectedExam.end} น.
+              </span>
+            </div>
+            <div className="exam-meta-card">
+              <span className="exam-location-label">EXAM LOCATION</span>
+              <span className="exam-meta-value">
+                {selectedExam.location ?? "—"}
+              </span>
             </div>
           </div>
 
-          {selectedExam && timelineData && (
-            <div
-              className="exam-timeline"
-              ref={timelineRef}
-              role="region"
-              aria-label={`Timeline for August ${selectedExam.date}`}
-            >
-              <div className="timeline-container">
-                <div className="timeline-base-line"></div>
-                <div
-                  className="timeline-progress-line"
-                  style={{ height: `${progressPercent}%` }}
-                ></div>
-
-                <div
-                  className="timeline-exam-box"
-                  style={{
-                    top: `${timelineData.startPercent}%`,
-                    height: `${timelineData.endPercent - timelineData.startPercent}%`,
-                  }}
+          <div className="exam-timeline">
+            <div className="exam-time-head">
+              <span className="exam-time-label">3 HOUR EXAM WINDOW</span>
+              <div className="exam-detail-nav">
+                <button
+                  type="button"
+                  className="exam-nav-button"
+                  onClick={selectPrevious}
+                  disabled={selectedIndex === 0}
+                  aria-label="ดูวันสอบก่อนหน้า"
                 >
-                  <span className="exam-box-abbr">{selectedExam.abbr}</span>
-                  <span className="timeline-exam-name">
-                    {selectedExam.course}
-                  </span>
-                </div>
-
-                {timelineData.milestones.map((milestone, idx) => {
-                  const percent =
-                    ((milestone.time - timelineData.beforeMin) /
-                      timelineData.totalSpan) *
-                    100;
-                  return (
-                    <React.Fragment key={idx}>
-                      <div
-                        className={`timeline-milestone ${milestone.highlight ? "highlight" : ""}`}
-                        style={{ top: `${percent}%` }}
-                        aria-hidden="true"
-                      />
-                      <div
-                        className="timeline-label"
-                        style={{ top: `${percent}%` }}
-                      >
-                        {formatTime(milestone.time)}
-                      </div>
-                    </React.Fragment>
-                  );
-                })}
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  className="exam-nav-button"
+                  onClick={selectNext}
+                  disabled={selectedIndex === EXAM_DAYS.length - 1}
+                  aria-label="ดูวันสอบถัดไป"
+                >
+                  ›
+                </button>
               </div>
             </div>
-          )}
-        </>
-      )}
+            <div className="exam-track" aria-label={`เวลา ${selectedExam.start} ถึง ${selectedExam.end} น.`}>
+              <div className="exam-track-line" />
+              <div
+                className="exam-track-progress"
+                style={{ width: `${timeline.progress}%` }}
+              />
+              {timeline.ticks.map((tick, index) => {
+                const edgeClass =
+                  index === 0
+                    ? "edge-start"
+                    : index === timeline.ticks.length - 1
+                      ? "edge-end"
+                      : "";
+
+                return (
+                <React.Fragment key={tick.label}>
+                  <span
+                    className={`exam-track-tick ${edgeClass} ${selectedPhase !== "upcoming" && tick.position <= timeline.progress ? "active" : ""}`}
+                    style={{ left: `${tick.position}%` }}
+                    aria-hidden="true"
+                  />
+                  <span
+                    className={`exam-track-label ${edgeClass}`}
+                    style={{ left: `${tick.position}%` }}
+                  >
+                    {tick.label}
+                  </span>
+                </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
   );
 }
