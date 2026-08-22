@@ -150,7 +150,7 @@ const CSS = `
     --surface: #202124;
     --surface-raised: #282a2d;
     --orange: #ff691f;
-    --lime: var(--orange);
+    --lime: #A6EC34;
     --white: #f4f1ea;
     --ink: #131415;
     --gray: #202124;
