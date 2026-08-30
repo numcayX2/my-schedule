@@ -66,7 +66,7 @@ const CSS = `
     --yellow: #ffd23f;
     --line: #3b3d36;
     --muted: #96988e;
-    --font-display: system-ui, sans-serif;
+    --font-display: var(--font-archivo), system-ui, sans-serif;
     --font-thai: var(--font-kanit);
     --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
   }
@@ -259,7 +259,8 @@ const CSS = `
     max-width: 850px;
     margin: 0;
     color: var(--paper);
-    font-size: clamp(68px, 9.1vw, 146px);
+    font-family: var(--font-display);
+    font-size: clamp(60px, 8vw, 126px);
     font-weight: 950;
     letter-spacing: -.075em;
     line-height: .72;
@@ -294,23 +295,6 @@ const CSS = `
     background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 12px, transparent 12px 14px);
   }
   .hero-barcode { width: 86px; height: 15px; color: var(--paper); opacity: .75; }
-  .hero-burst {
-    width: 70px;
-    height: 70px;
-    display: grid;
-    place-items: center;
-    position: absolute;
-    top: 58px;
-    right: -35px;
-    z-index: 5;
-    color: var(--ink);
-    background: var(--acid);
-    clip-path: polygon(50% 0%, 62% 22%, 82% 9%, 79% 32%, 100% 35%, 81% 49%, 96% 67%, 74% 65%, 72% 91%, 55% 75%, 40% 100%, 34% 76%, 11% 87%, 22% 65%, 0 59%, 20% 46%, 4% 25%, 29% 30%, 32% 5%);
-    font: 950 17px/.9 var(--font-display);
-    letter-spacing: -.06em;
-    transform: rotate(13deg);
-  }
-
   .hero-dashboard {
     min-width: 0;
     padding: 24px;
@@ -788,7 +772,7 @@ const CSS = `
   @media (max-width: 980px) {
     .schedule-header-main { grid-template-columns: minmax(0, 1fr) 290px; }
     .hero-copy { padding-inline: 32px; }
-    .schedule-title { font-size: clamp(66px, 10.8vw, 108px); }
+    .schedule-title { font-size: clamp(56px, 9.4vw, 96px); }
     .hero-dashboard { padding: 18px; }
     .session-count strong { font-size: 92px; }
     .board-heading { grid-template-columns: auto 1fr auto; }
@@ -811,11 +795,10 @@ const CSS = `
     .hero-document-line { gap: 8px; margin-bottom: 17px; }
     .hero-sticker { padding: 6px 8px; font-size: 8px; }
     .schedule-eyebrow { font-size: 9px; }
-    .schedule-title { font-size: clamp(61px, 20.5vw, 82px); line-height: .75; }
+    .schedule-title { font-size: clamp(44px, 15vw, 64px); line-height: .75; }
     .schedule-subtitle { margin-top: 24px; padding-block: 5px; font-size: 12px; line-height: 1.55; }
     .hero-print-line { margin-top: 17px; font-size: 7px; }
     .hero-barcode { width: 66px; height: 12px; }
-    .hero-burst { width: 54px; height: 54px; right: 5px; top: 83px; font-size: 13px; }
     .hero-dashboard {
       min-height: 142px;
       padding: 16px;
@@ -847,7 +830,7 @@ const CSS = `
     .schedule-footer { margin-top: 20px; padding-inline: 2px; font-size: 7px; }
   }
   @media (max-width: 420px) {
-    .schedule-title { font-size: clamp(58px, 19vw, 76px); }
+    .schedule-title { font-size: clamp(42px, 14vw, 56px); }
     .hero-copy { min-height: 300px; }
     .mobile-day-count { display: none; }
     .mobile-day-header { grid-template-columns: auto minmax(0, 1fr); }
@@ -1048,16 +1031,15 @@ export default function Schedule() {
               </div>
               <h1 className="schedule-title">
                 <span className="title-line">CLASS</span>
-                <span className="title-line"><span className="title-slash">/</span>GRID<span className="title-accent">.</span></span>
+                <span className="title-line"><span className="title-slash">/</span>SCHEDULE<span className="title-accent">.</span></span>
               </h1>
               <p className="schedule-subtitle">
-                ตารางเรียนและแผนการสอบที่จัดทุกวิชา เวลา และห้องเรียนให้เห็นชัดในจังหวะเดียว
+                ตารางเรียนที่จัดทุกวิชา เวลา และห้องเรียนให้เห็นชัดในจังหวะเดียว
               </p>
               <div className="hero-print-line">
                 <span className="hero-barcode" aria-hidden="true" />
                 <span>WEEKLY ROUTE / CAMPUS ISSUE</span>
               </div>
-              <span className="hero-burst" aria-hidden="true">GO!</span>
             </div>
             <aside className="hero-dashboard" aria-label="สรุปตารางเรียน">
               <div className="dashboard-mark"><span>WEEKLY LOAD</span><strong>M/S</strong></div>

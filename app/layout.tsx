@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Kanit } from "next/font/google";
+import { Archivo, Kanit } from "next/font/google";
+
+const archivo = Archivo({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-archivo",
+});
 
 const kanit = Kanit({
   weight: ["400", "700", "900"],
@@ -9,7 +15,7 @@ const kanit = Kanit({
 });
 
 export const metadata: Metadata = {
-  title: "Class Grid · ตารางเรียน",
+  title: "Class Schedule · ตารางเรียน",
   description: "ตารางเรียนรายสัปดาห์ ภาคการศึกษาที่ 1/2569",
 };
 
@@ -19,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" className={kanit.variable}>
+    <html lang="th" className={`${archivo.variable} ${kanit.variable}`}>
       <body>{children}</body>
     </html>
   );
