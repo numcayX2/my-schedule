@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
 interface DayNavItem {
   id: string;
   label: string;
@@ -16,156 +14,94 @@ interface ScheduleBottomNavProps {
 const NAV_CSS = `
   .schedule-bottom-nav {
     position: fixed;
-    bottom: 24px;
     left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px;
-    background: rgba(25, 26, 28, 0.78);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 50px;
-    box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.6), 
-      inset 0 1px 1px rgba(255, 255, 255, 0.1),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.5);
+    bottom: max(12px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    display: none;
+    align-items: stretch;
+    width: min(calc(100vw - 26px), 430px);
+    height: 62px;
+    padding: 7px 6px 5px;
+    color: var(--paper);
+    background: var(--ink);
+    border: 2px solid #777970;
+    box-shadow: 8px 9px 0 rgba(0,0,0,.42);
     z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-
-  .schedule-bottom-nav.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
+  .schedule-bottom-nav::before {
+    content: "DAY";
+    width: 43px;
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+    background:
+      repeating-linear-gradient(-45deg, rgba(18,19,16,.12) 0 4px, transparent 4px 8px),
+      var(--orange);
+    font: 900 8px/1 var(--font-mono);
+    letter-spacing: .08em;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
   }
-
-  /* Hide native cursor to let global ink cursor take over */
-  @media (hover: hover) and (pointer: fine) {
-    .schedule-bottom-nav button {
-      cursor: none !important;
-    }
-  }
-
-  .nav-pill-indicator {
+  .schedule-bottom-nav::after {
+    content: "";
     position: absolute;
-    height: calc(100% - 12px);
-    top: 6px;
-    background: rgba(255, 105, 31, 0.16);
-    border: 1px solid rgba(255, 105, 31, 0.46);
-    border-radius: 50px;
-    box-shadow: 0 0 16px rgba(255, 105, 31, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: left 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 1;
+    top: 0;
+    left: 50px;
+    right: 7px;
+    height: 3px;
+    background: repeating-linear-gradient(90deg, var(--acid) 0 7px, transparent 7px 11px);
   }
-
-  .nav-circle-button {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    color: #888;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: 13px;
-    transition: color 0.3s ease, transform 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-    z-index: 2;
+  .nav-day-list {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
     position: relative;
+    background-image: linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 20% 100%;
   }
-
-  .nav-circle-button:hover {
-    color: #fff;
+  .nav-circle-button {
+    min-width: 0;
+    padding: 0;
+    color: #777970;
+    background: transparent;
+    border: 0;
+    font: 900 10px/1 var(--font-mono);
+    letter-spacing: .06em;
+    position: relative;
+    z-index: 1;
+    transition: color .12s ease, background .12s ease, box-shadow .12s ease, transform .12s ease;
+    -webkit-tap-highlight-color: transparent;
   }
-  
-  .nav-circle-button:active {
-    transform: scale(0.9);
-  }
-
   .nav-circle-button.active {
-    color: var(--orange);
-    text-shadow: 0 0 8px rgba(255, 105, 31, 0.55);
+    color: var(--ink);
+    background: var(--acid);
+    box-shadow: inset 0 -4px 0 var(--orange), 2px 2px 0 var(--orange);
+    clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
   }
-
-  @media (min-width: 769px) {
-    .schedule-bottom-nav {
-      display: none;
-    }
-  }
+  .nav-circle-button:active { transform: scale(.9); }
+  @media (max-width: 768px) { .schedule-bottom-nav { display: flex; } }
+  @media (prefers-reduced-motion: reduce) { .nav-circle-button { transition: none; } }
 `;
 
-export default function ScheduleBottomNav({
-  days,
-  activeDay,
-  onDayClick,
-}: ScheduleBottomNavProps) {
-  const [visible, setVisible] = useState(false);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerWidth <= 768) {
-        setVisible(true);
-
-        if (hideTimeoutRef.current) {
-          clearTimeout(hideTimeoutRef.current);
-        }
-
-        hideTimeoutRef.current = setTimeout(() => {
-          setVisible(false);
-        }, 2500);
-      }
-    };
-
-    handleScroll();
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (hideTimeoutRef.current) {
-        clearTimeout(hideTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const activeIndex = Math.max(
-    0,
-    days.findIndex((d) => d.id === activeDay),
-  );
-
-  const indicatorLeft = 6 + activeIndex * 44;
-  const indicatorWidth = 40;
-
+export default function ScheduleBottomNav({ days, activeDay, onDayClick }: ScheduleBottomNavProps) {
   return (
     <>
       <style>{NAV_CSS}</style>
-      <nav
-        className={`schedule-bottom-nav ${visible ? "visible" : ""}`}
-        aria-label="Day navigation"
-      >
-        <div
-          className="nav-pill-indicator"
-          style={{ left: `${indicatorLeft}px`, width: `${indicatorWidth}px` }}
-        />
-        {days.map((day) => (
-          <button
-            key={day.id}
-            className={`nav-circle-button ${activeDay === day.id ? "active" : ""}`}
-            onClick={() => onDayClick(day.id)}
-            aria-label={`Go to ${day.id}`}
-            aria-current={activeDay === day.id ? "page" : undefined}
-          >
-            {day.label}
-          </button>
-        ))}
+      <nav className="schedule-bottom-nav" aria-label="เลือกวันเรียน">
+        <div className="nav-day-list">
+          {days.map((day) => (
+            <button
+              type="button"
+              className={`nav-circle-button ${activeDay === day.id ? "active" : ""}`}
+              key={day.id}
+              onClick={() => onDayClick(day.id)}
+              aria-label={`ไปที่ ${day.id}`}
+              aria-current={activeDay === day.id ? "page" : undefined}
+            >
+              {day.label}
+            </button>
+          ))}
+        </div>
       </nav>
     </>
   );
