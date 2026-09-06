@@ -1,0 +1,582 @@
+{
+  "browser": "Brave Browser (Chromium), Windows, viewport override; not touch-device emulation",
+  "url": "http://127.0.0.1:3001/",
+  "baselineCommit": "4dfcc23",
+  "mobileViewports": [
+    {
+      "active": "day-mon",
+      "documentWidth": 375,
+      "first": {
+        "bottom": 536,
+        "height": 126.5,
+        "left": 11.600000381469728,
+        "right": 363.6000003814697,
+        "top": 409.5,
+        "width": 352,
+        "x": 11.600000381469728,
+        "y": 409.5
+      },
+      "fonts": [
+        [
+          ".mobile-class-time",
+          "14px"
+        ],
+        [
+          ".mobile-class-name",
+          "18px"
+        ],
+        [
+          ".mobile-class-room",
+          "14px"
+        ]
+      ],
+      "header": {
+        "bottom": 285.8999938964844,
+        "height": 259.8999938964844,
+        "left": 10,
+        "right": 365.2000122070313,
+        "top": 26,
+        "width": 355.20001220703125,
+        "x": 10,
+        "y": 26
+      },
+      "mainCount": 1,
+      "nav": {
+        "bottom": 834,
+        "height": 64,
+        "left": 12,
+        "right": 363.2000122070313,
+        "top": 770,
+        "width": 351.20001220703125,
+        "x": 12,
+        "y": 770
+      },
+      "overflowText": [],
+      "overlap": 0,
+      "scrollWidth": 375,
+      "scrollY": 0,
+      "sections": [
+        {
+          "bottom": 790.6000061035156,
+          "id": "day-mon",
+          "top": 355.8999938964844
+        },
+        {
+          "bottom": 1239.300048828125,
+          "id": "day-tue",
+          "top": 804.6000366210938
+        },
+        {
+          "bottom": 1390.300048828125,
+          "id": "day-wed",
+          "top": 1253.300048828125
+        },
+        {
+          "bottom": 1839.000061035156,
+          "id": "day-thu",
+          "top": 1404.300048828125
+        },
+        {
+          "bottom": 2287.7000122070312,
+          "id": "day-fri",
+          "top": 1853
+        }
+      ],
+      "viewport": [
+        390,
+        844
+      ]
+    },
+    {
+      "active": "day-mon",
+      "documentWidth": 345,
+      "first": {
+        "bottom": 529.875,
+        "height": 126.5,
+        "left": 11.600000381469728,
+        "right": 333.20000648498535,
+        "top": 403.375,
+        "width": 321.6000061035156,
+        "x": 11.600000381469728,
+        "y": 403.375
+      },
+      "fonts": [
+        [
+          ".mobile-class-time",
+          "14px"
+        ],
+        [
+          ".mobile-class-name",
+          "18px"
+        ],
+        [
+          ".mobile-class-room",
+          "14px"
+        ]
+      ],
+      "header": {
+        "bottom": 279.77500915527344,
+        "height": 253.77500915527344,
+        "left": 10,
+        "right": 334.8000183105469,
+        "top": 26,
+        "width": 324.8000183105469,
+        "x": 10,
+        "y": 26
+      },
+      "mainCount": 1,
+      "nav": {
+        "bottom": 790,
+        "height": 64,
+        "left": 12,
+        "right": 332.8000183105469,
+        "top": 726,
+        "width": 320.8000183105469,
+        "x": 12,
+        "y": 726
+      },
+      "overflowText": [],
+      "overlap": 0,
+      "scrollWidth": 345,
+      "scrollY": 0,
+      "sections": [
+        {
+          "bottom": 784.4750061035156,
+          "id": "day-mon",
+          "top": 349.7749938964844
+        },
+        {
+          "bottom": 1233.175048828125,
+          "id": "day-tue",
+          "top": 798.4750366210938
+        },
+        {
+          "bottom": 1384.175048828125,
+          "id": "day-wed",
+          "top": 1247.175048828125
+        },
+        {
+          "bottom": 1832.875061035156,
+          "id": "day-thu",
+          "top": 1398.175048828125
+        },
+        {
+          "bottom": 2281.5750122070312,
+          "id": "day-fri",
+          "top": 1846.875
+        }
+      ],
+      "viewport": [
+        360,
+        800
+      ]
+    },
+    {
+      "active": "day-mon",
+      "documentWidth": 415,
+      "first": {
+        "bottom": 544.0500183105469,
+        "height": 126.5,
+        "left": 11.600000381469728,
+        "right": 403.6000003814697,
+        "top": 417.5500183105469,
+        "width": 392,
+        "x": 11.600000381469728,
+        "y": 417.5500183105469
+      },
+      "fonts": [
+        [
+          ".mobile-class-time",
+          "14px"
+        ],
+        [
+          ".mobile-class-name",
+          "18px"
+        ],
+        [
+          ".mobile-class-room",
+          "14px"
+        ]
+      ],
+      "header": {
+        "bottom": 293.95001220703125,
+        "height": 267.95001220703125,
+        "left": 10,
+        "right": 405.2000122070313,
+        "top": 26,
+        "width": 395.2000122070313,
+        "x": 10,
+        "y": 26
+      },
+      "mainCount": 1,
+      "nav": {
+        "bottom": 922,
+        "height": 64,
+        "left": 12,
+        "right": 403.2000122070313,
+        "top": 858,
+        "width": 391.2000122070313,
+        "x": 12,
+        "y": 858
+      },
+      "overflowText": [],
+      "overlap": 0,
+      "scrollWidth": 415,
+      "scrollY": 0,
+      "sections": [
+        {
+          "bottom": 798.6500244140625,
+          "id": "day-mon",
+          "top": 363.9500122070313
+        },
+        {
+          "bottom": 1247.3500366210938,
+          "id": "day-tue",
+          "top": 812.6500244140625
+        },
+        {
+          "bottom": 1398.3499755859375,
+          "id": "day-wed",
+          "top": 1261.3499755859375
+        },
+        {
+          "bottom": 1847.0499877929688,
+          "id": "day-thu",
+          "top": 1412.3499755859375
+        },
+        {
+          "bottom": 2295.750061035156,
+          "id": "day-fri",
+          "top": 1861.050048828125
+        }
+      ],
+      "viewport": [
+        430,
+        932
+      ]
+    }
+  ],
+  "navigationChecks": [
+    {
+      "clicked": "mon",
+      "active": "day-mon",
+      "scrollY": 332,
+      "headingTop": 23.899999618530273
+    },
+    {
+      "clicked": "tue",
+      "active": "day-tue",
+      "scrollY": 780.7999877929688,
+      "headingTop": 23.80000114440918
+    },
+    {
+      "clicked": "wed",
+      "active": "day-wed",
+      "scrollY": 1229.5999755859375,
+      "headingTop": 23.700000762939453
+    },
+    {
+      "clicked": "thu",
+      "active": "day-thu",
+      "scrollY": 1380,
+      "headingTop": 24.30000114440918
+    },
+    {
+      "clicked": "fri",
+      "active": "day-fri",
+      "scrollY": 1602.4000244140625,
+      "headingTop": 250.6000061035156
+    }
+  ],
+  "rapidClick": {
+    "sequence": [
+      "fri",
+      "mon",
+      "thu",
+      "tue"
+    ],
+    "active": "day-tue",
+    "y": 780.7999877929688
+  },
+  "reverseFromTuesday": {
+    "active": "day-mon",
+    "y": 359.20001220703125
+  },
+  "wheelInterruption": {
+    "start": 532,
+    "end": 1393.5999755859375,
+    "active": "day-thu"
+  },
+  "keyboardInterruption": {
+    "active": "day-mon",
+    "y": 211.1999969482422
+  },
+  "keyboardChecks": [
+    {
+      "focus": "day-mon",
+      "shadow": "rgba(245, 210, 191, 0.42) 0px 0px 0px 1.25589px inset, rgba(18, 19, 16, 0.082) 0px 0px 0px 0.417924px inset",
+      "visible": true,
+      "active": "day-mon"
+    },
+    {
+      "focus": "day-tue",
+      "shadow": "rgba(242, 240, 230, 0.027) 0px 0px 0px 0.0846613px inset",
+      "visible": true,
+      "active": "day-tue"
+    },
+    {
+      "focus": "day-wed",
+      "shadow": "rgba(242, 240, 230, 0.165) 0px 0px 0px 0.488708px inset",
+      "visible": true,
+      "active": "day-wed"
+    },
+    {
+      "focus": "day-thu",
+      "shadow": "rgba(242, 240, 230, 0.16) 0px 0px 0px 0.478234px inset",
+      "visible": true,
+      "active": "day-thu"
+    },
+    {
+      "focus": "day-fri",
+      "shadow": "rgba(242, 240, 230, 0.16) 0px 0px 0px 0.480079px inset",
+      "visible": true,
+      "active": "day-fri"
+    }
+  ],
+  "finalBottom390": {
+    "focus": "rgb(255, 91, 34) 0px 0px 0px 3px inset, rgb(18, 19, 16) 0px 0px 0px 5px inset",
+    "last": {
+      "bottom": 683.7000122070312,
+      "height": 126.5,
+      "left": 11.600000381469728,
+      "right": 363.6000003814697,
+      "top": 557.2000122070312,
+      "width": 352,
+      "x": 11.600000381469728,
+      "y": 557.2000122070312
+    },
+    "nav": {
+      "bottom": 834,
+      "height": 64,
+      "left": 12,
+      "right": 363.2000122070313,
+      "top": 770,
+      "width": 351.20001220703125,
+      "x": 12,
+      "y": 770
+    }
+  },
+  "bottom430": {
+    "last": {
+      "bottom": 771.75,
+      "height": 126.5,
+      "left": 11.600000381469728,
+      "right": 403.6000003814697,
+      "top": 645.25,
+      "width": 392,
+      "x": 11.600000381469728,
+      "y": 645.25
+    },
+    "nav": {
+      "bottom": 922,
+      "height": 64,
+      "left": 12,
+      "right": 403.2000122070313,
+      "top": 858,
+      "width": 391.2000122070313,
+      "x": 12,
+      "y": 858
+    }
+  },
+  "tabletCheck": {
+    "grid": {
+      "left": 402.3999938964844,
+      "total": 1160,
+      "width": 758
+    },
+    "overflow": [],
+    "viewport": [
+      820,
+      1180
+    ]
+  },
+  "renderedDataMatchesBaseline": true,
+  "renderedData": [
+    {
+      "code": "10301351",
+      "day": "mon",
+      "end": "12:00",
+      "name": "วิทยาการข้อมูล",
+      "room": "105",
+      "section": "2",
+      "start": "10:00",
+      "type": "LEC"
+    },
+    {
+      "code": "10301364",
+      "day": "mon",
+      "end": "15:00",
+      "name": "ตรรกศาสตร์เชิงดิจิทัลฯ",
+      "room": "105",
+      "section": "1",
+      "start": "13:00",
+      "type": "LAB"
+    },
+    {
+      "code": "10700320",
+      "day": "mon",
+      "end": "17:00",
+      "name": "ภาษาอังกฤษเพื่อการศึกษาฯ",
+      "room": "147",
+      "section": "2",
+      "start": "15:00",
+      "type": "LEC"
+    },
+    {
+      "code": "10301371",
+      "day": "tue",
+      "end": "12:00",
+      "name": "ปัญญาประดิษฐ์",
+      "room": "141",
+      "section": "1",
+      "start": "10:00",
+      "type": "LEC"
+    },
+    {
+      "code": "10301351",
+      "day": "tue",
+      "end": "16:00",
+      "name": "วิทยาการข้อมูล",
+      "room": "105",
+      "section": "2",
+      "start": "13:00",
+      "type": "LAB"
+    },
+    {
+      "code": "10300411",
+      "day": "tue",
+      "end": "19:00",
+      "name": "วิทยาศาสตร์เพื่อชีวิต",
+      "room": "141",
+      "section": "5",
+      "start": "17:00",
+      "type": "LEC"
+    },
+    {
+      "code": "10301364",
+      "day": "thu",
+      "end": "12:00",
+      "name": "ตรรกศาสตร์เชิงดิจิทัลฯ",
+      "room": "105",
+      "section": "1",
+      "start": "09:00",
+      "type": "LAB"
+    },
+    {
+      "code": "10301374",
+      "day": "thu",
+      "end": "15:00",
+      "name": "การประมวลผลภาษาธรรมชาติ",
+      "room": "105",
+      "section": "1",
+      "start": "13:00",
+      "type": "LEC"
+    },
+    {
+      "code": "10700320",
+      "day": "thu",
+      "end": "17:00",
+      "name": "ภาษาอังกฤษเพื่อการศึกษาฯ",
+      "room": "147",
+      "section": "2",
+      "start": "15:00",
+      "type": "LEC"
+    },
+    {
+      "code": "10301374",
+      "day": "fri",
+      "end": "12:00",
+      "name": "การประมวลผลภาษาธรรมชาติ",
+      "room": "105",
+      "section": "1",
+      "start": "09:00",
+      "type": "LAB"
+    },
+    {
+      "code": "10301371",
+      "day": "fri",
+      "end": "16:00",
+      "name": "ปัญญาประดิษฐ์",
+      "room": "105",
+      "section": "1",
+      "start": "13:00",
+      "type": "LAB"
+    },
+    {
+      "code": "10300411",
+      "day": "fri",
+      "end": "19:00",
+      "name": "วิทยาศาสตร์เพื่อชีวิต",
+      "room": "141",
+      "section": "5",
+      "start": "17:00",
+      "type": "LEC"
+    }
+  ],
+  "accessCheck": {
+    "buttons": [
+      {
+        "height": 48.79999923706055,
+        "label": "ไปที่วันจันทร์",
+        "width": 57
+      },
+      {
+        "height": 48.79999923706055,
+        "label": "ไปที่วันอังคาร",
+        "width": 57
+      },
+      {
+        "height": 48.79999923706055,
+        "label": "ไปที่วันพุธ",
+        "width": 57
+      },
+      {
+        "height": 48.79999923706055,
+        "label": "ไปที่วันพฤหัสบดี",
+        "width": 57
+      },
+      {
+        "height": 48.79999923706055,
+        "label": "ไปที่วันศุกร์",
+        "width": 57
+      }
+    ],
+    "dayNames": [
+      {
+        "id": "day-mon",
+        "label": "วันจันทร์MON"
+      },
+      {
+        "id": "day-tue",
+        "label": "วันอังคารTUE"
+      },
+      {
+        "id": "day-wed",
+        "label": "วันพุธWED"
+      },
+      {
+        "id": "day-thu",
+        "label": "วันพฤหัสบดีTHU"
+      },
+      {
+        "id": "day-fri",
+        "label": "วันศุกร์FRI"
+      }
+    ],
+    "main": 1,
+    "reducedMotion": false,
+    "verticalScrollContainers": [],
+    "viewportMeta": "width=device-width, initial-scale=1, viewport-fit=cover"
+  },
+  "productionErrors": []
+}

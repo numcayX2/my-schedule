@@ -1,5 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo, Kanit } from "next/font/google";
+import "../components/Schedule.css";
+import "../components/ScheduleBottomNav.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#121310",
+};
 
 const archivo = Archivo({
   subsets: ["latin"],
