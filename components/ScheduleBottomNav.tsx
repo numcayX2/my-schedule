@@ -1,5 +1,7 @@
 "use client";
 
+// Hello this is Antigravity
+
 import type { DayId } from "./schedule-data";
 
 interface DayNavItem {
