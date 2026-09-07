@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Kanit } from "next/font/google";
+import favicon from "../components/img/favicon.png";
 import "../components/Schedule.css";
 import "../components/ScheduleBottomNav.css";
 
@@ -24,6 +25,9 @@ const kanit = Kanit({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: favicon.src,
+  },
   title: "Class Schedule · ตารางเรียน",
   description: "ตารางเรียนรายสัปดาห์ ภาคการศึกษาที่ 1/2569",
 };
