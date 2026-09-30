@@ -13,7 +13,6 @@ function ClassCard({ session, index }: { session: ClassSession; index: number })
       data-tone={COURSE_TONES[session.code]}
       data-index={String(index + 1).padStart(2, "0")}
       style={getSessionGrid(session)}
-      aria-label={`${DAYS.find(day => day.id === session.day)?.name} ${session.name} ${getSessionTime(session)}`}
     >
       <div className="class-card-top">
         <span className="class-card-pip" aria-hidden="true" />
@@ -69,8 +68,11 @@ export default function Schedule() {
     if (!dot || !ring) return;
 
     const media = gsap.matchMedia();
+    const root = document.documentElement;
     media.add("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
-
+      // The stylesheet only hides the native cursor while this class is on the
+      // document, so a failed effect can never leave the page cursorless.
+      root.classList.add("custom-cursor");
       gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
       const dotX = gsap.quickTo(dot, "x", { duration: .08, ease: "power3.out" });
       const dotY = gsap.quickTo(dot, "y", { duration: .08, ease: "power3.out" });
@@ -79,7 +81,7 @@ export default function Schedule() {
       const handleMove = (event: MouseEvent) => {
         dot.classList.add("visible");
         ring.classList.add("visible");
-        ring.classList.toggle("hovering", event.target instanceof Element && Boolean(event.target.closest("button, .class-card")));
+        ring.classList.toggle("hovering", event.target instanceof Element && event.target.closest("button") !== null);
         dotX(event.clientX);
         dotY(event.clientY);
         ringX(event.clientX);
@@ -96,6 +98,7 @@ export default function Schedule() {
       window.addEventListener("mouseup", handleUp);
       document.documentElement.addEventListener("mouseleave", handleLeave);
       return () => {
+        root.classList.remove("custom-cursor");
         window.removeEventListener("mousemove", handleMove);
         window.removeEventListener("mousedown", handleDown);
         window.removeEventListener("mouseup", handleUp);
@@ -162,7 +165,7 @@ export default function Schedule() {
             <span className="board-index">02</span>
             <h2 className="board-title" id="weekly-grid-title">WEEKLY <span>ROUTING</span></h2>
             <span className="board-stamp">ROUTE SHEET<br />V1.0</span>
-            <span className="board-note">MON—FRI / 09:00—19:00<br />ALL TIMES ICT (UTC+7)</span>
+            <span className="board-note">MON-FRI / 09:00-19:00<br />ALL TIMES ICT (UTC+7)</span>
           </div>
 
           <div className="schedule-main" role="region" aria-label="ตารางเรียนรายสัปดาห์ เลื่อนแนวนอนเพื่อดูเวลาทั้งหมด" tabIndex={0}>

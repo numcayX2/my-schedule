@@ -10,7 +10,6 @@
   --violet: #a692ff;
   --yellow: #ffd23f;
   --line: #3b3d36;
-  --muted: #96988e;
   --font-display: var(--font-archivo), system-ui, sans-serif;
   --font-thai: var(--font-kanit);
   --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
@@ -449,7 +448,7 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   border-right: 3px solid var(--acid);
 }
 .schedule-day strong { color: var(--paper); font-size: 19px; line-height: 1; }
-.schedule-day span { color: #73756e; font: 800 8px/1 var(--font-mono); letter-spacing: .1em; }
+.schedule-day span { color: #8e9089; font: 800 8px/1 var(--font-mono); letter-spacing: .1em; }
 .schedule-cell { min-height: 112px; position: relative; }
 .schedule-cell::after {
   content: "";
@@ -474,7 +473,6 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   position: relative;
   overflow: hidden;
   z-index: 10;
-  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
 }
 .class-card[data-tone="acid"] { --course: var(--acid); }
 .class-card[data-tone="orange"] { --course: var(--orange); }
@@ -499,13 +497,6 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   border-style: solid;
   border-width: 0 22px 22px 0;
   border-color: transparent var(--ink) transparent transparent;
-}
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-.class-card:hover {
-  transform: translate(-2px, -3px) rotate(-.35deg);
-  box-shadow: 8px 9px 0 rgba(0,0,0,.52);
-  filter: saturate(1.08) brightness(1.03);
-}
 }
 .class-card-top {
   display: flex;
@@ -679,7 +670,7 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  color: #777970;
+  color: #9b9d94;
   font: 800 8px/1.4 var(--font-mono);
   letter-spacing: .12em;
 }
@@ -694,7 +685,7 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   opacity: 0;
 }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .schedule-root, .schedule-root * { cursor: none !important; }
+  html.custom-cursor .schedule-root, html.custom-cursor .schedule-root * { cursor: none !important; }
   .cursor-dot, .cursor-ring { display: block; }
   .cursor-dot.visible, .cursor-ring.visible { opacity: 1; }
   .cursor-dot { width: 7px; height: 7px; background: var(--acid); transform: rotate(45deg); }
@@ -764,7 +755,6 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   html { scroll-behavior: auto; }
   .schedule-root, .schedule-root * { cursor: auto !important; }
   .cursor-dot, .cursor-ring { display: none !important; }
-  .class-card { transition: none; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
