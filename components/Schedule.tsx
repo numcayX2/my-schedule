@@ -256,11 +256,15 @@ export default function Schedule() {
                 {TIMES.map((time, columnIndex) => (
                   <div
                     className="schedule-time-header"
+                    data-edge={columnIndex === 0 ? "start" : columnIndex === TIMES.length - 1 ? "end" : undefined}
                     aria-hidden="true"
                     key={time}
                     style={{ gridColumn: `${columnIndex * 2 + 2} / span 2` }}
                   >
-                    {time}
+                    <span className="schedule-time-label">{time}</span>
+                    {columnIndex === TIMES.length - 1 && (
+                      <span className="schedule-time-end">21:00</span>
+                    )}
                   </div>
                 ))}
                 {DAYS.map((day, rowIndex) => (

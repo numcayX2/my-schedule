@@ -420,18 +420,48 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
 .schedule-time-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   color: #b9bbb1;
   font: 800 11px/1 var(--font-mono);
   font-variant-numeric: tabular-nums;
   position: relative;
+  z-index: 15;
 }
 .schedule-time-header::after {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 50%;
-  width: 1px;
+  left: -1px;
+  width: 2px;
+  height: 8px;
+  background: var(--orange);
+}
+.schedule-time-label {
+  position: relative;
+  left: -0.5px;
+  transform: translateX(-50%);
+  padding: 2px 5px;
+  background: var(--ink);
+  white-space: nowrap;
+}
+.schedule-time-header[data-edge="start"] .schedule-time-label {
+  left: 3px;
+  transform: none;
+  padding-left: 2px;
+}
+.schedule-time-end {
+  position: absolute;
+  right: 3px;
+  padding: 2px 2px 2px 5px;
+  background: var(--ink);
+  white-space: nowrap;
+}
+.schedule-time-header[data-edge="end"]::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: -1px;
+  width: 2px;
   height: 8px;
   background: var(--orange);
 }
