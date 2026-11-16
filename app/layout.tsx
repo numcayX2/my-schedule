@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Kanit } from "next/font/google";
 import favicon from "../components/img/favicon.png";
+import "@radix-ui/themes/styles.css";
+import { Theme } from "@radix-ui/themes";
 import "../components/Schedule.css";
 import "../components/ScheduleBottomNav.css";
 
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
     icon: favicon.src,
   },
   title: "Class Schedule · ตารางเรียน",
-  description: "ตารางเรียนรายสัปดาห์ ภาคการศึกษาที่ 1/2569",
+  description: "ตารางเรียนรายสัปดาห์ ภาคการศึกษาที่ 2/2569",
 };
 
 export default function RootLayout({
@@ -39,7 +41,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th" className={`${archivo.variable} ${kanit.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Theme appearance="dark" accentColor="orange" grayColor="sand" radius="none">
+          {children}
+        </Theme>
+      </body>
     </html>
   );
 }

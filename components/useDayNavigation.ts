@@ -33,7 +33,7 @@ export default function useDayNavigation() {
       }
       // The last heading may not reach the reading line on a tall viewport.
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (maxScroll > 0 && window.scrollY >= maxScroll - 2) selected = "fri";
+      if (maxScroll > 0 && window.scrollY >= maxScroll - 2) selected = DAYS[DAYS.length - 1].id;
       setActiveDay(selected);
     };
     const scheduleUpdate = () => {

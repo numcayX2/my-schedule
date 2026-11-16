@@ -20,42 +20,46 @@ export interface ClassSession {
 }
 
 export const TIMES = [
-  "09:00", "10:00", "11:00", "12:00", "13:00",
-  "14:00", "15:00", "16:00", "17:00", "18:00",
+  "09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
+  "15:00", "16:00", "17:00", "18:00", "19:00", "20:00",
 ];
 
 export const CLASSES: ClassSession[] = [
-  {"name":"วิทยาการข้อมูล","code":"10301351","day":"mon","start":"10:00","end":"12:00","room":"105","section":"2","type":"LEC"},
-  {"name":"ตรรกศาสตร์เชิงดิจิทัลฯ","code":"10301364","day":"mon","start":"13:00","end":"15:00","room":"105","section":"1","type":"LAB"},
-  {"name":"ภาษาอังกฤษเพื่อการศึกษาฯ","code":"10700320","day":"mon","start":"15:00","end":"17:00","room":"147","section":"2","type":"LEC"},
-  {"name":"ปัญญาประดิษฐ์","code":"10301371","day":"tue","start":"10:00","end":"12:00","room":"141","section":"1","type":"LEC"},
-  {"name":"วิทยาการข้อมูล","code":"10301351","day":"tue","start":"13:00","end":"16:00","room":"105","section":"2","type":"LAB"},
-  {"name":"วิทยาศาสตร์เพื่อชีวิต","code":"10300411","day":"tue","start":"17:00","end":"19:00","room":"141","section":"5","type":"LEC"},
-  {"name":"ตรรกศาสตร์เชิงดิจิทัลฯ","code":"10301364","day":"thu","start":"09:00","end":"12:00","room":"105","section":"1","type":"LAB"},
-  {"name":"การประมวลผลภาษาธรรมชาติ","code":"10301374","day":"thu","start":"13:00","end":"15:00","room":"105","section":"1","type":"LEC"},
-  {"name":"ภาษาอังกฤษเพื่อการศึกษาฯ","code":"10700320","day":"thu","start":"15:00","end":"17:00","room":"147","section":"2","type":"LEC"},
-  {"name":"การประมวลผลภาษาธรรมชาติ","code":"10301374","day":"fri","start":"09:00","end":"12:00","room":"105","section":"1","type":"LAB"},
-  {"name":"ปัญญาประดิษฐ์","code":"10301371","day":"fri","start":"13:00","end":"16:00","room":"105","section":"1","type":"LAB"},
-  {"name":"วิทยาศาสตร์เพื่อชีวิต","code":"10300411","day":"fri","start":"17:00","end":"19:00","room":"141","section":"5","type":"LEC"},
+  {"name":"อินเทอร์เน็ตในทุกสิ่ง","code":"10301361","day":"mon","start":"10:00","end":"12:00","room":"Lab คอม2 (105)","section":"1","type":"LEC"},
+  {"name":"วิศวกรรมการพัฒนาปฏิบัติการบนคลาวด์","code":"10301347","day":"mon","start":"13:00","end":"15:00","room":"Lab คอม2 (105)","section":"1","type":"LEC"},
+  {"name":"การออกกำลังกายเพื่อเสริมสร้างสมรรถภาพ","code":"10700252","day":"mon","start":"15:00","end":"17:00","room":"สังคม 202 (102)","section":"11","type":"LEC"},
+  {"name":"การประยุกต์ใช้โปรแกรมสำเร็จรูปทางธุรกิจ","code":"10200503","day":"mon","start":"17:00","end":"21:00","room":"BA 206 (107)","section":"7","type":"LEC"},
+  {"name":"วิศวกรรมการพัฒนาปฏิบัติการบนคลาวด์","code":"10301347","day":"tue","start":"09:00","end":"12:00","room":"Lab คอม2 (105)","section":"1","type":"LAB"},
+  {"name":"การสร้างสรรค์และนวัตกรรม","code":"10307121","day":"tue","start":"13:00","end":"15:00","room":"วิทย์ 2205 (105)","section":"1","type":"LEC"},
+  {"name":"นานาสาระเกี่ยวกับอาหารและยา","code":"10400406","day":"tue","start":"15:00","end":"16:30","room":"ศร301 (125)","section":"1","type":"LEC"},
+  {"name":"อินเทอร์เน็ตในทุกสิ่ง","code":"10301361","day":"thu","start":"10:00","end":"13:00","room":"Lab คอม2 (105)","section":"1","type":"LAB"},
+  {"name":"การออกกำลังกายเพื่อเสริมสร้างสมรรถภาพ","code":"10700252","day":"thu","start":"15:00","end":"17:00","room":"สังคม 202 (102)","section":"11","type":"LAB"},
+  {"name":"การสร้างสรรค์และนวัตกรรม","code":"10307121","day":"fri","start":"13:00","end":"15:00","room":"วิทย์ 2205 (105)","section":"1","type":"LAB"},
+  {"name":"นานาสาระเกี่ยวกับอาหารและยา","code":"10400406","day":"fri","start":"15:00","end":"16:30","room":"ศร301 (125)","section":"1","type":"LEC"},
 ];
 
 export const COURSE_TONES: Record<string, string> = {
-  "10301351": "acid",
-  "10301364": "orange",
-  "10700320": "sky",
-  "10301371": "violet",
-  "10300411": "yellow",
-  "10301374": "paper",
+  "10301361": "acid",
+  "10301347": "orange",
+  "10700252": "sky",
+  "10200503": "violet",
+  "10307121": "yellow",
+  "10400406": "paper",
 };
 
 export function getSessionTime(session: ClassSession) {
   return `${session.start}–${session.end}`;
 }
 
+function timeToHalfHourColumn(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 2 + (minutes >= 30 ? 1 : 0) - 16;
+}
+
 export function getSessionGrid(session: ClassSession) {
   return {
     gridRowStart: DAYS.findIndex(day => day.id === session.day) + 2,
-    gridColumnStart: Number(session.start.slice(0, 2)) - 7,
-    gridColumnEnd: Number(session.end.slice(0, 2)) - 7,
+    gridColumnStart: timeToHalfHourColumn(session.start),
+    gridColumnEnd: timeToHalfHourColumn(session.end),
   };
 }

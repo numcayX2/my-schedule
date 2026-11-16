@@ -1,26 +1,26 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { CLASSES, getSessionGrid } from "../components/schedule-data.ts";
+import { CLASSES, COURSE_TONES, TIMES, getSessionGrid } from "../components/schedule-data.ts";
 
-// Captured from commit 4dfcc23 before changing the original grid-based data.
-const original = JSON.parse(await readFile(new URL("../artifacts/mobile-qa/schedule-baseline.json", import.meta.url), "utf8"));
-
-test("all 12 sessions retain every original timetable value", () => {
-  assert.equal(CLASSES.length, 12);
+test("term 2/2569 schedule contains 11 sessions across 6 courses", () => {
+  assert.equal(CLASSES.length, 11);
   assert.equal(new Set(CLASSES.map(session => session.code)).size, 6);
-  assert.deepEqual(CLASSES, original);
+  assert.equal(TIMES[0], "09:00");
+  assert.equal(TIMES[TIMES.length - 1], "20:00");
+  for (const session of CLASSES) {
+    assert.ok(COURSE_TONES[session.code], `missing tone for ${session.code}`);
+  }
 });
 
-test("semantic day and time reproduce the original desktop grid cells", () => {
-  const originalCells = [
-    [2, 3, 5], [2, 6, 8], [2, 8, 10],
-    [3, 3, 5], [3, 6, 9], [3, 10, 12],
-    [5, 2, 5], [5, 6, 8], [5, 8, 10],
-    [6, 2, 5], [6, 6, 9], [6, 10, 12],
+test("semantic day and time map to half-hour desktop grid cells without overlap", () => {
+  const expectedCells = [
+    [2, 4, 8], [2, 10, 14], [2, 14, 18], [2, 18, 26],
+    [3, 2, 8], [3, 10, 14], [3, 14, 17],
+    [5, 4, 10], [5, 14, 18],
+    [6, 10, 14], [6, 14, 17],
   ];
   assert.deepEqual(CLASSES.map(session => {
     const grid = getSessionGrid(session);
     return [grid.gridRowStart, grid.gridColumnStart, grid.gridColumnEnd];
-  }), originalCells);
+  }), expectedCells);
 });

@@ -1,18 +1,42 @@
 "use client";
 
-import React, { useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { gsap } from "gsap";
+import React, { useEffect, useRef, useState } from "react";
+import { Badge, Tooltip } from "@radix-ui/themes";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import ScheduleBottomNav from "./ScheduleBottomNav";
 import { CLASSES, COURSE_TONES, DAYS, TIMES, getSessionGrid, getSessionTime, type ClassSession } from "./schedule-data";
 import useDayNavigation from "./useDayNavigation";
 
-function ClassCard({ session, index }: { session: ClassSession; index: number }) {
+const MOBILE_SCHEDULE = DAYS.map((day) => ({
+  ...day,
+  classes: CLASSES.filter((session) => session.day === day.id)
+    .sort((a, b) => a.start.localeCompare(b.start)),
+}));
+
+const UNIQUE_COURSES = new Set(CLASSES.map((session) => session.code)).size;
+
+function ClassCard({
+  session,
+  index,
+  shouldReduceMotion,
+}: {
+  session: ClassSession;
+  index: number;
+  shouldReduceMotion?: boolean | null;
+}) {
   return (
-    <article
+    <motion.article
       className="class-card"
       data-tone={COURSE_TONES[session.code]}
       data-index={String(index + 1).padStart(2, "0")}
       style={getSessionGrid(session)}
+      initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.93, y: 8 }}
+      animate={shouldReduceMotion ? {} : { opacity: 1, scale: 1, y: 0 }}
+      transition={{
+        duration: 0.34,
+        delay: 0.26 + index * 0.024,
+        ease: [0.16, 1, 0.3, 1],
+      }}
     >
       <div className="class-card-top">
         <span className="class-card-pip" aria-hidden="true" />
@@ -26,153 +50,219 @@ function ClassCard({ session, index }: { session: ClassSession; index: number })
         <span>{session.type === "LEC" ? "บรรยาย" : "ปฏิบัติ"} · {session.type}</span>
       </div>
       <span className="class-card-barcode" aria-hidden="true" />
-    </article>
+    </motion.article>
   );
 }
 
 export default function Schedule() {
   const rootRef = useRef<HTMLDivElement>(null);
   const { dayRefs, activeDay, scrollToDay } = useDayNavigation();
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
-  const mobileSchedule = useMemo(
-    () => DAYS.map((day) => ({
-      ...day,
-      classes: CLASSES.filter((session) => session.day === day.id)
-        .sort((a, b) => a.start.localeCompare(b.start)),
-    })),
-    [],
-  );
-  const uniqueCourses = useMemo(() => new Set(CLASSES.map((session) => session.code)).size, []);
+  // Smooth Motion springs for custom cursor physics
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isClicking, setIsClicking] = useState(false);
+  const [isCursorActive, setIsCursorActive] = useState(false);
 
-  useLayoutEffect(() => {
-    const media = gsap.matchMedia();
-    media.add("(prefers-reduced-motion: no-preference)", () => {
-      const timeline = gsap.timeline({ defaults: { ease: "power4.out" } });
-      timeline
-        .fromTo(".signal-rail", { scaleX: 0, transformOrigin: "left" }, { scaleX: 1, duration: .45 })
-        .fromTo(".schedule-header", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .58 }, .08)
-        .fromTo(".schedule-title .title-line", { opacity: 0, x: -34 }, { opacity: 1, x: 0, duration: .52, stagger: .08 }, .22)
-        .fromTo(".hero-dashboard", { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: .58 }, .28)
-        .fromTo(".schedule-board", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: .55 }, .44)
-        .fromTo(".class-card", { opacity: 0, scale: .86 }, { opacity: 1, scale: 1, duration: .35, stagger: .035, clearProps: "transform,opacity" }, .58)
-        .fromTo(".mobile-day", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: .42, stagger: .06, clearProps: "transform,opacity" }, .5);
-    }, rootRef);
-    return () => media.revert();
-  }, []);
+  // High responsiveness for the dot, silky fluid inertia for the ring
+  const dotX = useSpring(mouseX, { stiffness: 950, damping: 48 });
+  const dotY = useSpring(mouseY, { stiffness: 950, damping: 48 });
+  const ringX = useSpring(mouseX, { stiffness: 320, damping: 26 });
+  const ringY = useSpring(mouseY, { stiffness: 320, damping: 26 });
 
   useEffect(() => {
-    const dot = dotRef.current;
-    const ring = ringRef.current;
-    if (!dot || !ring) return;
+    if (shouldReduceMotion) return;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    if (!finePointer.matches) return;
 
-    const media = gsap.matchMedia();
     const root = document.documentElement;
-    media.add("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
-      // The stylesheet only hides the native cursor while this class is on the
-      // document, so a failed effect can never leave the page cursorless.
-      root.classList.add("custom-cursor");
-      gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
-      const dotX = gsap.quickTo(dot, "x", { duration: .08, ease: "power3.out" });
-      const dotY = gsap.quickTo(dot, "y", { duration: .08, ease: "power3.out" });
-      const ringX = gsap.quickTo(ring, "x", { duration: .32, ease: "power3.out" });
-      const ringY = gsap.quickTo(ring, "y", { duration: .32, ease: "power3.out" });
-      const handleMove = (event: MouseEvent) => {
-        dot.classList.add("visible");
-        ring.classList.add("visible");
-        ring.classList.toggle("hovering", event.target instanceof Element && event.target.closest("button") !== null);
-        dotX(event.clientX);
-        dotY(event.clientY);
-        ringX(event.clientX);
-        ringY(event.clientY);
-      };
-      const handleDown = () => ring.classList.add("clicking");
-      const handleUp = () => ring.classList.remove("clicking");
-      const handleLeave = () => {
-        dot.classList.remove("visible");
-        ring.classList.remove("visible", "hovering", "clicking");
-      };
-      window.addEventListener("mousemove", handleMove);
-      window.addEventListener("mousedown", handleDown);
-      window.addEventListener("mouseup", handleUp);
-      document.documentElement.addEventListener("mouseleave", handleLeave);
-      return () => {
-        root.classList.remove("custom-cursor");
-        window.removeEventListener("mousemove", handleMove);
-        window.removeEventListener("mousedown", handleDown);
-        window.removeEventListener("mouseup", handleUp);
-        document.documentElement.removeEventListener("mouseleave", handleLeave);
-        handleLeave();
-        gsap.killTweensOf([dot, ring]);
-      };
-    });
-    return () => media.revert();
-  }, []);
+    root.classList.add("custom-cursor");
+
+    const handleMove = (event: MouseEvent) => {
+      mouseX.set(event.clientX);
+      mouseY.set(event.clientY);
+      setIsCursorActive(true);
+
+      const target = event.target as Element | null;
+      setIsHovering(target?.closest("button, a") !== null);
+    };
+
+    const handleDown = () => setIsClicking(true);
+    const handleUp = () => setIsClicking(false);
+    const handleLeave = () => {
+      setIsCursorActive(false);
+      setIsHovering(false);
+      setIsClicking(false);
+    };
+
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mousedown", handleDown);
+    window.addEventListener("mouseup", handleUp);
+    document.documentElement.addEventListener("mouseleave", handleLeave);
+
+    return () => {
+      root.classList.remove("custom-cursor");
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mousedown", handleDown);
+      window.removeEventListener("mouseup", handleUp);
+      document.documentElement.removeEventListener("mouseleave", handleLeave);
+    };
+  }, [shouldReduceMotion, mouseX, mouseY]);
 
   return (
     <div className="schedule-root" ref={rootRef}>
-      <div className="cursor-ring" ref={ringRef} aria-hidden="true" />
-      <div className="cursor-dot" ref={dotRef} aria-hidden="true" />
+      <motion.div
+        className={`cursor-ring ${isCursorActive ? "visible" : ""} ${isHovering ? "hovering" : ""} ${isClicking ? "clicking" : ""}`}
+        aria-hidden="true"
+        style={{
+          x: ringX,
+          y: ringY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        animate={
+          shouldReduceMotion
+            ? {}
+            : {
+                scale: isClicking ? 0.72 : isHovering ? 1.55 : 1,
+              }
+        }
+        transition={{ type: "spring", stiffness: 450, damping: 26 }}
+      />
+      <motion.div
+        className={`cursor-dot ${isCursorActive ? "visible" : ""}`}
+        aria-hidden="true"
+        style={{
+          x: dotX,
+          y: dotY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        animate={
+          shouldReduceMotion
+            ? {}
+            : {
+                scale: isClicking ? 1.3 : isHovering ? 0.5 : 1,
+              }
+        }
+        transition={{ duration: 0.12 }}
+      />
 
       <a className="skip-link" href="#schedule">ข้ามไปตารางเรียน</a>
       <div className="content-shell">
-        <div className="signal-rail" aria-hidden="true" />
+        <motion.div
+          className="signal-rail"
+          aria-hidden="true"
+          initial={shouldReduceMotion ? false : { scaleX: 0 }}
+          animate={shouldReduceMotion ? {} : { scaleX: 1 }}
+          transition={{ duration: 0.46, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformOrigin: "left" }}
+        />
 
-        <header className="schedule-header">
+        <motion.header
+          className="schedule-header"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div className="schedule-header-top">
             <span className="system-label">COURSE CONTROL / 01</span>
             <div className="header-status">
               <span className="status-dot" aria-hidden="true" />
-              <span className="system-label">SYSTEM ONLINE / TERM 1</span>
+              <Badge variant="surface" color="green" size="1" radius="none">
+                SYSTEM ONLINE / TERM 2
+              </Badge>
             </div>
           </div>
           <div className="schedule-header-main">
             <div className="hero-copy">
               <div className="hero-document-line">
-                <span className="hero-sticker">ROUTE DOSSIER</span>
-                <span className="schedule-eyebrow">{"// ISSUE 01 · 2569"}</span>
+                <Badge variant="solid" color="orange" size="2" radius="none" className="hero-sticker">
+                  ROUTE DOSSIER
+                </Badge>
+                <span className="schedule-eyebrow">{"// ISSUE 02 · 2569"}</span>
               </div>
               <h1 className="schedule-title">
-                <span className="title-line">CLASS</span>
-                <span className="title-line"><span className="title-slash">/</span>SCHEDULE<span className="title-accent">.</span></span>
+                <motion.span
+                  className="title-line"
+                  initial={shouldReduceMotion ? false : { opacity: 0, x: -28 }}
+                  animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
+                  transition={{ duration: 0.42, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  CLASS
+                </motion.span>
+                <motion.span
+                  className="title-line"
+                  initial={shouldReduceMotion ? false : { opacity: 0, x: -28 }}
+                  animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
+                  transition={{ duration: 0.42, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <span className="title-slash">/</span>SCHEDULE<span className="title-accent">.</span>
+                </motion.span>
               </h1>
               <p className="schedule-subtitle">
-                ตารางเรียน · ภาคการศึกษาที่ 1/2569
+                ตารางเรียน · ภาคการศึกษาที่ 2/2569
               </p>
               <div className="hero-print-line">
                 <span className="hero-barcode" aria-hidden="true" />
                 <span>WEEKLY ROUTE / CAMPUS ISSUE</span>
               </div>
             </div>
-            <aside className="hero-dashboard" aria-label="สรุปตารางเรียน">
-              <div className="dashboard-mark"><span>WEEKLY LOAD</span><strong>M/S</strong></div>
-              <span className="dashboard-stamp">PRINTED<br />SHEET 01</span>
+            <motion.aside
+              className="hero-dashboard"
+              aria-label="สรุปตารางเรียน"
+              initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+              animate={shouldReduceMotion ? {} : { opacity: 1, scale: 1 }}
+              transition={{ duration: 0.48, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Tooltip content="Master Schedule Academic Load Monitor">
+                <div className="dashboard-mark" style={{ cursor: "help" }}><span>WEEKLY LOAD</span><strong>M/S</strong></div>
+              </Tooltip>
+              <span className="dashboard-stamp">PRINTED<br />SHEET 02</span>
               <div className="session-count">
                 <strong>{String(CLASSES.length).padStart(2, "0")}</strong>
                 <span>CLASS SESSIONS</span>
               </div>
               <div className="dashboard-stats">
-                <div className="dashboard-stat"><span>COURSES</span><strong>0{uniqueCourses}</strong></div>
-                <div className="dashboard-stat"><span>SEMESTER</span><strong>1/69</strong></div>
+                <div className="dashboard-stat"><span>COURSES</span><strong>0{UNIQUE_COURSES}</strong></div>
+                <div className="dashboard-stat"><span>SEMESTER</span><strong>2/69</strong></div>
               </div>
-            </aside>
+            </motion.aside>
           </div>
-        </header>
+        </motion.header>
 
-        <main className="schedule-board" id="schedule" tabIndex={-1} aria-labelledby="weekly-grid-title">
+        <motion.main
+          className="schedule-board"
+          id="schedule"
+          tabIndex={-1}
+          aria-labelledby="weekly-grid-title"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
+          animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.52, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div className="board-heading">
             <span className="board-index">02</span>
             <h2 className="board-title" id="weekly-grid-title">WEEKLY <span>ROUTING</span></h2>
             <span className="board-stamp">ROUTE SHEET<br />V1.0</span>
-            <span className="board-note">MON-FRI / 09:00-19:00<br />ALL TIMES ICT (UTC+7)</span>
+            <span className="board-note">MON-FRI / 09:00-21:00<br />ALL TIMES ICT (UTC+7)</span>
           </div>
 
           <div className="schedule-main" role="region" aria-label="ตารางเรียนรายสัปดาห์ เลื่อนแนวนอนเพื่อดูเวลาทั้งหมด" tabIndex={0}>
             <div className="schedule-grid-wrap">
               <div className="schedule-grid">
                 <div className="schedule-corner" aria-hidden="true">DAY<br />TIME</div>
-                {TIMES.map((time) => <div className="schedule-time-header" aria-hidden="true" key={time}>{time}</div>)}
+                {TIMES.map((time, columnIndex) => (
+                  <div
+                    className="schedule-time-header"
+                    aria-hidden="true"
+                    key={time}
+                    style={{ gridColumn: `${columnIndex * 2 + 2} / span 2` }}
+                  >
+                    {time}
+                  </div>
+                ))}
                 {DAYS.map((day, rowIndex) => (
                   <React.Fragment key={day.id}>
                     <div className="schedule-day" style={{ gridRowStart: rowIndex + 2, gridColumnStart: 1 }}>
@@ -182,31 +272,43 @@ export default function Schedule() {
                       <div
                         className="schedule-cell" aria-hidden="true"
                         key={`${day.id}-${time}`}
-                        style={{ gridRowStart: rowIndex + 2, gridColumnStart: columnIndex + 2 }}
+                        style={{ gridRowStart: rowIndex + 2, gridColumn: `${columnIndex * 2 + 2} / span 2` }}
                       />
                     ))}
                   </React.Fragment>
                 ))}
                 {CLASSES.map((session, index) => (
-                  <ClassCard session={session} index={index} key={`${session.code}-${session.day}-${session.start}`} />
+                  <ClassCard
+                    session={session}
+                    index={index}
+                    key={`${session.code}-${session.day}-${session.start}`}
+                    shouldReduceMotion={shouldReduceMotion}
+                  />
                 ))}
               </div>
             </div>
           </div>
           <div className="board-legend" aria-label="ตารางเรียนข้อมูลประกอบ">
-            <span><i className="legend-mark signal" /> SESSION MAP / 12 BLOCKS</span>
+            <span><i className="legend-mark signal" /> SESSION MAP / {CLASSES.length} BLOCKS</span>
             <span><i className="legend-mark paper" /> LEC · LAB · ROOM NUMBER</span>
             <span>DO NOT LOSE THIS SHEET</span>
           </div>
 
           <div className="schedule-mobile-list" aria-label="ตารางเรียนรายวัน">
-            {mobileSchedule.map((day) => (
-              <section
+            {MOBILE_SCHEDULE.map((day, dayIndex) => (
+              <motion.section
                 className="mobile-day"
                 aria-labelledby={`day-title-${day.id}`}
                 id={`day-${day.id}`}
                 key={day.id}
                 ref={(element) => { dayRefs.current[day.id] = element; }}
+                initial={shouldReduceMotion ? false : { opacity: 0, x: -16 }}
+                animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.36,
+                  delay: 0.1 + dayIndex * 0.04,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
               >
                 <div className="mobile-day-header">
                   <span className="mobile-day-idx">{day.index}</span>
@@ -245,15 +347,15 @@ export default function Schedule() {
                     );
                   })
                 )}
-              </section>
+              </motion.section>
             ))}
           </div>
-        </main>
+        </motion.main>
       </div>
 
       <footer className="schedule-footer">
         <span>MY SCHEDULE / ACADEMIC CONTROL</span>
-        <span>TERM 01 · 2569</span>
+        <span>TERM 02 · 2569</span>
       </footer>
       <ScheduleBottomNav
         days={DAYS}
