@@ -2,9 +2,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Badge, Tooltip } from "@radix-ui/themes";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { animate, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import AmbientBackdrop from "./AmbientBackdrop";
+import ClassCard from "./ClassCard";
 import ScheduleBottomNav from "./ScheduleBottomNav";
-import { CLASSES, COURSE_TONES, DAYS, TIMES, getSessionGrid, getSessionTime, type ClassSession } from "./schedule-data";
+import { EASE_OUT, EASE_SLAM } from "./motion-presets";
+import { CLASSES, COURSE_TONES, DAYS, TIMES } from "./schedule-data";
 import useDayNavigation from "./useDayNavigation";
 
 const MOBILE_SCHEDULE = DAYS.map((day) => ({
@@ -15,43 +18,19 @@ const MOBILE_SCHEDULE = DAYS.map((day) => ({
 
 const UNIQUE_COURSES = new Set(CLASSES.map((session) => session.code)).size;
 
-function ClassCard({
-  session,
-  index,
-  shouldReduceMotion,
-}: {
-  session: ClassSession;
-  index: number;
-  shouldReduceMotion?: boolean | null;
-}) {
-  return (
-    <motion.article
-      className="class-card"
-      data-tone={COURSE_TONES[session.code]}
-      data-index={String(index + 1).padStart(2, "0")}
-      style={getSessionGrid(session)}
-      initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.93, y: 8 }}
-      animate={shouldReduceMotion ? {} : { opacity: 1, scale: 1, y: 0 }}
-      transition={{
-        duration: 0.34,
-        delay: 0.26 + index * 0.024,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-    >
-      <div className="class-card-top">
-        <span className="class-card-pip" aria-hidden="true" />
-        <span className="class-card-code">{session.code}</span>
-        <span className="class-card-time">{getSessionTime(session)}</span>
-      </div>
-      <h3 className="class-card-name">{session.name}</h3>
-      <div className="class-card-meta">
-        <span className="class-card-room">ห้อง {session.room}</span>
-        <span>กลุ่ม {session.section}</span>
-        <span>{session.type === "LEC" ? "บรรยาย" : "ปฏิบัติ"} · {session.type}</span>
-      </div>
-      <span className="class-card-barcode" aria-hidden="true" />
-    </motion.article>
-  );
+// Counts up from zero once the hero lands. Server HTML keeps the real number.
+function CountUp({ to, delay, shouldReduceMotion }: { to: number; delay: number; shouldReduceMotion?: boolean | null }) {
+  const value = useMotionValue(to);
+  const text = useTransform(value, (v) => String(Math.round(v)).padStart(2, "0"));
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+    value.set(0);
+    const controls = animate(value, to, { duration: 1.2, delay, ease: EASE_OUT });
+    return () => controls.stop();
+  }, [shouldReduceMotion, to, delay, value]);
+
+  return <motion.strong>{text}</motion.strong>;
 }
 
 export default function Schedule() {
@@ -113,6 +92,9 @@ export default function Schedule() {
 
   return (
     <div className="schedule-root" ref={rootRef}>
+      {!shouldReduceMotion && (
+        <AmbientBackdrop mouseX={mouseX} mouseY={mouseY} cursorActive={isCursorActive} />
+      )}
       <motion.div
         className={`cursor-ring ${isCursorActive ? "visible" : ""} ${isHovering ? "hovering" : ""} ${isClicking ? "clicking" : ""}`}
         aria-hidden="true"
@@ -157,7 +139,7 @@ export default function Schedule() {
           aria-hidden="true"
           initial={shouldReduceMotion ? false : { scaleX: 0 }}
           animate={shouldReduceMotion ? {} : { scaleX: 1 }}
-          transition={{ duration: 0.46, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.46, ease: EASE_OUT }}
           style={{ transformOrigin: "left" }}
         />
 
@@ -165,7 +147,7 @@ export default function Schedule() {
           className="schedule-header"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5, delay: 0.06, ease: EASE_OUT }}
         >
           <div className="schedule-header-top">
             <span className="system-label">COURSE CONTROL / 01</span>
@@ -179,27 +161,41 @@ export default function Schedule() {
           <div className="schedule-header-main">
             <div className="hero-copy">
               <div className="hero-document-line">
-                <Badge variant="solid" color="orange" size="2" radius="none" className="hero-sticker">
-                  ROUTE DOSSIER
-                </Badge>
+                <motion.span
+                  className="hero-sticker-slam"
+                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 2.8, rotate: -16 }}
+                  animate={shouldReduceMotion ? {} : { opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.55, duration: 0.4, ease: EASE_SLAM, opacity: { delay: 0.55, duration: 0.1 } }}
+                >
+                  <Badge variant="solid" color="orange" size="2" radius="none" className="hero-sticker">
+                    ROUTE DOSSIER
+                  </Badge>
+                </motion.span>
                 <span className="schedule-eyebrow">{"// ISSUE 02 · 2569"}</span>
               </div>
               <h1 className="schedule-title">
                 <motion.span
                   className="title-line"
-                  initial={shouldReduceMotion ? false : { opacity: 0, x: -28 }}
-                  animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
-                  transition={{ duration: 0.42, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                  initial={shouldReduceMotion ? false : { opacity: 0, x: -48, skewX: -12, clipPath: "inset(-20% 100% -20% -10%)" }}
+                  animate={shouldReduceMotion ? {} : { opacity: 1, x: 0, skewX: 0, clipPath: "inset(-20% -10% -20% -10%)" }}
+                  transition={{ duration: 0.62, delay: 0.16, ease: EASE_OUT }}
                 >
                   CLASS
                 </motion.span>
                 <motion.span
                   className="title-line"
-                  initial={shouldReduceMotion ? false : { opacity: 0, x: -28 }}
-                  animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
-                  transition={{ duration: 0.42, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                  initial={shouldReduceMotion ? false : { opacity: 0, x: -48, skewX: -12, clipPath: "inset(-20% 100% -20% -10%)" }}
+                  animate={shouldReduceMotion ? {} : { opacity: 1, x: 0, skewX: 0, clipPath: "inset(-20% -10% -20% -10%)" }}
+                  transition={{ duration: 0.62, delay: 0.3, ease: EASE_OUT }}
                 >
-                  <span className="title-slash">/</span>SCHEDULE<span className="title-accent">.</span>
+                  <span className="title-slash">/</span>SCHEDULE
+                  <motion.span
+                    className="title-accent"
+                    animate={shouldReduceMotion ? {} : { opacity: [1, 0, 1] }}
+                    transition={{ delay: 1.1, duration: 0.7, repeat: 3, repeatDelay: 0.5, times: [0, 0.5, 1] }}
+                  >
+                    .
+                  </motion.span>
                 </motion.span>
               </h1>
               <p className="schedule-subtitle">
@@ -215,14 +211,14 @@ export default function Schedule() {
               aria-label="สรุปตารางเรียน"
               initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
               animate={shouldReduceMotion ? {} : { opacity: 1, scale: 1 }}
-              transition={{ duration: 0.48, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.48, delay: 0.18, ease: EASE_OUT }}
             >
               <Tooltip content="Master Schedule Academic Load Monitor">
                 <div className="dashboard-mark" style={{ cursor: "help" }}><span>WEEKLY LOAD</span><strong>M/S</strong></div>
               </Tooltip>
               <span className="dashboard-stamp">PRINTED<br />SHEET 02</span>
               <div className="session-count">
-                <strong>{String(CLASSES.length).padStart(2, "0")}</strong>
+                <CountUp to={CLASSES.length} delay={0.55} shouldReduceMotion={shouldReduceMotion} />
                 <span>CLASS SESSIONS</span>
               </div>
               <div className="dashboard-stats">
@@ -240,7 +236,7 @@ export default function Schedule() {
           aria-labelledby="weekly-grid-title"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
           animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.52, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.52, delay: 0.24, ease: EASE_OUT }}
         >
           <div className="board-heading">
             <span className="board-index">02</span>
@@ -306,13 +302,10 @@ export default function Schedule() {
                 id={`day-${day.id}`}
                 key={day.id}
                 ref={(element) => { dayRefs.current[day.id] = element; }}
-                initial={shouldReduceMotion ? false : { opacity: 0, x: -16 }}
-                animate={shouldReduceMotion ? {} : { opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.36,
-                  delay: 0.1 + dayIndex * 0.04,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
+                initial={shouldReduceMotion ? false : { opacity: 0, x: -22 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.08 }}
+                transition={{ duration: 0.5, delay: dayIndex === 0 ? 0.3 : 0, ease: EASE_OUT }}
               >
                 <div className="mobile-day-header">
                   <span className="mobile-day-idx">{day.index}</span>
@@ -324,13 +317,17 @@ export default function Schedule() {
                 {day.classes.length === 0 ? (
                   <div className="mobile-day-empty">ไม่มีคาบเรียน / OPEN DAY</div>
                 ) : (
-                  day.classes.map((session) => {
+                  day.classes.map((session, classIndex) => {
                     const sessionIndex = CLASSES.findIndex(
                       (item) => item.code === session.code && item.day === session.day && item.start === session.start,
                     );
                     return (
-                      <article
+                      <motion.article
                         className="mobile-class"
+                        initial={shouldReduceMotion ? false : { opacity: 0, x: -34, skewX: -6 }}
+                        whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0, skewX: 0 }}
+                        viewport={{ once: true, amount: 0.25 }}
+                        transition={{ duration: 0.55, delay: 0.08 + classIndex * 0.08, ease: EASE_OUT }}
                         data-tone={COURSE_TONES[session.code]}
                         data-index={String(sessionIndex + 1).padStart(2, "0")}
                         key={`${session.code}-${session.day}-${session.start}`}
@@ -347,7 +344,7 @@ export default function Schedule() {
                             <span>{session.type === "LEC" ? "บรรยาย" : "ปฏิบัติ"} <abbr title={session.type === "LEC" ? "Lecture" : "Laboratory"}>{session.type}</abbr></span>
                           </div>
                         </div>
-                      </article>
+                      </motion.article>
                     );
                   })
                 )}

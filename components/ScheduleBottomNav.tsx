@@ -2,6 +2,7 @@
 
 import { Tooltip } from "@radix-ui/themes";
 import { motion, useReducedMotion } from "motion/react";
+import { EASE_OUT } from "./motion-presets";
 import type { DayId } from "./schedule-data";
 
 interface DayNavItem {
@@ -25,7 +26,7 @@ export default function ScheduleBottomNav({ days, activeDay, onDayClick }: Sched
       aria-label="เลือกวันเรียน"
       initial={shouldReduceMotion ? false : { opacity: 0, y: 32, x: "-50%" }}
       animate={shouldReduceMotion ? {} : { opacity: 1, y: 0, x: "-50%" }}
-      transition={{ duration: 0.45, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.45, delay: 0.25, ease: EASE_OUT }}
     >
       <div className="nav-day-list">
         {days.map((day) => (
@@ -41,7 +42,15 @@ export default function ScheduleBottomNav({ days, activeDay, onDayClick }: Sched
               aria-controls={`day-${day.id}`}
               aria-current={activeDay === day.id ? "location" : undefined}
             >
-              {day.short}
+              {activeDay === day.id && (
+                <motion.span
+                  className="nav-active-pill"
+                  layoutId="nav-active-pill"
+                  aria-hidden="true"
+                  transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 520, damping: 34 }}
+                />
+              )}
+              <span className="nav-label">{day.short}</span>
             </motion.button>
           </Tooltip>
         ))}

@@ -571,6 +571,18 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   font: 400 12px/1.4 var(--font-thai), sans-serif;
   letter-spacing: .06em;
 }
+.class-card:hover { z-index: 19; }
+.class-card-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: soft-light;
+  transition: opacity .25s ease;
+}
+.class-card:hover .class-card-glare { opacity: .85; }
+.hero-sticker-slam { display: inline-block; }
 .class-card-barcode {
   display: none;
   width: 48px;
@@ -705,6 +717,44 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   letter-spacing: .12em;
 }
 
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 1001;
+  background: var(--acid);
+  transform-origin: left;
+  pointer-events: none;
+}
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ambient-drift, .ambient-spot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  will-change: transform;
+}
+.ambient-drift {
+  width: 680px;
+  height: 680px;
+  margin: -340px 0 0 -340px;
+  background: radial-gradient(circle, rgba(255, 91, 34, .2), transparent 64%);
+}
+.ambient-spot {
+  width: 760px;
+  height: 760px;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(200, 255, 56, .1), transparent 62%);
+  mix-blend-mode: screen;
+}
 .cursor-dot, .cursor-ring {
   position: fixed;
   top: 0;
