@@ -2,7 +2,7 @@
 
 import { Tooltip } from "@radix-ui/themes";
 import { motion, useReducedMotion } from "motion/react";
-import { EASE_OUT } from "./motion-presets";
+import { EASE_OUT, INTRO } from "./motion-presets";
 import type { DayId } from "./schedule-data";
 
 interface DayNavItem {
@@ -26,7 +26,7 @@ export default function ScheduleBottomNav({ days, activeDay, onDayClick }: Sched
       aria-label="เลือกวันเรียน"
       initial={shouldReduceMotion ? false : { opacity: 0, y: 32, x: "-50%" }}
       animate={shouldReduceMotion ? {} : { opacity: 1, y: 0, x: "-50%" }}
-      transition={{ duration: 0.45, delay: 0.25, ease: EASE_OUT }}
+      transition={{ duration: 0.45, delay: INTRO.nav, ease: EASE_OUT }}
     >
       <div className="nav-day-list">
         {days.map((day) => (

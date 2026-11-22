@@ -490,19 +490,32 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   background: #3b3d36;
 }
 
-.class-card {
+.class-card-slot {
+  display: grid;
   min-width: 0;
   margin: 5px;
+  position: relative;
+  z-index: 10;
+}
+.class-card-slot:hover { z-index: 19; }
+.class-card-shadow {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  transform: translate(5px, 5px);
+  opacity: .84;
+  pointer-events: none;
+}
+.class-card {
+  min-width: 0;
   padding: 13px 14px 12px;
   color: var(--ink);
   background:
     linear-gradient(115deg, transparent 0 58%, rgba(18,19,16,.055) 58% 59%, transparent 59%),
     var(--course, var(--paper));
   border: 2px solid var(--ink);
-  box-shadow: 5px 5px 0 rgba(0,0,0,.42);
   position: relative;
   overflow: hidden;
-  z-index: 10;
 }
 .class-card[data-tone="acid"] { --course: var(--acid); }
 .class-card[data-tone="orange"] { --course: var(--orange); }
@@ -571,7 +584,7 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   font: 400 12px/1.4 var(--font-thai), sans-serif;
   letter-spacing: .06em;
 }
-.class-card:hover { z-index: 19; }
+.class-card-slot:hover .class-card-glare { opacity: .85; }
 .class-card-glare {
   position: absolute;
   inset: 0;
@@ -581,7 +594,6 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   mix-blend-mode: soft-light;
   transition: opacity .25s ease;
 }
-.class-card:hover .class-card-glare { opacity: .85; }
 .hero-sticker-slam { display: inline-block; }
 .class-card-barcode {
   display: none;
@@ -768,15 +780,16 @@ button:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   html.custom-cursor .schedule-root, html.custom-cursor .schedule-root * { cursor: none !important; }
   .cursor-dot, .cursor-ring { display: block; }
   .cursor-dot.visible, .cursor-ring.visible { opacity: 1; }
-  .cursor-dot { width: 7px; height: 7px; background: var(--acid); transform: rotate(45deg); }
+  .cursor-dot { width: 7px; height: 7px; background: var(--acid); }
   .cursor-ring {
     width: 34px;
     height: 34px;
     border: 1px solid rgba(242,240,230,.8);
-    transition: width .22s ease, height .22s ease, border-color .22s ease, background .22s ease;
+    transition: border-color .22s ease, background .22s ease;
   }
-  .cursor-ring.hovering { width: 54px; height: 54px; border-color: var(--orange); background: rgba(255,91,34,.1); }
-  .cursor-ring.clicking { width: 24px; height: 24px; background: rgba(200,255,56,.2); }
+  /* Size changes come from Motion's scale (transform only); CSS swaps colour. */
+  .cursor-ring.hovering { border-color: var(--orange); background: rgba(255,91,34,.1); }
+  .cursor-ring.clicking { background: rgba(200,255,56,.2); }
 }
 
 @media (max-width: 980px) {

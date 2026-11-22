@@ -6,7 +6,7 @@ import { animate, motion, useMotionValue, useReducedMotion, useSpring, useTransf
 import AmbientBackdrop from "./AmbientBackdrop";
 import ClassCard from "./ClassCard";
 import ScheduleBottomNav from "./ScheduleBottomNav";
-import { EASE_OUT, EASE_SLAM } from "./motion-presets";
+import { EASE_OUT, EASE_SLAM, INTRO } from "./motion-presets";
 import { CLASSES, COURSE_TONES, DAYS, TIMES } from "./schedule-data";
 import useDayNavigation from "./useDayNavigation";
 
@@ -59,24 +59,36 @@ export default function Schedule() {
     const root = document.documentElement;
     root.classList.add("custom-cursor");
 
+    // mousemove only feeds motion values (no React render); hover/active state
+    // changes come from mouseover, which fires once per element boundary.
+    let inside = false;
     const handleMove = (event: MouseEvent) => {
+      if (!inside) {
+        // Snap on (re-)entry so the cursor doesn't fly in from its last spot.
+        inside = true;
+        for (const v of [dotX, ringX]) v.jump(event.clientX);
+        for (const v of [dotY, ringY]) v.jump(event.clientY);
+      }
       mouseX.set(event.clientX);
       mouseY.set(event.clientY);
+    };
+    const handleOver = (event: MouseEvent) => {
       setIsCursorActive(true);
-
       const target = event.target as Element | null;
-      setIsHovering(target?.closest("button, a") !== null);
+      setIsHovering(target?.closest("button, a") != null);
     };
 
     const handleDown = () => setIsClicking(true);
     const handleUp = () => setIsClicking(false);
     const handleLeave = () => {
+      inside = false;
       setIsCursorActive(false);
       setIsHovering(false);
       setIsClicking(false);
     };
 
     window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseover", handleOver);
     window.addEventListener("mousedown", handleDown);
     window.addEventListener("mouseup", handleUp);
     document.documentElement.addEventListener("mouseleave", handleLeave);
@@ -84,11 +96,12 @@ export default function Schedule() {
     return () => {
       root.classList.remove("custom-cursor");
       window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseover", handleOver);
       window.removeEventListener("mousedown", handleDown);
       window.removeEventListener("mouseup", handleUp);
       document.documentElement.removeEventListener("mouseleave", handleLeave);
     };
-  }, [shouldReduceMotion, mouseX, mouseY]);
+  }, [shouldReduceMotion, mouseX, mouseY, dotX, dotY, ringX, ringY]);
 
   return (
     <div className="schedule-root" ref={rootRef}>
@@ -121,6 +134,7 @@ export default function Schedule() {
           y: dotY,
           translateX: "-50%",
           translateY: "-50%",
+          rotate: 45,
         }}
         animate={
           shouldReduceMotion
@@ -147,7 +161,7 @@ export default function Schedule() {
           className="schedule-header"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.06, ease: EASE_OUT }}
+          transition={{ duration: 0.5, delay: INTRO.header, ease: EASE_OUT }}
         >
           <div className="schedule-header-top">
             <span className="system-label">COURSE CONTROL / 01</span>
@@ -165,7 +179,7 @@ export default function Schedule() {
                   className="hero-sticker-slam"
                   initial={shouldReduceMotion ? false : { opacity: 0, scale: 2.8, rotate: -16 }}
                   animate={shouldReduceMotion ? {} : { opacity: 1, scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.55, duration: 0.4, ease: EASE_SLAM, opacity: { delay: 0.55, duration: 0.1 } }}
+                  transition={{ delay: INTRO.sticker, duration: 0.4, ease: EASE_SLAM, opacity: { delay: INTRO.sticker, duration: 0.1 } }}
                 >
                   <Badge variant="solid" color="orange" size="2" radius="none" className="hero-sticker">
                     ROUTE DOSSIER
@@ -178,7 +192,7 @@ export default function Schedule() {
                   className="title-line"
                   initial={shouldReduceMotion ? false : { opacity: 0, x: -48, skewX: -12, clipPath: "inset(-20% 100% -20% -10%)" }}
                   animate={shouldReduceMotion ? {} : { opacity: 1, x: 0, skewX: 0, clipPath: "inset(-20% -10% -20% -10%)" }}
-                  transition={{ duration: 0.62, delay: 0.16, ease: EASE_OUT }}
+                  transition={{ duration: 0.62, delay: INTRO.titleLine1, ease: EASE_OUT }}
                 >
                   CLASS
                 </motion.span>
@@ -186,13 +200,13 @@ export default function Schedule() {
                   className="title-line"
                   initial={shouldReduceMotion ? false : { opacity: 0, x: -48, skewX: -12, clipPath: "inset(-20% 100% -20% -10%)" }}
                   animate={shouldReduceMotion ? {} : { opacity: 1, x: 0, skewX: 0, clipPath: "inset(-20% -10% -20% -10%)" }}
-                  transition={{ duration: 0.62, delay: 0.3, ease: EASE_OUT }}
+                  transition={{ duration: 0.62, delay: INTRO.titleLine2, ease: EASE_OUT }}
                 >
                   <span className="title-slash">/</span>SCHEDULE
                   <motion.span
                     className="title-accent"
                     animate={shouldReduceMotion ? {} : { opacity: [1, 0, 1] }}
-                    transition={{ delay: 1.1, duration: 0.7, repeat: 3, repeatDelay: 0.5, times: [0, 0.5, 1] }}
+                    transition={{ delay: INTRO.accent, duration: 0.7, repeat: 3, repeatDelay: 0.5, times: [0, 0.5, 1] }}
                   >
                     .
                   </motion.span>
@@ -211,14 +225,14 @@ export default function Schedule() {
               aria-label="สรุปตารางเรียน"
               initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
               animate={shouldReduceMotion ? {} : { opacity: 1, scale: 1 }}
-              transition={{ duration: 0.48, delay: 0.18, ease: EASE_OUT }}
+              transition={{ duration: 0.48, delay: INTRO.dashboard, ease: EASE_OUT }}
             >
               <Tooltip content="Master Schedule Academic Load Monitor">
                 <div className="dashboard-mark" style={{ cursor: "help" }}><span>WEEKLY LOAD</span><strong>M/S</strong></div>
               </Tooltip>
               <span className="dashboard-stamp">PRINTED<br />SHEET 02</span>
               <div className="session-count">
-                <CountUp to={CLASSES.length} delay={0.55} shouldReduceMotion={shouldReduceMotion} />
+                <CountUp to={CLASSES.length} delay={INTRO.count} shouldReduceMotion={shouldReduceMotion} />
                 <span>CLASS SESSIONS</span>
               </div>
               <div className="dashboard-stats">
@@ -236,7 +250,7 @@ export default function Schedule() {
           aria-labelledby="weekly-grid-title"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
           animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.52, delay: 0.24, ease: EASE_OUT }}
+          transition={{ duration: 0.52, delay: INTRO.board, ease: EASE_OUT }}
         >
           <div className="board-heading">
             <span className="board-index">02</span>
@@ -305,7 +319,7 @@ export default function Schedule() {
                 initial={shouldReduceMotion ? false : { opacity: 0, x: -22 }}
                 whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.08 }}
-                transition={{ duration: 0.5, delay: dayIndex === 0 ? 0.3 : 0, ease: EASE_OUT }}
+                transition={{ duration: 0.5, delay: dayIndex === 0 ? INTRO.mobileFirstDay : 0, ease: EASE_OUT }}
               >
                 <div className="mobile-day-header">
                   <span className="mobile-day-idx">{day.index}</span>
