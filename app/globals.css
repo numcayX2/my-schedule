@@ -1,0 +1,10 @@
+/*
+ * Tailwind v4 is scoped to Aceternity components in components/ui only.
+ * Preflight is deliberately NOT imported: the ZZZ stylesheet
+ * (components/Schedule.css) owns the base styles. Utilities live in a
+ * cascade layer, so unlayered ZZZ rules always win on conflict.
+ */
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@source "../components/ui";

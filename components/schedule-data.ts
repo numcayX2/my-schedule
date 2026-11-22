@@ -39,7 +39,7 @@ export const CLASSES: ClassSession[] = [
 ];
 
 export const COURSE_TONES: Record<string, string> = {
-  "10301361": "acid",
+  "10301361": "mint",
   "10301347": "orange",
   "10700252": "sky",
   "10200503": "violet",

@@ -1,29 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Kanit } from "next/font/google";
+import { Anton, Prompt } from "next/font/google";
 import favicon from "../components/img/favicon.png";
-import "@radix-ui/themes/styles.css";
-import { Theme } from "@radix-ui/themes";
+import "./globals.css";
 import "../components/Schedule.css";
-import "../components/ScheduleBottomNav.css";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#121310",
+  themeColor: "#101114",
 };
 
-const archivo = Archivo({
+const anton = Anton({
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-archivo",
+  variable: "--font-anton",
 });
 
-const kanit = Kanit({
-  weight: ["400", "700", "900"],
-  subsets: ["thai"],
+const prompt = Prompt({
+  weight: ["400", "600", "800"],
+  subsets: ["thai", "latin"],
   display: "swap",
-  variable: "--font-kanit",
+  variable: "--font-prompt",
 });
 
 export const metadata: Metadata = {
@@ -40,12 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" className={`${archivo.variable} ${kanit.variable}`}>
-      <body>
-        <Theme appearance="dark" accentColor="orange" grayColor="sand" radius="none">
-          {children}
-        </Theme>
-      </body>
+    <html lang="th" className={`${anton.variable} ${prompt.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

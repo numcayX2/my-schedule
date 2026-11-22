@@ -21,7 +21,7 @@ Dark matte base, one acid-yellow accent, diagonal cuts against pill buttons, hug
 ## Hard rules
 
 1. **Readability first.** Class names, times, rooms, and instructors must stay clear. Text contrast must meet WCAG AA (4.5:1). Never put hazard stripes or halftone behind text that has to be read.
-2. **One accent.** `--accent` (`#E5FE10`) marks active, focus, CTA, and "today" only, at most ~10% of the page. `--warn` / `--danger` / `--info` are semantic only, never decoration.
+2. **One accent.** `--accent` (`#E5FE10`) marks active, focus, CTA, and "today" only, at most ~10% of the page. `--warn` / `--danger` / `--info` are semantic only, never decoration. Exception: the progress gauge uses the game-matched orange `--progress-*` tokens (spec 2.1), and only the gauge may use them.
 3. **Shape contrast.** Cards, tabs, and headers are cut at 45° (`clip-path` chamfer) or parallelogram (skew with counter-skew on text). Buttons, chips, toggles, and filters are pills. Close buttons are red circles.
 4. **Shadows.** Hard offset only (`4px 4px 0 #000`). No soft shadows, no glassmorphism, no purple-pink gradients.
 5. **Typography.** Display = Anton (heavy condensed uppercase, can be skewed). Thai and body text = Prompt (sans-serif). Load both through `next/font/google`. Numerals = bold, `tabular-nums`. Body = clean sans. Do not skew or fake-italic Thai text, and do not use display faces for long Thai copy. Pair English uppercase graphic headings with Thai content.
@@ -38,16 +38,23 @@ Use the CSS custom properties defined in the spec (section 2). Do not hardcode h
 | Area | Treatment |
 |---|---|
 | Page header | Skewed display type, giant watermark, serial stamp (term / academic year) |
-| Day tabs | Parallelogram tabs, today filled with accent |
+| Day tabs | Desktop board: dark pill tabs, today = game active tab (accent, slanted left edge, round right cap). Mobile dock: parallelogram tabs, today filled with accent |
 | Time grid | Thin `--line` grid, tabular time headers, panel background |
-| Class card | Single-corner chamfer, subject colour as left edge bar only, large time numerals, room/section as label |
+| Class card | Game event-row style: full subject-colour rounded bar (never the accent colour), 2px darker outline, black text, black round LEC/LAB button, halftone only in the corner (spec 2.3) |
 | Status tags | Slanted tape (`NOW`, `NEXT`) |
 | Buttons / filters | Pill |
-| Backdrop | Ghost watermark text plus grain, one hazard stripe |
+| Backdrop | Ghost watermark text plus grain |
+| Week board frame | Game event-calendar frame: striped shell, grey metal bezel with seam and binding tabs, dark viewport, bevelled grey hour strip, NOW pill + stem (spec 2.2) |
+| Progress gauge | Game-style orange bar: black rim, pill caps, golden-to-orange fill, chevron bands, outlined centred numbers, circular icon badge |
 
 ## Workflow
 
-- Existing animation work lives in `components/motion-presets.ts` and `components/Schedule.css`. Extend it; do not duplicate presets.
-- Stack: Next.js 16, React 19, Radix UI Themes, `motion`. Check the spec's open question on whether Radix Themes stays before adding new Radix-dependent styling.
+- Stack: Next.js 16, React 19, `motion`, Tailwind v4 (scoped). Radix UI Themes was removed; do not reintroduce it.
+- Styling: `components/Schedule.css` holds every ZZZ token and component style. Tailwind is imported without preflight in `app/globals.css` and scans only `components/ui`. Use it only for Aceternity components copied into `components/ui`.
+- Aceternity UI: copy a component from `https://ui.aceternity.com/registry/<name>.json` into `components/ui`, then adapt it: no hydration-unsafe randomness during render, honor `prefers-reduced-motion`, valid ARIA, and no glow, glass, gradient or tilt effects (spec section 8). Currently used: `EncryptedText` (h1, file stamp, dossier code). Never scramble Thai text.
+- Motion constants live in `components/motion-presets.ts`; CSS mirrors them as `--snap`, `--t`, `--stagger`. Change both together.
+- Time logic lives in `components/schedule-time.ts` (pure, tested). The clock is client-only (`useSyncExternalStore` with a null server snapshot), so time-dependent UI never causes hydration mismatches. `#demo` in the URL starts the DEMO clock (Monday 15:40) for QA.
+- Mobile (<= 768px) uses `useDayNavigation` with a bottom day dock. Its reading line (96px) and scroll inset (24px) assume nothing is fixed at the top of the viewport.
+- Tests: `node --test tests/*.mjs` (a bare `node --test tests/` fails on this setup). Also run `npm run lint` and `npm run build`.
 - Before declaring UI work done, check at desktop and mobile widths, keyboard focus visibility, contrast, and reduced-motion behavior.
 - Do not commit unrelated uncommitted changes together with design work.
