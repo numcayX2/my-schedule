@@ -5,62 +5,49 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 ---
-name: ZZZ Design Language
-description: A comprehensive guide to the visual design language of Zenless Zone Zero (ZZZ) and its in-universe artifact mimicry.
-tags: [design, ui-ux, art-direction, graphic-design, video-games, retro-futurism, brutalist]
----
 
-# Zenless Zone Zero (ZZZ) Visual Design System
+# my-schedule: Design Rules (Zenless Zone Zero style)
 
-## Overview: The "Urban Industrial Pop" Aesthetic
-The design style of *Zenless Zone Zero* is a distinctive blend of **Neo-Retro Futurism, Brutalist Graphic Design, and 90s Streetwear/Print Media aesthetics**. The overarching vibe is **"Loud, Gritty, and Playful,"** combining 90s fighting game manuals, Japanese fashion magazines, Soviet-era industrial propaganda, and modern streetwear graphic design.
+Source of truth: `artifacts/zzz-design-spec.md`. Read it before any UI work. If this file and the spec disagree, the spec wins. Update the spec first, then this file.
 
-The key concept is that all visuals serve as **in-universe promotional and informational materials** (dossiers, manuals, advertisements, web pages).
+The spec was derived from 79 in-game ZZZ UI screenshots (`C:\Users\Acer\Pictures\ZZZ_finetune`). Hex values are approximate until verified against the originals.
 
----
+This replaces the earlier generic "ZZZ Design Language" guide. That guide told you to use hazard elements heavily and to use hot pink/purple. Both are wrong for this project.
 
-## Part 1: The Core Concept (Analog Artifact Mimicry)
-Instead of sleek, futuristic glassmorphism, the art direction mimics physical, analog artifacts with distinct textures (grainy paper, newsprint, photocopies).
+## Core idea
 
-**Examples of these artifacts:**
-*   **Character Dossier:** Luciana de Montefio's file, styled like a physical paper document with V1.0 labels and typewriter fonts.
-*   **Product/Weapon Ad:** Phlegethon's poster, featuring fictional in-world languages alongside English/Vietnamese.
-*   **Corporate File:** Belobog Heavy Industries' official company dossier.
-*   **Comic Strip Manual:** The "Safety" Bangboo manual, styled as a safety pamphlet/comic book.
-*   **Web Browser UI:** The Cunning Hares page, mimicking an early-2000s internet browser with a URL bar.
-*   **Hygiene/Instruction Guide:** The "Butler" Bangboo manual, styled as a cooking and tea preparation guide.
+Dark matte base, one acid-yellow accent, diagonal cuts against pill buttons, huge numerals, and every screen treated as a physical object (VHS, binder, sticker, phone bezel). Signature elements go on frames, backgrounds, and focus points. Never on the schedule content itself.
 
----
+## Hard rules
 
-## Part 2: Design Principles & Elements
+1. **Readability first.** Class names, times, rooms, and instructors must stay clear. Text contrast must meet WCAG AA (4.5:1). Never put hazard stripes or halftone behind text that has to be read.
+2. **One accent.** `--accent` (`#E5FE10`) marks active, focus, CTA, and "today" only, at most ~10% of the page. `--warn` / `--danger` / `--info` are semantic only, never decoration.
+3. **Shape contrast.** Cards, tabs, and headers are cut at 45° (`clip-path` chamfer) or parallelogram (skew with counter-skew on text). Buttons, chips, toggles, and filters are pills. Close buttons are red circles.
+4. **Shadows.** Hard offset only (`4px 4px 0 #000`). No soft shadows, no glassmorphism, no purple-pink gradients.
+5. **Typography.** Display = Anton (heavy condensed uppercase, can be skewed). Thai and body text = Prompt (sans-serif). Load both through `next/font/google`. Numerals = bold, `tabular-nums`. Body = clean sans. Do not skew or fake-italic Thai text, and do not use display faces for long Thai copy. Pair English uppercase graphic headings with Thai content.
+6. **Signature elements are rationed.** At most 1-2 hazard stripes per page. Sticker tags (`NOW`, `NEXT`, `TODAY`) are slanted tape or pill, rotated -3° to -6°. Giant ghost watermark text sits at 4-8% opacity behind panels.
+7. **Motion.** Fast and sharp, 120-180ms, snap easing, staggered slanted entry. No soft bounce. Always honor `prefers-reduced-motion`.
+8. **Copy.** No emoji. No marketing or filler wording. Thai body with English technical terms.
 
-### 1. Brutalist & Collage Typography
-*   **Heavy, blocky sans-serifs** (Impact / Arial Black variants) that are stretched, condensed, and often overlapping.
-*   **Grid-breaking layouts:** Elements intentionally cross borders and misalign to create chaotic, energetic movement.
-*   **Faux-alien glyphs and pseudo-languages** add cryptic, corporate sci-fi mystery.
-*   **Comic-book sound effects** (BANG!, DING!, WHIP!) are pasted over rigid layouts as graphic elements.
+## Tokens
 
-### 2. Color Blocking & Faction Coding
-Uses extreme contrast and high saturation. Textured backgrounds (off-white paper, concrete grey) serve as canvases for neon colors to pop.
-*   **Yellow and Black (Sons of Calydon, Safety, Belobog):** Mimics industrial warning tape, heavy machinery, and construction sites.
-*   **Hot Pink and Purple (Cunning Hares):** Represents a sleek, tech-savvy, "kawaii" pop-culture vibe.
-*   **Greens and Teals (Butler):** Evokes clean, elegant, yet hygienic vibes.
+Use the CSS custom properties defined in the spec (section 2). Do not hardcode hex values in components. If a needed token is missing, add it to the spec and the stylesheet together.
 
-### 3. Industrial Hazard & Technical Iconography
-*   Hazard stripes, caution tape, and "Warning" stamps.
-*   Technical diagrams, grid lines, and mechanical schematics.
-*   Barcodes, die-cut sticker borders, and photocopier marks that give the illusion of physical manufacture.
+## Component mapping
 
-### 4. Pop-Culture & Anime Mashup (Sticker Bomb Effect)
-There is a deliberate juxtaposition between "soft" and "hard" elements. Cute, anime-style characters (like Luciana or the Bangboos) are sliced onto gritty, hard-surface weapon posters and hazard-striped corporate files, creating a street-art collage effect.
+| Area | Treatment |
+|---|---|
+| Page header | Skewed display type, giant watermark, serial stamp (term / academic year) |
+| Day tabs | Parallelogram tabs, today filled with accent |
+| Time grid | Thin `--line` grid, tabular time headers, panel background |
+| Class card | Single-corner chamfer, subject colour as left edge bar only, large time numerals, room/section as label |
+| Status tags | Slanted tape (`NOW`, `NEXT`) |
+| Buttons / filters | Pill |
+| Backdrop | Ghost watermark text plus grain, one hazard stripe |
 
----
+## Workflow
 
-## Part 3: How to Apply This Style (Actionable Checklist)
-1.  **Choose a specific medium:** Pick an analog artifact (a dossier, a safety manual, a web page) and stick to its physical constraints.
-2.  **Add gritty textures:** Use grain, scan lines, paper folds, and photocopy imperfections on the background.
-3.  **Break the grid:** Overlap massive typography with technical diagrams and barcodes.
-4.  **Implement "Hazard" Elements:** Use warning stripes and industrial iconography heavily.
-5.  **Mix the aesthetic:** Place clean, cute anime characters directly onto harsh, mechanical, or "gritty" backgrounds for a sticker-bomb look.
-6.  **Utilize Faction Colors:** Choose a distinct, high-contrast color palette (usually warning-signage colors) for specific factions or product lines.
-7.  **Add Comic Energy:** Inject comic-book sound effects and bold, expressive arrows/bursts into the static, corporate layouts.
+- Existing animation work lives in `components/motion-presets.ts` and `components/Schedule.css`. Extend it; do not duplicate presets.
+- Stack: Next.js 16, React 19, Radix UI Themes, `motion`. Check the spec's open question on whether Radix Themes stays before adding new Radix-dependent styling.
+- Before declaring UI work done, check at desktop and mobile widths, keyboard focus visibility, contrast, and reduced-motion behavior.
+- Do not commit unrelated uncommitted changes together with design work.

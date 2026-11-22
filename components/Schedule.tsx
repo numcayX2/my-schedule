@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Badge, Tooltip } from "@radix-ui/themes";
-import { animate, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import { animate, motion, steps, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import AmbientBackdrop from "./AmbientBackdrop";
 import ClassCard from "./ClassCard";
 import ScheduleBottomNav from "./ScheduleBottomNav";
@@ -17,6 +17,25 @@ const MOBILE_SCHEDULE = DAYS.map((day) => ({
 }));
 
 const UNIQUE_COURSES = new Set(CLASSES.map((session) => session.code)).size;
+
+// Signal-glitch burst (stepped, not tweened): RGB split + horizontal slice jitter,
+// replayed every few seconds like a ZZZ menu losing sync. Rest is repeated at
+// the end because steps(1) holds each segment's start value, and the hold
+// between repeats must be clean.
+const GLITCH_REST = "0px 0 0 rgba(255,91,34,0), 0px 0 0 rgba(200,255,56,0)";
+const GLITCH_KEYFRAMES = {
+  x: [0, -7, 5, -2, 3, 0, 0],
+  textShadow: [
+    GLITCH_REST,
+    "-5px 0 0 rgba(255,91,34,.9), 5px 0 0 rgba(200,255,56,.85)",
+    "4px 0 0 rgba(255,91,34,.9), -3px 0 0 rgba(117,216,255,.85)",
+    "-2px 0 0 rgba(255,91,34,.9), 2px 0 0 rgba(200,255,56,.85)",
+    "3px 0 0 rgba(255,91,34,.9), -4px 0 0 rgba(200,255,56,.85)",
+    GLITCH_REST,
+    GLITCH_REST,
+  ],
+};
+const GLITCH_TRANSITION = { duration: 0.3, ease: steps(1), repeat: Infinity, repeatDelay: 4.5 };
 
 // Counts up from zero once the hero lands. Server HTML keeps the real number.
 function CountUp({ to, delay, shouldReduceMotion }: { to: number; delay: number; shouldReduceMotion?: boolean | null }) {
@@ -105,6 +124,13 @@ export default function Schedule() {
 
   return (
     <div className="schedule-root" ref={rootRef}>
+      {/* CSS-only so it never blocks the page if hydration is slow or JS is off. */}
+      <div className="boot-shutter" aria-hidden="true">
+        <div className="boot-panel boot-panel-signal" />
+        <div className="boot-panel boot-panel-ink">
+          <span className="boot-label">ROUTE // LOADING<b>CLASS SHEET 02</b></span>
+        </div>
+      </div>
       {!shouldReduceMotion && (
         <AmbientBackdrop mouseX={mouseX} mouseY={mouseY} cursorActive={isCursorActive} />
       )}
@@ -194,7 +220,13 @@ export default function Schedule() {
                   animate={shouldReduceMotion ? {} : { opacity: 1, x: 0, skewX: 0, clipPath: "inset(-20% -10% -20% -10%)" }}
                   transition={{ duration: 0.62, delay: INTRO.titleLine1, ease: EASE_OUT }}
                 >
-                  CLASS
+                  <motion.span
+                    className="title-glitch"
+                    animate={shouldReduceMotion ? {} : GLITCH_KEYFRAMES}
+                    transition={{ ...GLITCH_TRANSITION, delay: INTRO.glitch }}
+                  >
+                    CLASS
+                  </motion.span>
                 </motion.span>
                 <motion.span
                   className="title-line"
@@ -202,13 +234,19 @@ export default function Schedule() {
                   animate={shouldReduceMotion ? {} : { opacity: 1, x: 0, skewX: 0, clipPath: "inset(-20% -10% -20% -10%)" }}
                   transition={{ duration: 0.62, delay: INTRO.titleLine2, ease: EASE_OUT }}
                 >
-                  <span className="title-slash">/</span>SCHEDULE
                   <motion.span
-                    className="title-accent"
-                    animate={shouldReduceMotion ? {} : { opacity: [1, 0, 1] }}
-                    transition={{ delay: INTRO.accent, duration: 0.7, repeat: 3, repeatDelay: 0.5, times: [0, 0.5, 1] }}
+                    className="title-glitch"
+                    animate={shouldReduceMotion ? {} : GLITCH_KEYFRAMES}
+                    transition={{ ...GLITCH_TRANSITION, delay: INTRO.glitch + 0.07 }}
                   >
-                    .
+                    <span className="title-slash">/</span>SCHEDULE
+                    <motion.span
+                      className="title-accent"
+                      animate={shouldReduceMotion ? {} : { opacity: [1, 0, 1] }}
+                      transition={{ delay: INTRO.accent, duration: 0.7, repeat: 3, repeatDelay: 0.5, times: [0, 0.5, 1] }}
+                    >
+                      .
+                    </motion.span>
                   </motion.span>
                 </motion.span>
               </h1>
@@ -232,7 +270,22 @@ export default function Schedule() {
               </Tooltip>
               <span className="dashboard-stamp">PRINTED<br />SHEET 02</span>
               <div className="session-count">
-                <CountUp to={CLASSES.length} delay={INTRO.count} shouldReduceMotion={shouldReduceMotion} />
+                <motion.span
+                  className="count-hit"
+                  animate={shouldReduceMotion ? {} : { scale: [1, 1.08, 1] }}
+                  transition={{ delay: INTRO.sfx, duration: 0.24, ease: EASE_OUT }}
+                >
+                  <CountUp to={CLASSES.length} delay={INTRO.count} shouldReduceMotion={shouldReduceMotion} />
+                  <motion.span
+                    className="sfx-burst"
+                    aria-hidden="true"
+                    initial={shouldReduceMotion ? false : { opacity: 0, scale: 0, rotate: -30 }}
+                    animate={shouldReduceMotion ? {} : { opacity: 1, scale: [0, 1.35, 1], rotate: [-30, 20, 12] }}
+                    transition={{ delay: INTRO.sfx, duration: 0.42, ease: EASE_OUT, opacity: { delay: INTRO.sfx, duration: 0.05 } }}
+                  >
+                    DING!
+                  </motion.span>
+                </motion.span>
                 <span>CLASS SESSIONS</span>
               </div>
               <div className="dashboard-stats">
