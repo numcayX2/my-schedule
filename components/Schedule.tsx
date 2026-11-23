@@ -20,8 +20,6 @@ const FILTERS: { id: TypeFilter; label: string }[] = [
   { id: "LAB", label: "LAB ปฏิบัติ" },
 ];
 
-type ClockMode = "live" | "demo";
-
 // Wall clock as an external store. The server snapshot is null, so the server
 // HTML shows placeholders and time-dependent output never mismatches on hydrate.
 let clockMs: number | null = null;
@@ -47,17 +45,15 @@ export default function Schedule() {
   // The clock only exists on the client: server HTML renders placeholders,
   // so time-dependent output never causes a hydration mismatch.
   const tickMs = useSyncExternalStore(subscribeClock, readClock, () => null);
-  const demoHash = useSyncExternalStore(subscribeHash, readDemoHash, () => false);
-  const [chosenMode, setMode] = useState<ClockMode | null>(null);
-  const mode: ClockMode = chosenMode ?? (demoHash ? "demo" : "live");
+  const isDemo = useSyncExternalStore(subscribeHash, readDemoHash, () => false);
   const [filter, setFilter] = useState<TypeFilter>("ALL");
   const [dossierCode, setDossierCode] = useState<string | null>(null);
   const [dossierOpen, setDossierOpen] = useState(false);
   const triggerRef = useRef<HTMLElement | null>(null);
 
   const clock = useMemo(
-    () => (tickMs === null ? null : mode === "demo" ? demoDate(new Date(tickMs)) : new Date(tickMs)),
-    [tickMs, mode],
+    () => (tickMs === null ? null : isDemo ? demoDate(new Date(tickMs)) : new Date(tickMs)),
+    [tickMs, isDemo],
   );
   const now = useMemo(() => (clock ? getNowState(clock) : null), [clock]);
 
@@ -95,15 +91,6 @@ export default function Schedule() {
             {` // ${TERM}`}
           </span>
         </div>
-        <div className="mode" role="group" aria-label="โหมดเวลา">
-          <span className="stamp">CLOCK</span>
-          <button type="button" className="pill" aria-pressed={mode === "live"} onClick={() => setMode("live")}>
-            LIVE
-          </button>
-          <button type="button" className="pill" aria-pressed={mode === "demo"} onClick={() => setMode("demo")}>
-            DEMO · MON 15:40
-          </button>
-        </div>
       </div>
 
       <header className="head">
@@ -133,7 +120,7 @@ export default function Schedule() {
             <small>{clock ? WEEKDAY[clock.getDay()] : "---"}</small>
           </div>
           <div className="clock-time">
-            {mode === "demo" ? "DEMO" : "LOCAL"} <b>{clock ? `${pad2(clock.getHours())}:${pad2(clock.getMinutes())}` : "--:--"}</b>
+            {isDemo ? "DEMO" : "LOCAL"} <b>{clock ? `${pad2(clock.getHours())}:${pad2(clock.getMinutes())}` : "--:--"}</b>
           </div>
         </div>
       </header>
@@ -142,7 +129,7 @@ export default function Schedule() {
 
       <main className="main">
         <div className="board-tools">
-          <div className="filters" role="group" aria-label="กรองประเภทคาบ">
+          <div className="filters trough-group" role="group" aria-label="กรองประเภทคาบ">
             {FILTERS.map((f) => (
               <button
                 key={f.id}
@@ -151,7 +138,7 @@ export default function Schedule() {
                 aria-pressed={filter === f.id}
                 onClick={() => setFilter(f.id)}
               >
-                {f.label}
+                <span>{f.label}</span>
               </button>
             ))}
           </div>

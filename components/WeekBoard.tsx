@@ -80,8 +80,13 @@ export default function WeekBoard({
                   />
                   {!hasClasses && (
                     <div className="no-class" style={{ gridRow: row, gridColumn: "2 / -1" }}>
-                      <b>NO CLASS</b>
-                      <span>ไม่มีคาบเรียน</span>
+                      <svg className="no-class-x" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+                      </svg>
+                      <div className="no-class-text">
+                        <b>NO CLASS</b>
+                        <span>ไม่มีคาบเรียน</span>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -96,6 +96,9 @@ export default function NowDeck({
           <>
             <div className="now-time">--:--</div>
             <div className="now-empty">
+              <svg className="now-empty-x" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+              </svg>
               <span>ตอนนี้ไม่มีคาบเรียน</span>
             </div>
             {next && now.minutesToNext !== null && (
@@ -122,23 +125,25 @@ export default function NowDeck({
           <h2 id="queue-h">UP NEXT</h2>
           <span>QUEUE &gt;&gt;</span>
         </div>
-        {(now?.upcoming ?? []).map((s) => (
-          <button
-            key={`${s.day}-${s.start}`}
-            type="button"
-            className="queue-item"
-            onClick={(e) => onOpen(s.code, e.currentTarget)}
-          >
-            <span className="queue-day">{dayShort(s)}</span>
-            <span className="queue-name">
-              {s.name}
-              <small>
-                {s.room} · {s.type}
-              </small>
-            </span>
-            <span className="queue-time">{s.start}</span>
-          </button>
-        ))}
+        <div className="panel-body">
+          {(now?.upcoming ?? []).map((s) => (
+            <button
+              key={`${s.day}-${s.start}`}
+              type="button"
+              className="queue-item"
+              onClick={(e) => onOpen(s.code, e.currentTarget)}
+            >
+              <span className="queue-day">{dayShort(s)}</span>
+              <span className="queue-name">
+                {s.name}
+                <small>
+                  {s.room} · {s.type}
+                </small>
+              </span>
+              <span className="queue-time">{s.start}</span>
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="panel panel-files" aria-labelledby="files-h">
@@ -146,19 +151,21 @@ export default function NowDeck({
           <h2 id="files-h">COURSE FILES</h2>
           <span>{String(courses.length).padStart(2, "0")}</span>
         </div>
-        {courses.map((c) => (
-          <button
-            key={c.code}
-            type="button"
-            className="file-item"
-            style={{ "--tone": `var(--tone-${COURSE_TONES[c.code]})` } as CSSProperties}
-            onClick={(e) => onOpen(c.code, e.currentTarget)}
-          >
-            <i aria-hidden="true" />
-            <span>{c.name}</span>
-            <code>{c.code}</code>
-          </button>
-        ))}
+        <div className="panel-body">
+          {courses.map((c) => (
+            <button
+              key={c.code}
+              type="button"
+              className="file-item"
+              style={{ "--tone": `var(--tone-${COURSE_TONES[c.code]})` } as CSSProperties}
+              onClick={(e) => onOpen(c.code, e.currentTarget)}
+            >
+              <i aria-hidden="true" />
+              <span>{c.name}</span>
+              <code>{c.code}</code>
+            </button>
+          ))}
+        </div>
       </section>
     </aside>
   );

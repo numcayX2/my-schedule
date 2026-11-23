@@ -1,51 +1,81 @@
 /*
- * my-schedule: ZZZ design system implementation.
- * Source of truth: artifacts/zzz-design-spec.md. Tokens below mirror spec section 2.
+ * my-schedule: ZZZ design system implementation (Spec v2).
+ * Source of truth: artifacts/zzz-design-spec.md. Tokens below mirror spec section 2,
+ * pixel-measured from 79 in-game ZZZ UI screenshots.
  * Tailwind (app/globals.css) is only for Aceternity components in components/ui.
  */
 
-/* ---------- tokens ---------- */
+/* ---------- tokens (spec 2.0–2.3) ---------- */
 :root {
-  --bg-base: #101114;
-  --bg-panel: #1a1b1f;
-  --bg-raised: #23252a;
-  --bg-hover: #2c2f35;
-  --line: #353940;
-  --text: #ffffff;
-  --text-muted: #a3a6ab;
-  --accent: #e5fe10;
-  --accent-ink: #101114;
-  --warn: #ff6600;
-  --danger: #ff3b30;
-  --info: #00e5ff;
-  --paper: #eae6df;
-  --paper-muted: #4a4c50;
+  /* Neutral matte charcoal base (no blue tint) */
+  --bg-void: #0a0a0a;
+  --bg-base: #141414;
+  --bg-panel: #1d1d1e;
+  --bg-raised: #2a2a2a;
+  --bg-hover: #323232;
+  --line: #363636;
+  --line-strong: #4a4a4a;
 
-  /* Progress gauge only (measured from the game, spec section 2.1). */
+  /* Ink & text */
+  --ink-black: #000000;
+  --ink-card: #111111;
+  --text: #ffffff;
+  --text-body: #cccccc;
+  --text-muted: #a3a3a3;
+
+  /* Accent family (active-tab pulse range: --accent-lime <-> --accent-peak) */
+  --accent: #e6d600;
+  --accent-lime: #b8cc00;
+  --accent-peak: #fcdd00;
+  --accent-tag: #ffff04;
+  --accent-ink: #0a0a0a;
+
+  /* Dossier paper & hardware semantic controls */
+  --paper: #c4bfb0;
+  --paper-muted: #444444;
+  --warn: #ff7000;
+  --danger: #df261d;
+  --close-bg: #c01c00;
+  --close-rim: #e3421f;
+  --info: #4c88fa;
+  --success: #44d31b;
+
+  /* Progress gauge only (measured from screenshot #74, spec 2.1) */
   --progress-from: #f9b636;
   --progress-mid: #fc8a27;
   --progress-to: #ef580c;
   --progress-track: #2b2b2b;
   --progress-casing: #393a39;
+  --gauge-metal-hi: #d4d7db;
+  --gauge-metal-mid: #7a7e84;
+  --gauge-metal-lo: #3a3c40;
 
-  /* Board frame (measured from the in-game event calendar). */
-  --metal: #828282;
-  --metal-hi: #a3a3a3;
-  --metal-lo: #585858;
-  --viewport: #1b1c20;
+  /* Board frame (measured from event calendar screenshot #28, spec 2.2) */
+  --shell-a: #0b0b0b;
+  --shell-b: #141414;
+  --shell-border: #353535;
+  --metal: #8c8a8a;
+  --metal-hi: #a8a8a8;
+  --metal-lo: #5c5c5c;
+  --viewport: #1d1d1e;
+  --trough: #222324;
   --strip: #9e9e9e;
   --strip-hi: #b8b8b8;
   --strip-lo: #777777;
-  --grid-hour: #2c2d32;
-  --grid-half: #222327;
+  --strip-now: #dadada;
+  --grid-hour: #2c2c2e;
+  --grid-half: #232325;
+  --tab-bg: #0e0e0e;
+  --tab-border: #3d3d3d;
 
-  /* Subject colours: fill of the class cards, file-list marks and dossier kicker (spec 2.3). None equals --accent. */
+  /* Subject colours: full-card fills, file-list bars, dossier kicker (spec 2.3).
+     None equals --accent, --warn, or --info. */
   --tone-mint: #4fd69c;
-  --tone-orange: #ff6600;
-  --tone-sky: #00e5ff;
+  --tone-orange: #f57d17;
+  --tone-sky: #38c6f4;
   --tone-violet: #b98cff;
-  --tone-yellow: #ffc400;
-  --tone-paper: #eae6df;
+  --tone-amber: #f9b636;
+  --tone-paper: #c4bfb0;
 
   --font-display: var(--font-anton), var(--font-prompt), sans-serif;
   --font-body: var(--font-prompt), system-ui, sans-serif;
@@ -56,7 +86,10 @@
   --t: 150ms;
   --stagger: 40ms;
 
-  --hard-shadow: 4px 4px 0 #000;
+  /* Chunky hardware casing bevels (no neo-brutalist hard offset shadows) */
+  --casing-ring: 0 0 0 2px var(--ink-black), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --trough-inset: inset 0 2px 6px rgba(0, 0, 0, 0.75);
+
   color-scheme: dark;
 }
 
@@ -72,7 +105,14 @@ body {
 }
 
 body {
-  background: var(--bg-base);
+  background-color: var(--bg-base);
+  /* Signature dark 45deg diagonal stripes (spec 5.1) */
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--shell-a) 0 8px,
+    var(--shell-b) 8px 11px
+  );
+  background-attachment: fixed;
   color: var(--text);
   font: 400 14px/1.5 var(--font-body);
   min-height: 100vh;
@@ -105,28 +145,29 @@ button {
   outline-offset: 3px;
 }
 
-/* grain (spec 5.7) */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.045;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+/* Slow lime <-> yellow pulse on active ZZZ tabs (screenshots #27, #28, #30, #74, #76) */
+@keyframes zzz-pulse {
+  0%,
+  100% {
+    background-color: var(--accent-lime);
+  }
+  50% {
+    background-color: var(--accent-peak);
+  }
 }
 
-/* giant ghost watermark (spec 5.8) */
+/* giant angled ghost watermark (spec 5.8) */
 .ghost {
   position: fixed;
-  left: -2vw;
-  bottom: -6vw;
+  left: -3vw;
+  bottom: -7vw;
   z-index: 0;
   font: 400 clamp(200px, 30vw, 520px) / 0.8 var(--font-display);
   letter-spacing: -0.02em;
-  color: #fff;
+  color: var(--text);
   opacity: 0.045;
   white-space: nowrap;
+  transform: rotate(-7deg);
   pointer-events: none;
   user-select: none;
 }
@@ -139,7 +180,7 @@ body::before {
   padding: 22px clamp(14px, 2.4vw, 36px) 48px;
 }
 
-/* ---------- shared atoms ---------- */
+/* ---------- shared hardware atoms ---------- */
 .stamp {
   font: 600 11px/1.2 var(--font-mono);
   letter-spacing: 0.16em;
@@ -152,19 +193,38 @@ body::before {
   color: var(--text);
 }
 
+/* Recessed dark pill trough holding tab/filter groups (spec 4) */
+.trough-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 9999px;
+  background: var(--bg-void);
+  border: 2px solid var(--line);
+  box-shadow:
+    0 0 0 2px var(--ink-black),
+    var(--trough-inset);
+}
+
 .pill {
-  border: 1px solid var(--line);
+  position: relative;
+  border: 0;
   background: transparent;
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 9999px;
   font: 600 12px/1 var(--font-body);
   letter-spacing: 0.04em;
   color: var(--text-muted);
   cursor: pointer;
   transition:
-    background var(--t) var(--snap),
+    background-color var(--t) var(--snap),
     color var(--t) var(--snap),
-    border-color var(--t) var(--snap);
+    transform var(--t) var(--snap);
+}
+
+.pill span {
+  display: inline-block;
 }
 
 .pill:hover {
@@ -172,51 +232,92 @@ body::before {
   color: var(--text);
 }
 
+/* Active tab in trough: slanted capsule with lime <-> yellow pulse */
 .pill[aria-pressed="true"] {
   background: var(--accent);
-  border-color: var(--accent);
   color: var(--accent-ink);
+  font-weight: 800;
+  border-radius: 14px;
+  transform: skewX(-14deg);
+  box-shadow: 0 0 0 1px var(--ink-black);
+  animation: zzz-pulse 2.8s ease-in-out infinite;
 }
 
+.pill[aria-pressed="true"] span {
+  transform: skewX(14deg);
+}
+
+/* Keep rounded outer caps on first/last active tab inside a trough */
+.trough-group .pill[aria-pressed="true"]:first-child {
+  border-radius: 9999px 10px 10px 9999px;
+}
+
+.trough-group .pill[aria-pressed="true"]:last-child {
+  border-radius: 10px 9999px 9999px 10px;
+}
+
+.pill:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+/* Tilted yellow black-outlined micro-tag (NEW! / TODAY style, spec 5.3) */
 .sticker {
   position: absolute;
   z-index: 2;
-  font: 400 11px/1 var(--font-display);
-  letter-spacing: 0.1em;
-  padding: 4px 7px 3px;
-  background: var(--accent-ink);
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  transform: rotate(-5deg);
+  font: 400 14px/1 var(--font-display);
+  letter-spacing: 0.08em;
+  color: var(--accent-tag);
+  -webkit-text-stroke: 4px var(--ink-black);
+  paint-order: stroke fill;
+  transform: rotate(-7deg) skewX(-10deg);
+  pointer-events: none;
 }
 
+/* Solid dark recessed empty slot with bold X (screenshots #05, #15, #34, spec 4) */
 .no-class {
-  /* Above the now-marker stem so it never crosses the label. */
   position: relative;
   z-index: 1;
   margin: 10px 8px;
-  border: 1px dashed var(--line);
+  border-radius: 18px 8px 18px 18px;
+  background: var(--bg-void);
+  border: 2px solid var(--line);
+  box-shadow: var(--trough-inset);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background:
-    linear-gradient(to top right, transparent calc(50% - 0.5px), rgba(53, 57, 64, 0.8) 50%, transparent calc(50% + 0.5px)),
-    linear-gradient(to bottom right, transparent calc(50% - 0.5px), rgba(53, 57, 64, 0.8) 50%, transparent calc(50% + 0.5px));
+  gap: 14px;
+  overflow: hidden;
+}
+
+.no-class-x {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  color: var(--bg-hover);
+}
+
+.no-class-text {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
 }
 
 .no-class b {
-  font: 400 26px/1 var(--font-display);
-  letter-spacing: 0.08em;
-  background: var(--bg-panel);
-  padding: 4px 10px;
+  font: 400 24px/1 var(--font-display);
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
 }
 
 .no-class span {
   font-size: 12px;
   color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 9999px;
   background: var(--bg-panel);
-  padding: 2px 8px;
+  border: 1px solid var(--line);
 }
 
 /* ---------- top bar ---------- */
@@ -226,9 +327,12 @@ body::before {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 14px;
+  padding: 10px 14px;
   margin-bottom: 22px;
-  border-bottom: 2px solid var(--line);
+  border-radius: 20px 8px 20px 20px;
+  background: var(--bg-panel);
+  border: 2px solid var(--line);
+  box-shadow: var(--casing-ring);
 }
 
 .brand {
@@ -243,18 +347,9 @@ body::before {
   letter-spacing: 0.06em;
   background: var(--accent);
   color: var(--accent-ink);
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 9999px;
-}
-
-.mode {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.mode .stamp {
-  margin-right: 4px;
+  box-shadow: 0 0 0 2px var(--ink-black);
 }
 
 /* ---------- header ---------- */
@@ -338,11 +433,11 @@ body::before {
   font-weight: 600;
 }
 
-/* ---------- deck: NOW / UP NEXT / FILES ---------- */
+/* ---------- deck: NOW / UP NEXT / FILES (asymmetric hardware casings) ---------- */
 .deck {
   display: grid;
   grid-template-columns: 1.25fr 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
   margin-bottom: 22px;
 }
 
@@ -350,21 +445,37 @@ body::before {
   position: relative;
   background: var(--bg-panel);
   border: 2px solid var(--line);
-  box-shadow: var(--hard-shadow);
-  padding: 16px 16px 18px 46px;
-  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  border-radius: 24px 10px 24px 24px;
+  box-shadow: var(--casing-ring);
+  padding: 16px 18px 18px 48px;
+  overflow: hidden;
 }
 
-/* halftone corner (spec 5.2) */
+/* Subtle micro-dot header band inside the NOW deck (screenshots #15, #24, #76) */
+.vhs::before {
+  content: "";
+  position: absolute;
+  left: 32px;
+  right: 0;
+  top: 0;
+  height: 52px;
+  pointer-events: none;
+  background-color: var(--bg-void);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.09) 1px, transparent 1.2px);
+  background-size: 5px 5px;
+  border-bottom: 2px solid var(--ink-black);
+}
+
+/* Halftone corner (spec 5.2, clear of text) */
 .vhs::after {
   content: "";
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 150px;
-  height: 110px;
+  width: 140px;
+  height: 100px;
   pointer-events: none;
-  opacity: 0.14;
+  opacity: 0.12;
   background-image: radial-gradient(circle, var(--text) 1.1px, transparent 1.4px);
   background-size: 7px 7px;
   mask-image: linear-gradient(315deg, #000 10%, transparent 70%);
@@ -375,44 +486,48 @@ body::before {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 30px;
+  width: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-raised);
-  border-right: 1px solid var(--line);
+  background: var(--bg-void);
+  border-right: 2px solid var(--line);
 }
 
 .vhs-spine span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font: 600 10px/1 var(--font-mono);
-  letter-spacing: 0.32em;
+  letter-spacing: 0.3em;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
 .vhs-label {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
 }
 
 .tape {
   display: inline-block;
   font: 400 15px/1 var(--font-display);
-  letter-spacing: 0.08em;
-  padding: 6px 12px 5px;
-  transform: rotate(-4deg);
+  letter-spacing: 0.1em;
+  padding: 5px 14px 4px;
+  border-radius: 9999px;
+  transform: skewX(-12deg);
   background: var(--accent);
   color: var(--accent-ink);
+  box-shadow: 0 0 0 2px var(--ink-black);
 }
 
 .tape-ghost {
-  background: transparent;
+  background: var(--bg-raised);
   color: var(--text);
-  border: 1px solid var(--text);
+  border: 1px solid var(--line-strong);
 }
 
 .rec {
@@ -431,18 +546,24 @@ body::before {
 }
 
 .now-time {
+  position: relative;
+  z-index: 1;
   font: 400 44px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.01em;
-  margin: 6px 0 4px;
+  margin: 4px 0 4px;
 }
 
 .now-name {
+  position: relative;
+  z-index: 1;
   font: 800 17px/1.4 var(--font-body);
   margin-bottom: 6px;
 }
 
 .now-meta {
+  position: relative;
+  z-index: 1;
   font: 600 11px/1.6 var(--font-mono);
   letter-spacing: 0.06em;
   color: var(--text-muted);
@@ -454,23 +575,33 @@ body::before {
   font-weight: 600;
 }
 
+/* Solid recessed EMPTY box inside NOW deck (screenshots #05, #15, #34) */
 .now-empty {
-  margin-top: 6px;
-  padding: 14px;
-  border: 1px dashed var(--line);
+  position: relative;
+  z-index: 1;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 14px 6px 14px 14px;
+  background: var(--bg-void);
+  border: 2px solid var(--line);
+  box-shadow: var(--trough-inset);
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 13px;
   color: var(--text-muted);
-  background:
-    linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line) 50%, transparent calc(50% + 0.5px)),
-    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--line) 50%, transparent calc(50% + 0.5px));
 }
 
-.now-empty span {
-  background: var(--bg-panel);
-  padding: 2px 6px;
+.now-empty-x {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  color: var(--bg-hover);
 }
 
 .gauge {
+  position: relative;
+  z-index: 1;
   margin-top: 16px;
 }
 
@@ -492,7 +623,7 @@ body::before {
   align-items: center;
 }
 
-/* Circular icon badge left of the bar, as in the game. */
+/* Circular icon badge left of the bar, as in screenshot #74. */
 .gauge-badge {
   position: relative;
   margin-left: 4px;
@@ -505,22 +636,25 @@ body::before {
   margin-right: 8px;
   border-radius: 50%;
   color: var(--progress-mid);
-  /* Bevelled metal ring around a black face. */
-  background: radial-gradient(circle, #000 0 56%, #d4d7db 59%, #7a7e84 68%, #3a3c40 72%, #000 75%);
+  background: radial-gradient(
+    circle,
+    var(--ink-black) 0 56%,
+    var(--gauge-metal-hi) 59%,
+    var(--gauge-metal-mid) 68%,
+    var(--gauge-metal-lo) 72%,
+    var(--ink-black) 75%
+  );
 }
 
-/* Game-matched orange gauge, measured from in-game screenshot (tile 74):
-   black rim inside a dark grey casing, #2B2B2B track, pill caps, golden-to-orange fill with
-   right-pointing chevron bands that get stronger toward the fill end. */
+/* Game-matched orange gauge, measured from in-game screenshot #74 (spec 2.1) */
 .gauge-bar {
   position: relative;
   flex: 1;
   height: 30px;
   overflow: hidden;
   border-radius: 9999px;
-  border: 3px solid #000;
+  border: 3px solid var(--ink-black);
   background: var(--progress-track);
-  /* Dark grey casing outside the black rim (measured #363636-#3C3C3C). */
   box-shadow: 0 0 0 4px var(--progress-casing);
 }
 
@@ -530,38 +664,31 @@ body::before {
   min-width: 22px;
   overflow: hidden;
   border-radius: 9999px;
-  /* The gradient spans the whole track, not the fill: a short fill stays
-     golden and only a nearly full bar reaches deep orange (as in the game).
-     --frac is the fill fraction (0-1) set inline. */
-  background: linear-gradient(90deg, var(--progress-from), var(--progress-mid) 68%, var(--progress-to)) left / calc(100% / var(--frac, 1)) 100% no-repeat;
+  background: linear-gradient(90deg, var(--progress-from), var(--progress-mid) 68%, var(--progress-to))
+    left / calc(100% / var(--frac, 1)) 100% no-repeat;
   transition: width 0.4s var(--snap);
 }
 
-/* Chevrons: the same stripe pattern on the top half and mirrored on the
-   bottom half meets at the centre line as ">" shapes. */
-.gauge-bar i::before,
-.gauge-bar i::after {
+.gauge-bar i::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 50%;
-  /* 60deg on top + mirrored bottom = ">" (verified by pixel offsets). */
-  background: repeating-linear-gradient(60deg, rgba(200, 56, 0, 0.32) 0 12px, transparent 12px 24px);
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='24' viewBox='0 0 28 24'><polygon points='0,0 14,0 21,12 14,24 0,24 7,12' fill='rgb(200,56,0)' fill-opacity='0.34'/></svg>");
+  background-size: 28px 100%;
+  background-repeat: repeat-x;
   mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.1), #000 85%);
+  animation: gauge-chevrons 1s linear infinite;
 }
 
-.gauge-bar i::before {
-  top: 0;
+@keyframes gauge-chevrons {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 28px;
+  }
 }
 
-.gauge-bar i::after {
-  bottom: 0;
-  transform: scaleY(-1);
-}
-
-/* Decorative duplicate of the value (screen readers get aria-valuetext).
-   Black outline keeps it legible over the stripes, like the game label. */
 .gauge-label {
   position: absolute;
   inset: 0;
@@ -570,22 +697,32 @@ body::before {
   font: 800 15px/1 var(--font-body);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
-  color: #fff;
-  -webkit-text-stroke: 4px #000;
+  color: var(--text);
+  -webkit-text-stroke: 4px var(--ink-black);
   paint-order: stroke fill;
 }
 
+/* Secondary panels (UP NEXT / COURSE FILES): asymmetric rounded hardware frames */
 .panel {
+  display: flex;
+  flex-direction: column;
   background: var(--bg-panel);
-  border: 1px solid var(--line);
-  padding: 14px 16px;
+  border: 2px solid var(--line);
+  border-radius: 24px 10px 24px 24px;
+  box-shadow: var(--casing-ring);
+  overflow: hidden;
 }
 
+/* Micro-dot header strip matching ZZZ modal headers (#15, #24, #76) */
 .panel-head {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 10px;
+  align-items: center;
+  padding: 13px 16px;
+  background-color: var(--bg-void);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.09) 1px, transparent 1.2px);
+  background-size: 5px 5px;
+  border-bottom: 2px solid var(--ink-black);
 }
 
 .panel-head h2 {
@@ -597,6 +734,17 @@ body::before {
   font: 600 10px/1 var(--font-mono);
   letter-spacing: 0.16em;
   color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+}
+
+.panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px;
 }
 
 .queue-item {
@@ -605,12 +753,22 @@ body::before {
   gap: 10px;
   align-items: center;
   width: 100%;
-  padding: 10px 0;
+  padding: 10px 12px;
   text-align: left;
-  background: none;
-  border: 0;
-  border-top: 1px solid var(--line);
+  background: var(--bg-void);
+  border: 1.5px solid var(--line);
+  border-radius: 14px 6px 14px 14px;
   cursor: pointer;
+  transition:
+    background-color var(--t) var(--snap),
+    border-color var(--t) var(--snap),
+    transform var(--t) var(--snap);
+}
+
+.queue-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--line-strong);
+  transform: translateX(2px);
 }
 
 .queue-item:hover .queue-name {
@@ -618,7 +776,7 @@ body::before {
 }
 
 .queue-day {
-  width: 34px;
+  width: 36px;
   font: 400 15px/1 var(--font-display);
   letter-spacing: 0.06em;
   color: var(--text-muted);
@@ -639,6 +797,10 @@ body::before {
 .queue-time {
   font: 400 16px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
+  padding: 4px 9px;
+  border-radius: 9999px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
 }
 
 .file-item {
@@ -646,23 +808,36 @@ body::before {
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 7px 0;
+  padding: 7px 11px;
   text-align: left;
-  background: none;
-  border: 0;
+  background: var(--bg-void);
+  border: 1.5px solid var(--line);
+  border-radius: 12px 6px 12px 12px;
   cursor: pointer;
+  transition:
+    background-color var(--t) var(--snap),
+    border-color var(--t) var(--snap),
+    transform var(--t) var(--snap);
+}
+
+.file-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--line-strong);
+  transform: translateX(2px);
 }
 
 .file-item i {
   width: 6px;
   align-self: stretch;
-  min-height: 22px;
+  min-height: 20px;
+  border-radius: 9999px;
   background: var(--tone);
 }
 
 .file-item span {
   flex: 1;
-  font: 600 12px/1.4 var(--font-body);
+  font: 600 12px/1.35 var(--font-body);
+  transition: color var(--t) var(--snap);
 }
 
 .file-item code {
@@ -682,39 +857,40 @@ body::before {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.filters {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
 .count {
   font: 600 11px/1 var(--font-mono);
   letter-spacing: 0.16em;
   color: var(--text-muted);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: var(--bg-void);
+  border: 2px solid var(--line);
+  box-shadow: 0 0 0 2px var(--ink-black);
 }
 
 .count b {
   font: 400 22px/1 var(--font-display);
   letter-spacing: 0.02em;
   color: var(--text);
-  margin-right: 4px;
+  margin-right: 6px;
 }
 
 /* ---------- desktop week board (rows = days, columns = half hours) ----------
-   Frame modelled on the in-game event calendar (measured from screenshot):
-   striped near-black shell, speckled grey metal bezel with a stitched seam
+   Frame modelled on in-game event calendar screenshot #28 (spec 2.2):
+   striped near-black shell, speckled grey metal bezel with stitched seam
    and binding tabs, recessed dark viewport, bevelled grey header strip. */
 .board-shell {
   position: relative;
   padding: 18px 26px 18px 18px;
-  border: 3px solid #353535;
+  border: 3px solid var(--shell-border);
   border-radius: 30px 12px 30px 30px;
-  background: repeating-linear-gradient(45deg, #0b0b0b 0 6px, #141414 6px 8px);
-  box-shadow: var(--hard-shadow);
+  background: repeating-linear-gradient(45deg, var(--shell-a) 0 6px, var(--shell-b) 6px 8px);
+  box-shadow:
+    0 0 0 2px var(--ink-black),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .board-bezel {
@@ -724,7 +900,7 @@ body::before {
   background-color: var(--metal);
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>");
   box-shadow:
-    0 0 0 3px #000,
+    0 0 0 3px var(--ink-black),
     inset 0 2px 0 var(--metal-hi),
     inset 0 -3px 0 var(--metal-lo),
     inset -3px 0 0 var(--metal-lo);
@@ -753,10 +929,10 @@ body::before {
 .bezel-tabs i {
   width: 34px;
   height: 9px;
-  background: linear-gradient(180deg, #1d1d1e, #3d3d3e 50%, #181819);
+  background: linear-gradient(180deg, var(--viewport), var(--tab-border) 50%, var(--bg-base));
   box-shadow:
-    -8px 0 0 -2px #070707,
-    0 0 0 1px #000;
+    -8px 0 0 -2px var(--bg-void),
+    0 0 0 1px var(--ink-black);
 }
 
 .board {
@@ -765,10 +941,10 @@ body::before {
   border-radius: 16px;
   background-color: var(--viewport);
   box-shadow:
-    0 0 0 3px #363637,
+    0 0 0 3px var(--line),
     inset 0 3px 0 rgba(0, 0, 0, 0.55);
   scrollbar-width: thin;
-  scrollbar-color: #707070 #1a1a1b;
+  scrollbar-color: var(--strip-lo) var(--bg-panel);
 }
 
 .board::-webkit-scrollbar {
@@ -776,11 +952,11 @@ body::before {
 }
 
 .board::-webkit-scrollbar-track {
-  background: #1a1a1b;
+  background: var(--bg-panel);
 }
 
 .board::-webkit-scrollbar-thumb {
-  background: #707070;
+  background: var(--strip-lo);
   border-radius: 9999px;
 }
 
@@ -799,8 +975,8 @@ body::before {
 /* Header: grey bevelled strip seated in a dark recessed trough. */
 .week-head {
   position: relative;
-  background: #222324;
-  border-bottom: 1px solid #000;
+  background: var(--trough);
+  border-bottom: 1px solid var(--ink-black);
 }
 
 .week-head::before {
@@ -812,7 +988,7 @@ body::before {
   box-shadow:
     inset 0 3px 0 var(--strip-hi),
     inset 0 -4px 0 var(--strip-lo),
-    0 0 0 2px #111;
+    0 0 0 2px var(--ink-card);
 }
 
 .week-corner,
@@ -821,7 +997,7 @@ body::before {
   display: flex;
   align-items: center;
   margin: 44px 0 9px;
-  color: #0a0a0a;
+  color: var(--accent-ink);
 }
 
 .week-corner {
@@ -861,10 +1037,9 @@ body::before {
   background: var(--strip-lo);
 }
 
-/* The hour containing "now" is lit, like the game's current column. */
-/* Lit between the strip's top highlight (3px) and bottom shadow (4px). */
+/* Current hour lit brightly like Week 5 in screenshot #28 (--strip-now #DADADA). */
 .week-hour.is-now {
-  background: linear-gradient(var(--strip-hi), var(--strip-hi)) 0 3px / 100% calc(100% - 7px) no-repeat;
+  background: linear-gradient(var(--strip-now), var(--strip-now)) 0 3px / 100% calc(100% - 7px) no-repeat;
 }
 
 .week-day {
@@ -873,27 +1048,32 @@ body::before {
   flex-direction: column;
   justify-content: center;
   padding: 14px 14px 12px 16px;
-  border-right: 2px solid #0e0e0f;
+  border-right: 2px solid var(--tab-bg);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 1px 0 0 #2a2b2e;
+  box-shadow: 1px 0 0 var(--bg-raised);
 }
 
 .week-day .sticker {
-  right: 8px;
-  top: 6px;
+  right: 10px;
+  top: 8px;
 }
 
-/* Day tab: game tab trough; today gets the active-tab shape
-   (slanted left edge, round right cap). */
+/* Day tab: dark pill tab; today gets the game active-tab shape + pulse. */
 .day-tab {
+  display: flex;
+  padding: 9px 16px 8px;
+  border: 2px solid var(--tab-border);
+  border-radius: 9999px;
+  background: var(--tab-bg);
+  color: var(--text);
+}
+
+.day-tab > span {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 9px 16px 8px;
-  border: 2px solid #3d3d3d;
-  border-radius: 9999px;
-  background: #0e0e0e;
-  color: var(--text);
+  width: 100%;
+  gap: 6px;
 }
 
 .day-tab b {
@@ -914,6 +1094,7 @@ body::before {
   background: var(--accent);
   color: var(--accent-ink);
   clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%);
+  animation: zzz-pulse 2.8s ease-in-out infinite;
 }
 
 .week-day.is-today .day-tab small {
@@ -940,12 +1121,10 @@ body::before {
 }
 
 .week-track.is-today {
-  background-color: rgba(229, 254, 16, 0.03);
+  background-color: rgba(230, 214, 0, 0.035);
 }
 
-/* Current-time marker: game "today" pill in the trough above the header
-   strip, with a stem through the strip and every row, ending in a dot.
-   The stem sits behind the cards (cards are z-index 1). */
+/* Current-time marker: pill in the trough above the header strip + stem + dot. */
 .now-layer {
   position: relative;
   pointer-events: none;
@@ -958,7 +1137,7 @@ body::before {
   width: 4px;
   margin-left: -2px;
   background: var(--accent);
-  box-shadow: 0 0 0 1px #000;
+  box-shadow: 0 0 0 1px var(--ink-black);
 }
 
 .now-stem::after {
@@ -971,7 +1150,7 @@ body::before {
   border-radius: 50%;
   transform: translateX(-50%);
   background: var(--accent);
-  box-shadow: 0 0 0 2px #000;
+  box-shadow: 0 0 0 2px var(--ink-black);
 }
 
 .now-pill {
@@ -983,17 +1162,16 @@ body::before {
   border-radius: 9999px;
   background: var(--accent);
   color: var(--accent-ink);
-  box-shadow: 0 0 0 2px #000;
+  box-shadow: 0 0 0 2px var(--ink-black);
   font: 400 15px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.06em;
   white-space: nowrap;
 }
 
-/* ---------- class card ----------
-   Modelled on the game's event rows: full-colour rounded bar, 2px darker
-   outline, 2px top highlight, black text, black round type button.
-   The subject colour fills the whole card; it is never the accent colour. */
+/* ---------- class card (spec 2.3) ----------
+   Modelled on screenshot #28 event rows: full-colour rounded bar, 2px darker
+   outline, 2px top highlight, black ink, black round type button. */
 .class-card {
   position: relative;
   z-index: 1;
@@ -1007,21 +1185,21 @@ body::before {
   text-align: left;
   border: 0;
   border-radius: 30px;
-  color: #111;
+  color: var(--ink-card);
   cursor: pointer;
   background: linear-gradient(135deg, color-mix(in srgb, var(--tone) 78%, #fff), var(--tone) 60%);
   box-shadow:
     inset 0 2px 0 rgba(255, 255, 255, 0.5),
-    inset 0 0 0 2px color-mix(in srgb, var(--tone) 55%, #000);
+    inset 0 0 0 2px color-mix(in srgb, var(--tone) 55%, var(--ink-black));
   transition:
     transform var(--t) var(--snap),
     filter var(--t) var(--snap),
     opacity var(--t) var(--snap);
-  animation: card-enter 0.32s var(--snap) both;
+  animation: card-enter 0.32s var(--snap) backwards;
   animation-delay: calc(var(--i, 0) * var(--stagger));
 }
 
-/* Halftone dots in the bottom-right corner only, clear of the text. */
+/* Halftone dots in the bottom-right corner only, clear of text. */
 .class-card::after {
   content: "";
   position: absolute;
@@ -1031,7 +1209,7 @@ body::before {
   height: 36px;
   pointer-events: none;
   opacity: 0.22;
-  background-image: radial-gradient(circle, #000 1.2px, transparent 1.5px);
+  background-image: radial-gradient(circle, var(--ink-black) 1.2px, transparent 1.5px);
   background-size: 6px 6px;
   mask-image: linear-gradient(315deg, #000, transparent 75%);
 }
@@ -1046,8 +1224,8 @@ body::before {
   outline: none;
   box-shadow:
     inset 0 2px 0 rgba(255, 255, 255, 0.5),
-    inset 0 0 0 2px color-mix(in srgb, var(--tone) 55%, #000),
-    0 0 0 2px #000,
+    inset 0 0 0 2px color-mix(in srgb, var(--tone) 55%, var(--ink-black)),
+    0 0 0 2px var(--ink-black),
     0 0 0 5px var(--accent);
 }
 
@@ -1066,8 +1244,8 @@ body::before {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #111;
-  color: #fff;
+  background: var(--ink-card);
+  color: var(--text);
   font: 700 8px/1 var(--font-mono);
   letter-spacing: 0;
 }
@@ -1115,7 +1293,7 @@ body::before {
   padding-right: 28px;
   font: 700 10px/1.35 var(--font-mono);
   letter-spacing: 0.04em;
-  color: rgba(17, 17, 17, 0.82);
+  color: rgba(17, 17, 17, 0.85);
   text-transform: uppercase;
 }
 
@@ -1140,8 +1318,8 @@ body::before {
   display: none;
 }
 
-/* Bottom dock: useDayNavigation scrolls a day heading to 24px from the top
-   and reads the active day at 96px, so a top bar would cover the heading. */
+/* Bottom hardware dock: useDayNavigation scrolls a day heading to 24px from top
+   and reads the active day at 96px, so nothing is fixed at the top. */
 .mobile-tabs {
   position: fixed;
   left: 0;
@@ -1152,42 +1330,48 @@ body::before {
   justify-content: center;
   gap: 6px;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: var(--bg-base);
+  background: var(--bg-void);
   border-top: 2px solid var(--line);
+  box-shadow: 0 -2px 0 var(--ink-black);
 }
 
 .mobile-tabs button {
   flex: 1 1 0;
   max-width: 76px;
-  border: 0;
-  padding: 10px 16px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 12px;
   background: var(--bg-panel);
   color: var(--text-muted);
   cursor: pointer;
-  transform: skewX(-10deg);
+  transform: skewX(-12deg);
   font: 400 18px/1 var(--font-display);
   letter-spacing: 0.06em;
   transition:
-    background var(--t) var(--snap),
-    color var(--t) var(--snap);
+    background-color var(--t) var(--snap),
+    color var(--t) var(--snap),
+    border-color var(--t) var(--snap);
 }
 
 .mobile-tabs button span {
   display: inline-block;
-  transform: skewX(10deg);
+  transform: skewX(12deg);
 }
 
 .mobile-tabs button.is-today {
-  box-shadow: inset 0 -4px 0 var(--accent);
+  border-color: var(--accent);
 }
 
 .mobile-tabs button[aria-current="true"] {
   background: var(--text);
+  border-color: var(--text);
   color: var(--accent-ink);
 }
 
 .mobile-tabs button.is-today[aria-current="true"] {
   background: var(--accent);
+  border-color: var(--accent);
+  animation: zzz-pulse 2.8s ease-in-out infinite;
 }
 
 /* Lets the last days scroll up to the reading line instead of the page end
@@ -1241,15 +1425,15 @@ body::before {
 
 .mobile-day .no-class {
   margin: 0;
-  height: 140px;
+  height: 132px;
 }
 
-/* ---------- dossier drawer (binder paper object) ---------- */
+/* ---------- dossier drawer (warm grey-cream hardware binder, screenshot #74) ---------- */
 .scrim {
   position: fixed;
   inset: 0;
   z-index: 20;
-  background: rgba(0, 0, 0, 0.66);
+  background: rgba(0, 0, 0, 0.72);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--t) var(--snap);
@@ -1271,8 +1455,11 @@ body::before {
   padding: 28px 26px 26px 54px;
   background: var(--paper);
   color: var(--accent-ink);
-  box-shadow: 8px 8px 0 #000;
-  clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%);
+  border: 3px solid var(--line-strong);
+  border-radius: 26px 10px 26px 26px;
+  box-shadow:
+    0 0 0 3px var(--ink-black),
+    inset 0 2px 0 rgba(255, 255, 255, 0.35);
   transform: translateX(calc(100% + 120px)) skewX(-4deg);
   visibility: hidden;
   transition:
@@ -1302,40 +1489,49 @@ body::before {
   height: 16px;
   border-radius: 50%;
   background: var(--bg-base);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.8);
 }
 
+/* Iconic ZZZ tilted squircle close button (#15, #24, #27, #28, #76):
+   red-orange casing with bright rim and bold black X. */
 .dossier-close {
   position: absolute;
-  right: 34px;
+  right: 20px;
   top: 18px;
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--danger);
-  color: #fff;
-  font: 400 20px/1 var(--font-display);
+  width: 54px;
+  height: 36px;
+  border: 2.5px solid var(--close-rim);
+  border-radius: 18px 8px 18px 18px;
+  background: linear-gradient(180deg, var(--close-rim), var(--close-bg) 55%);
+  color: var(--ink-black);
+  box-shadow: 0 0 0 3px var(--ink-black);
+  transform: skewX(-12deg);
   cursor: pointer;
   transition:
     transform var(--t) var(--snap),
-    box-shadow var(--t) var(--snap);
+    filter var(--t) var(--snap);
+}
+
+.dossier-close svg {
+  transform: skewX(12deg);
 }
 
 .dossier-close:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 2px 2px 0 #000;
+  filter: brightness(1.12);
+  transform: skewX(-12deg) scale(1.04);
 }
 
 .dossier-close:focus-visible {
-  outline-color: var(--accent-ink);
+  outline: 3px solid var(--ink-black);
+  outline-offset: 4px;
 }
 
 .dossier-code {
   font: 600 11px/1 var(--font-mono);
   letter-spacing: 0.2em;
-  padding-right: 48px;
+  padding-right: 72px;
 }
 
 .dossier-bars {
@@ -1363,10 +1559,11 @@ body::before {
 
 .dossier-kicker i {
   display: inline-block;
-  width: 22px;
-  height: 8px;
+  width: 24px;
+  height: 10px;
+  border-radius: 9999px;
   background: var(--tone);
-  outline: 1px solid var(--accent-ink);
+  border: 1.5px solid var(--accent-ink);
 }
 
 .dossier-name {
@@ -1382,7 +1579,7 @@ body::before {
 
 .dossier-grid div {
   padding: 10px 10px 10px 0;
-  border-bottom: 1px solid rgba(16, 17, 20, 0.25);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.25);
 }
 
 .dossier-grid dt {
@@ -1407,11 +1604,11 @@ body::before {
   grid-template-columns: 52px 1fr auto;
   gap: 10px;
   align-items: center;
-  margin-bottom: 6px;
-  padding: 10px 12px;
-  background: #fff;
-  border: 1px solid var(--accent-ink);
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 2px solid var(--accent-ink);
+  border-radius: 16px 6px 16px 16px;
 }
 
 .dossier-sessions b {
@@ -1432,12 +1629,13 @@ body::before {
 }
 
 .dossier-sessions em {
-  font: 600 9px/1 var(--font-mono);
+  font: 700 9px/1 var(--font-mono);
   font-style: normal;
   letter-spacing: 0.12em;
-  padding: 4px 8px;
+  padding: 5px 9px;
   border-radius: 9999px;
-  border: 1px solid var(--accent-ink);
+  background: var(--accent-ink);
+  color: var(--text);
 }
 
 .dossier-foot {

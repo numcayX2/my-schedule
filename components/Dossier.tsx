@@ -55,7 +55,9 @@ export default function Dossier({
           <i />
         </div>
         <button ref={closeRef} type="button" className="dossier-close" onClick={onClose} aria-label="ปิด">
-          ×
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+            <path d="M4.5 4.5l11 11M15.5 4.5l-11 11" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" />
+          </svg>
         </button>
         {course && (
           <>

@@ -43,7 +43,7 @@ export const COURSE_TONES: Record<string, string> = {
   "10301347": "orange",
   "10700252": "sky",
   "10200503": "violet",
-  "10307121": "yellow",
+  "10307121": "amber",
   "10400406": "paper",
 };
 

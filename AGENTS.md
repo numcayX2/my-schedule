@@ -8,44 +8,46 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # my-schedule: Design Rules (Zenless Zone Zero style)
 
-Source of truth: `artifacts/zzz-design-spec.md`. Read it before any UI work. If this file and the spec disagree, the spec wins. Update the spec first, then this file.
+Source of truth: `artifacts/zzz-design-spec.md` (v2). Read it before any UI work. If this file and the spec disagree, the spec wins. Update the spec first, then this file.
 
-The spec was derived from 79 in-game ZZZ UI screenshots (`C:\Users\Acer\Pictures\ZZZ_finetune`). Hex values are approximate until verified against the originals.
+The spec was derived and pixel-measured from 79 full-resolution (`2560×1440`) in-game ZZZ UI screenshots (`C:\Users\Acer\Pictures\ZZZ_finetune`).
 
-This replaces the earlier generic "ZZZ Design Language" guide. That guide told you to use hazard elements heavily and to use hot pink/purple. Both are wrong for this project.
+This replaces the earlier generic "ZZZ Design Language" guide (heavy yellow/black hazard stripes, hot pink/purple, 45° chamfers, brutalist hard offset shadows). Those do not match the real in-game UI.
 
 ## Core idea
 
-Dark matte base, one acid-yellow accent, diagonal cuts against pill buttons, huge numerals, and every screen treated as a physical object (VHS, binder, sticker, phone bezel). Signature elements go on frames, backgrounds, and focus points. Never on the schedule content itself.
+Pure neutral matte charcoal base (no blue tint), one yellow-lime accent family (`--accent` `#E6D600`, pulsing `#B8CC00 ↔ #FCDD00` on active tabs), chunky layered hardware framing with asymmetric rounded corners, dark recessed troughs holding slanted-edge active tabs, huge tabular numerals, and physical hardware objects (metal bezel calendar, cassette deck, warm grey-cream dossier). Signature elements go on frames, backgrounds, and focus points—never behind readable schedule text.
 
 ## Hard rules
 
-1. **Readability first.** Class names, times, rooms, and instructors must stay clear. Text contrast must meet WCAG AA (4.5:1). Never put hazard stripes or halftone behind text that has to be read.
-2. **One accent.** `--accent` (`#E5FE10`) marks active, focus, CTA, and "today" only, at most ~10% of the page. `--warn` / `--danger` / `--info` are semantic only, never decoration. Exception: the progress gauge uses the game-matched orange `--progress-*` tokens (spec 2.1), and only the gauge may use them.
-3. **Shape contrast.** Cards, tabs, and headers are cut at 45° (`clip-path` chamfer) or parallelogram (skew with counter-skew on text). Buttons, chips, toggles, and filters are pills. Close buttons are red circles.
-4. **Shadows.** Hard offset only (`4px 4px 0 #000`). No soft shadows, no glassmorphism, no purple-pink gradients.
-5. **Typography.** Display = Anton (heavy condensed uppercase, can be skewed). Thai and body text = Prompt (sans-serif). Load both through `next/font/google`. Numerals = bold, `tabular-nums`. Body = clean sans. Do not skew or fake-italic Thai text, and do not use display faces for long Thai copy. Pair English uppercase graphic headings with Thai content.
-6. **Signature elements are rationed.** At most 1-2 hazard stripes per page. Sticker tags (`NOW`, `NEXT`, `TODAY`) are slanted tape or pill, rotated -3° to -6°. Giant ghost watermark text sits at 4-8% opacity behind panels.
-7. **Motion.** Fast and sharp, 120-180ms, snap easing, staggered slanted entry. No soft bounce. Always honor `prefers-reduced-motion`.
+1. **Readability first.** Class names, times, rooms, and instructors must stay clear. Text contrast must meet WCAG AA (4.5:1). Never put halftone or heavy patterns behind text that has to be read.
+2. **One accent family.** `--accent` (`#E6D600`, pulse range `--accent-lime` `#B8CC00` to `--accent-peak` `#FCDD00`, micro-tag `--accent-tag` `#FFFF04`) marks active, focus, CTA, and "today" only, at most ~10% of the page. `--warn` / `--danger` / `--info` / `--success` are semantic only, never decoration. Exception: the progress gauge uses the game-matched orange `--progress-*` tokens (spec 2.1), and only the gauge may use them.
+3. **Shape & hardware language.** Panels, modals, and cards use chunky rounded corners (`16–26px`) with asymmetric corner radii (3 large radii + 1 tighter corner) and layered borders (`--line` + `#000` + subtle top inset highlight)—NOT 45° `clip-path` chamfers. Tab and filter groups sit in dark recessed pill troughs (`--bg-void`), with active tabs slanted on the side edge (~15–20°). Close buttons are asymmetrical tilted squircles in `--close-bg` (`#C01C00`) with bright `--close-rim` (`#E3421F`) and a **bold black `×`**—NOT red circles with white X. Empty slots are solid dark blocks with a bold `X` and `EMPTY` / `NO CLASS` label—NOT dashed wireframes.
+4. **Depth, not shadows.** Use layered hardware casings, inset bevels, and recessed dark troughs. No neo-brutalist hard offset shadows (`4px 4px 0 #000`), no soft drop shadows, no glassmorphism, and no purple-pink gradients.
+5. **Typography.** Display = Anton (heavy condensed uppercase, can be skewed `-8deg`). Thai and body text = Prompt (sans-serif, 400/600/800). Load both through `next/font/google`. Numerals = bold, `tabular-nums`. Do not skew or fake-italic Thai text, and do not use display faces for long Thai copy. Pair English uppercase graphic headings with Thai content.
+6. **Signature elements are rationed.** Dark 45° diagonal stripes (`#0B0B0B` / `#141414`) for backdrop/shells (no yellow/black hazard stripes). Fine micro-dot headers and corner-only halftone. Tilted yellow black-outlined `NEW!` micro-tags (`#FFFF04`). Giant angled ghost watermark text at 4–8% opacity behind panels. Vertical 90° spine labels (`SCHEDULE`, `DATA FILE`).
+7. **Motion.** Fast and sharp, 120–180ms, snap easing, staggered slanted entry, optional slow lime↔yellow pulse on active tabs. No soft bounce. Always honor `prefers-reduced-motion`.
 8. **Copy.** No emoji. No marketing or filler wording. Thai body with English technical terms.
 
 ## Tokens
 
-Use the CSS custom properties defined in the spec (section 2). Do not hardcode hex values in components. If a needed token is missing, add it to the spec and the stylesheet together.
+Use the pixel-measured CSS custom properties defined in the spec (section 2). Do not hardcode hex values in components or `Schedule.css`. If a needed token is missing, add it to the spec and the stylesheet together.
 
 ## Component mapping
 
 | Area | Treatment |
 |---|---|
-| Page header | Skewed display type, giant watermark, serial stamp (term / academic year) |
-| Day tabs | Desktop board: dark pill tabs, today = game active tab (accent, slanted left edge, round right cap). Mobile dock: parallelogram tabs, today filled with accent |
-| Time grid | Thin `--line` grid, tabular time headers, panel background |
-| Class card | Game event-row style: full subject-colour rounded bar (never the accent colour), 2px darker outline, black text, black round LEC/LAB button, halftone only in the corner (spec 2.3) |
-| Status tags | Slanted tape (`NOW`, `NEXT`) |
-| Buttons / filters | Pill |
-| Backdrop | Ghost watermark text plus grain |
-| Week board frame | Game event-calendar frame: striped shell, grey metal bezel with seam and binding tabs, dark viewport, bevelled grey hour strip, NOW pill + stem (spec 2.2) |
-| Progress gauge | Game-style orange bar: black rim, pill caps, golden-to-orange fill, chevron bands, outlined centred numbers, circular icon badge |
+| Page header | Skewed display type, giant angled watermark, serial stamp (term / academic year), dark diagonal-striped backdrop |
+| Topbar / filters | Recessed dark pill troughs (`--bg-void` + `--line` rim); active option = slanted `--accent` tab |
+| Day tabs | Desktop board: dark pill tabs (`--tab-bg`/`--tab-border`), today = game active tab (`--accent`, slanted left edge, round right cap). Mobile dock: dark recessed bottom dock with slanted tabs |
+| Time grid | Neutral `--grid-hour` / `--grid-half` lines, tabular time headers in bevelled grey strip (`--strip`, active hour `--strip-now` `#DADADA`) |
+| Class card | Game event-row style: full subject-colour rounded bar (never `--accent`, `--warn`, or `--info`), 2px darker inset outline, `#111` ink, black round `LEC`/`LAB` button, corner-only halftone (spec 2.3) |
+| NOW deck & secondary panels | Asymmetric rounded hardware frames with layered borders and micro-dot headers; vertical spine on NOW deck; orange chevron progress gauge (spec 2.1) |
+| Empty slots | Solid dark recessed block with bold centered `X` and `NO CLASS` / `EMPTY` label |
+| Status tags | Tilted yellow black-outlined micro-tag (`NEW!`, `TODAY`) or black-outlined category pills |
+| Course Dossier | Warm grey-cream binder sheet (`--paper` `#C4BFB0`), asymmetric rounded corners, binder holes, barcode, tilted `--close-bg` squircle close button with bold black `×` |
+| Week board frame | Game event-calendar frame: striped dark shell, speckled grey metal bezel (`--metal` `#8C8A8A`) with dashed seam and 3 binding tabs, `--viewport` `#1D1D1E`, bevelled grey hour strip, `NOW` pill + stem (spec 2.2) |
+| Progress gauge | Game-style orange bar: black rim, dark grey casing, pill caps, golden-to-orange fill (`#F9B636`→`#EF580C`), chevron bands, outlined centred numbers, circular metal badge |
 
 ## Workflow
 

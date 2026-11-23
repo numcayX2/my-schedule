@@ -8,7 +8,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#101114",
+  themeColor: "#141414",
 };
 
 const anton = Anton({
