@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Asymmetric ZZZ hardware squircle (tight top-right corner, spec v2 §4) -->
+    <clipPath id="shellClip">
+      <path d="M 124 20 H 442 Q 492 20 492 70 V 388 Q 492 492 388 492 H 124 Q 20 492 20 388 V 124 Q 20 20 124 20 Z" />
+    </clipPath>
+    <clipPath id="screenClip">
+      <rect x="64" y="196" width="384" height="248" rx="46" />
+    </clipPath>
+    <!-- Dark 45deg diagonal stripes (spec v2 §5.1) -->
+    <pattern id="stripes" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="24" height="24" fill="#0B0B0B" />
+      <rect width="7" height="24" fill="#171718" />
+    </pattern>
+    <!-- Accent yellow-lime gradient (spec v2 §2.0) -->
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FCDD00" />
+      <stop offset="100%" stop-color="#D4DF00" />
+    </linearGradient>
+    <!-- Close/alert red-orange gradient (spec v2 §2.0) -->
+    <linearGradient id="redGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E3421F" />
+      <stop offset="100%" stop-color="#C01C00" />
+    </linearGradient>
+    <!-- Event bar orange gradient (spec v2 §2.3) -->
+    <linearGradient id="orangeBar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFA048" />
+      <stop offset="65%" stop-color="#F57D17" />
+    </linearGradient>
+    <!-- Event bar mint gradient (spec v2 §2.3) -->
+    <linearGradient id="mintBar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7EE8BA" />
+      <stop offset="65%" stop-color="#4FD69C" />
+    </linearGradient>
+    <!-- Event bar sky gradient (spec v2 §2.3) -->
+    <linearGradient id="skyBar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#74DAFA" />
+      <stop offset="65%" stop-color="#38C6F4" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer black housing silhouette for crisp edge on both light and dark browser tabs -->
+  <path d="M 122 8 H 446 Q 504 8 504 66 V 390 Q 504 504 390 504 H 122 Q 8 504 8 390 V 122 Q 8 8 122 8 Z" fill="#000000" />
+
+  <!-- Diagonal striped dark hardware body -->
+  <g clip-path="url(#shellClip)">
+    <rect x="0" y="0" width="512" height="512" fill="url(#stripes)" />
+    <!-- Subtle top bevel highlight -->
+    <path d="M 124 28 H 442 Q 484 28 484 70" fill="none" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="8" stroke-linecap="round" />
+  </g>
+
+  <!-- Chunky outer grey hardware rim -->
+  <path d="M 124 22 H 442 Q 490 22 490 70 V 388 Q 490 490 388 490 H 124 Q 22 490 22 388 V 124 Q 22 22 124 22 Z" fill="none" stroke="#525256" stroke-width="14" />
+
+  <!-- Top bar: recessed dark trough holding slanted ZZZ accent tab + red-orange hardware corner button -->
+  <rect x="64" y="68" width="292" height="96" rx="48" fill="#000000" stroke="#3E3E42" stroke-width="8" />
+  <!-- Slanted ZZZ active tab inside trough -->
+  <path d="M 112 78 H 322 L 298 154 H 112 A 38 38 0 0 1 112 78 Z" fill="url(#accentGrad)" />
+  <!-- Two bold black binder/cassette holes on the active tab -->
+  <rect x="112" y="101" width="32" height="30" rx="10" fill="#0A0A0A" />
+  <rect x="170" y="101" width="102" height="30" rx="15" fill="#0A0A0A" />
+
+  <!-- Iconic tilted ZZZ red-orange hardware badge in the tight top-right corner (#15, #28) -->
+  <g transform="translate(416 116) skewX(-10)">
+    <rect x="-44" y="-36" width="88" height="72" rx="22" fill="#000000" />
+    <rect x="-36" y="-28" width="72" height="56" rx="16" fill="url(#redGrad)" stroke="#E3421F" stroke-width="6" />
+    <!-- Bold black X / square pip -->
+    <path d="M -13 -13 L 13 13 M 13 -13 L -13 13" stroke="#0A0A0A" stroke-width="12" stroke-linecap="round" />
+  </g>
+
+  <!-- Inner dark recessed schedule viewport (metal bezel outline, spec v2 §2.2) -->
+  <rect x="58" y="190" width="396" height="260" rx="52" fill="#000000" stroke="#8C8A8A" stroke-width="12" />
+  <rect x="64" y="196" width="384" height="248" rx="46" fill="#1D1D1E" />
+
+  <!-- Subtle hour grid lines inside viewport -->
+  <g clip-path="url(#screenClip)">
+    <line x1="160" y1="196" x2="160" y2="444" stroke="#2C2C2E" stroke-width="6" />
+    <line x1="256" y1="196" x2="256" y2="444" stroke="#2C2C2E" stroke-width="6" />
+    <line x1="352" y1="196" x2="352" y2="444" stroke="#2C2C2E" stroke-width="6" />
+
+    <!-- Event Row 1: Mint class card (top-left) -->
+    <rect x="86" y="218" width="214" height="58" rx="29" fill="url(#mintBar)" stroke="#111111" stroke-width="6" />
+    <circle cx="272" cy="247" r="14" fill="#111111" />
+
+    <!-- Event Row 2: Orange class card (middle-right) -->
+    <rect x="174" y="291" width="252" height="58" rx="29" fill="url(#orangeBar)" stroke="#111111" stroke-width="6" />
+    <circle cx="398" cy="320" r="14" fill="#111111" />
+
+    <!-- Event Row 3: Sky class card (bottom-left) -->
+    <rect x="86" y="364" width="246" height="58" rx="29" fill="url(#skyBar)" stroke="#111111" stroke-width="6" />
+    <circle cx="304" cy="393" r="14" fill="#111111" />
+
+    <!-- Vertical ZZZ NOW stem slicing through the schedule -->
+    <rect x="334" y="196" width="14" height="224" fill="#FCDD00" stroke="#000000" stroke-width="4" />
+    <circle cx="341" cy="418" r="14" fill="#FCDD00" stroke="#000000" stroke-width="5" />
+  </g>
+</svg>

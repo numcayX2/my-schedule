@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Prompt } from "next/font/google";
-import favicon from "../components/img/favicon.png";
 import "./globals.css";
 import "../components/Schedule.css";
 
@@ -26,9 +25,6 @@ const prompt = Prompt({
 });
 
 export const metadata: Metadata = {
-  icons: {
-    icon: favicon.src,
-  },
   title: "Class Schedule · ตารางเรียน",
   description: "ตารางเรียนรายสัปดาห์ ภาคการศึกษาที่ 2/2569",
 };
