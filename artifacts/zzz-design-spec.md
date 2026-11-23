@@ -107,7 +107,7 @@
 | Display | Anton (หนามาก condensed ตัวพิมพ์ใหญ่ เอียงได้ `skewX(-8deg)`) | หัวหน้า, ชื่อวัน, `WEEKLY SCHEDULE` |
 | Numeral | หนา tabular (`font-variant-numeric: tabular-nums`) | เวลา, วันที่ `23/11 MON`, นับชั่วโมง |
 | Body | Prompt (sans-serif รองรับภาษาไทย) น้ำหนัก 400 / 600 / 800 | ชื่อวิชา, ห้อง, รายละเอียดใน Dossier |
-| Label | uppercase ตัวเล็ก letter-spacing กว้าง หรือ monospace | `ROOM`, `SEC`, `DATA FILE`, serial stamp |
+| Label / Sub-font | Bai Jamjuree (600 / 700, รองรับไทย+อังกฤษ, `tabular-nums`, letter-spacing กระชับ 0.02–0.1em — ห้ามใช้ monospace แบบ code editor) | `ROOM`, `SEC`, `10307121`, `วิทย์ 2205 (105)`, serial stamp |
 | Watermark | display ขนาดยักษ์ opacity 4–8% (เอียงได้) วางหลังแผง | `WK47`, `DATA FILE`, `SCHEDULE` |
 
 กฎ: หัวข้อภาษาอังกฤษตัวพิมพ์ใหญ่เป็นกราฟิกคู่กับข้อความไทย ข้อความไทยใช้ Prompt ตรงเสมอ ห้ามเอียงเทียม (`skew`/`italic`) กับข้อความไทย และไม่ใช้ display font กับข้อความไทยยาว (ตรงกับวิธีแสดงภาษาไทยในเกมทั้ง 79 ภาพ)
@@ -168,7 +168,7 @@
 | Day tabs | `WeekBoard.tsx` / `MobileDays.tsx` | Desktop: แท็บมืดขอบเทา, วันนี้ = แท็บ active สี `--accent` ขอบซ้ายเฉียงปลายขวามน; Mobile dock: ร่องมืดด้านล่างพร้อมแท็บเฉียง |
 | Class card | `ClassCard.tsx` | แถวกิจกรรมเต็มสีวิชาตาม §2.3 มุมโค้ง 30px ขอบในเข้ม 2px ตัวอักษรดำ ปุ่มกลมดำ `LEC`/`LAB` และ halftone เฉพาะมุมขวาล่าง |
 | Empty day (`NO CLASS`) | `WeekBoard.tsx` / `MobileDays.tsx` | ช่องพื้นทึบมืดพร้อมกากบาท `X` หนา + ป้าย `NO CLASS` / `ไม่มีคาบเรียน` (สไตล์ `EMPTY` จาก `#05`/`#15`/`#34`) |
-| Course Dossier | `Dossier.tsx` | แฟ้มกระดาษสีเทาครีมอุ่น `--paper` (`#C4BFB0`) มุมโค้งอสมมาตร รูเจาะสันแฟ้ม บาร์โค้ด + ปุ่มปิดสี่เหลี่ยมมนเอียงสี `--close-bg` กากบาทดำ |
+| Course Dossier | `Dossier.tsx` | โมดอลฮาร์ดแวร์มืดแบบ `#68`/`#69`/`#70` (แถบหัว micro-dot + ปุ่มปิดสี่เหลี่ยมมนเอียงสี `--close-bg` กากบาทดำ + watermark จางด้านหลัง) ด้านในบรรจุการ์ดแฟ้มเย็บตะเข็บ dashed สีเทาครีมอุ่น `--paper` (`#C4BFB0` แบบ `#74` มีป้ายสีวิชาขอบดำ + pill ข้อมูลพื้นดำ) คู่กับรางรายการ `SESSIONS >>` พื้นมืดแบบ `#69`/`#70` |
 | Backdrop | `Schedule.css` | พื้น `--bg-base` + ลายทางทแยง 45° มืด + ghost watermark ตัวอักษรยักษ์เอียงจาง |
 
 ---
@@ -196,8 +196,8 @@
 
 **ยืนยันแล้ว**
 - วัดพิกเซลยืนยันสีทั้งหมดจากภาพต้นฉบับ 79 ภาพ (`C:\Users\Acer\Pictures\ZZZ_finetune`) เรียบร้อยแล้ว
-- Display: **Anton** (Google Fonts), Body และภาษาไทย: **Prompt** (`400/600/800`)
-- Font stack: `"Anton", "Prompt", sans-serif` สำหรับ display, `"Prompt", system-ui, sans-serif` สำหรับ body
+- Display: **Anton** (Google Fonts), Body และภาษาไทย: **Prompt** (`400/600/800`), Sub-font / Metadata / Codes: **Bai Jamjuree** (`600/700`, ไทย+อังกฤษ, `tabular-nums` — ในเกม ZZZ ไม่ใช้ monospace แบบ terminal)
+- Font stack: `"Anton", "Prompt", sans-serif` สำหรับ display, `"Prompt", system-ui, sans-serif` สำหรับ body, `"Bai Jamjuree", "Prompt", sans-serif` สำหรับ sub-font/metadata
 - Radix UI Themes: เอาออกแล้ว ใช้ token ของ ZZZ อย่างเดียว
 - Tailwind v4: ติดตั้งแบบไม่มี preflight ใช้เฉพาะ component ของ Aceternity ใน `components/ui`
 - Aceternity: ใช้ `EncryptedText` กับ `h1`, serial stamp และรหัสใน dossier (ไม่ใช้กับข้อความไทย)

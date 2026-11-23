@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Prompt } from "next/font/google";
+import { Anton, Bai_Jamjuree, Prompt } from "next/font/google";
 import "./globals.css";
 import "../components/Schedule.css";
 
@@ -24,6 +24,13 @@ const prompt = Prompt({
   variable: "--font-prompt",
 });
 
+const baiJamjuree = Bai_Jamjuree({
+  weight: ["600", "700"],
+  subsets: ["thai", "latin"],
+  display: "swap",
+  variable: "--font-bai-jamjuree",
+});
+
 export const metadata: Metadata = {
   title: "Class Schedule · ตารางเรียน",
   description: "ตารางเรียนรายสัปดาห์ ภาคการศึกษาที่ 2/2569",
@@ -35,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" className={`${anton.variable} ${prompt.variable}`}>
+    <html lang="th" className={`${anton.variable} ${prompt.variable} ${baiJamjuree.variable}`}>
       <body>{children}</body>
     </html>
   );

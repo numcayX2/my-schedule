@@ -79,7 +79,7 @@
 
   --font-display: var(--font-anton), var(--font-prompt), sans-serif;
   --font-body: var(--font-prompt), system-ui, sans-serif;
-  --font-mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+  --font-sub: var(--font-bai-jamjuree), var(--font-prompt), sans-serif;
 
   /* Mirrors components/motion-presets.ts */
   --snap: cubic-bezier(0.2, 0.9, 0.2, 1);
@@ -182,8 +182,9 @@ button {
 
 /* ---------- shared hardware atoms ---------- */
 .stamp {
-  font: 600 11px/1.2 var(--font-mono);
-  letter-spacing: 0.16em;
+  font: 700 11px/1.2 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
   text-transform: uppercase;
 }
@@ -423,8 +424,9 @@ button {
 
 .clock-time {
   margin-top: 8px;
-  font: 600 13px/1 var(--font-mono);
-  letter-spacing: 0.2em;
+  font: 700 13px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
   color: var(--text-muted);
 }
 
@@ -497,8 +499,8 @@ button {
 .vhs-spine span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font: 600 10px/1 var(--font-mono);
-  letter-spacing: 0.3em;
+  font: 700 10px/1 var(--font-sub);
+  letter-spacing: 0.22em;
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -531,8 +533,8 @@ button {
 }
 
 .rec {
-  font: 600 10px/1 var(--font-mono);
-  letter-spacing: 0.18em;
+  font: 700 11px/1 var(--font-sub);
+  letter-spacing: 0.1em;
   color: var(--text-muted);
 }
 
@@ -564,15 +566,16 @@ button {
 .now-meta {
   position: relative;
   z-index: 1;
-  font: 600 11px/1.6 var(--font-mono);
-  letter-spacing: 0.06em;
+  font: 600 12px/1.6 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
   color: var(--text-muted);
   text-transform: uppercase;
 }
 
 .now-meta b {
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* Solid recessed EMPTY box inside NOW deck (screenshots #05, #15, #34) */
@@ -609,8 +612,9 @@ button {
   display: flex;
   justify-content: space-between;
   margin-bottom: 6px;
-  font: 600 10px/1 var(--font-mono);
-  letter-spacing: 0.16em;
+  font: 700 11px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
@@ -731,8 +735,9 @@ button {
 }
 
 .panel-head span {
-  font: 600 10px/1 var(--font-mono);
-  letter-spacing: 0.16em;
+  font: 700 11px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
   padding: 4px 10px;
   border-radius: 9999px;
@@ -789,8 +794,9 @@ button {
 
 .queue-name small {
   display: block;
-  font: 600 10px/1.4 var(--font-mono);
-  letter-spacing: 0.06em;
+  font: 600 11px/1.4 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
   color: var(--text-muted);
 }
 
@@ -841,8 +847,9 @@ button {
 }
 
 .file-item code {
-  font: 600 10px/1 var(--font-mono);
-  letter-spacing: 0.08em;
+  font: 700 11px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
 }
 
@@ -861,8 +868,9 @@ button {
 }
 
 .count {
-  font: 600 11px/1 var(--font-mono);
-  letter-spacing: 0.16em;
+  font: 700 11px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
   padding: 8px 16px;
   border-radius: 9999px;
@@ -1003,8 +1011,8 @@ button {
 .week-corner {
   margin-left: 10px;
   padding: 0 12px;
-  font: 700 11px/1 var(--font-mono);
-  letter-spacing: 0.12em;
+  font: 700 12px/1 var(--font-sub);
+  letter-spacing: 0.06em;
 }
 
 .week-hour {
@@ -1082,8 +1090,9 @@ button {
 }
 
 .day-tab small {
-  font: 600 12px/1 var(--font-mono);
-  letter-spacing: 0.1em;
+  font: 700 12px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
 }
 
@@ -1246,8 +1255,8 @@ button {
   border-radius: 50%;
   background: var(--ink-card);
   color: var(--text);
-  font: 700 8px/1 var(--font-mono);
-  letter-spacing: 0;
+  font: 700 9px/1 var(--font-sub);
+  letter-spacing: 0.02em;
 }
 
 .chip-lab {
@@ -1291,9 +1300,10 @@ button {
 .card-meta {
   margin-top: auto;
   padding-right: 28px;
-  font: 700 10px/1.35 var(--font-mono);
-  letter-spacing: 0.04em;
-  color: rgba(17, 17, 17, 0.85);
+  font: 700 11px/1.35 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: rgba(17, 17, 17, 0.86);
   text-transform: uppercase;
 }
 
@@ -1428,12 +1438,12 @@ button {
   height: 132px;
 }
 
-/* ---------- dossier drawer (warm grey-cream hardware binder, screenshot #74) ---------- */
+/* ---------- dossier modal (ZZZ hardware dialog #68/#69/#70 + stitched folder #74) ---------- */
 .scrim {
   position: fixed;
   inset: 0;
   z-index: 20;
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.76);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--t) var(--snap);
@@ -1446,21 +1456,22 @@ button {
 
 .dossier {
   position: fixed;
-  top: 24px;
+  top: 50%;
   right: 24px;
-  bottom: 24px;
   z-index: 21;
-  width: min(440px, calc(100vw - 32px));
-  overflow: auto;
-  padding: 28px 26px 26px 54px;
-  background: var(--paper);
-  color: var(--accent-ink);
-  border: 3px solid var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  width: min(468px, calc(100% - 48px));
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
+  background: var(--bg-panel);
+  color: var(--text);
+  border: 2.5px solid var(--line-strong);
   border-radius: 26px 10px 26px 26px;
   box-shadow:
     0 0 0 3px var(--ink-black),
-    inset 0 2px 0 rgba(255, 255, 255, 0.35);
-  transform: translateX(calc(100% + 120px)) skewX(-4deg);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transform: translate(calc(100% + 60px), -50%) skewX(-3deg);
   visibility: hidden;
   transition:
     transform 0.18s var(--snap),
@@ -1468,45 +1479,59 @@ button {
 }
 
 .dossier.is-open {
-  transform: none;
+  transform: translate(0, -50%);
   visibility: visible;
   transition:
     transform 0.18s var(--snap),
     visibility 0s;
 }
 
-.dossier-holes {
-  position: absolute;
-  left: 18px;
-  top: 60px;
+/* Dark micro-dot header bar holding title & tilted close button (#15, #24, #68, #70, #76) */
+.dossier-head {
+  flex: none;
   display: flex;
-  flex-direction: column;
-  gap: 70px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background-color: var(--bg-void);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1.2px);
+  background-size: 5px 5px;
+  border-bottom: 2px solid var(--ink-black);
 }
 
-.dossier-holes i {
-  width: 16px;
-  height: 16px;
+.dossier-code {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font: 700 13px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.dossier-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--bg-base);
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.8);
+  background: var(--tone);
+  box-shadow: 0 0 0 2px var(--ink-black);
 }
 
-/* Iconic ZZZ tilted squircle close button (#15, #24, #27, #28, #76):
-   red-orange casing with bright rim and bold black X. */
+/* Iconic ZZZ tilted squircle close button (#15, #24, #27, #28, #68, #70, #76) */
 .dossier-close {
-  position: absolute;
-  right: 20px;
-  top: 18px;
+  flex: none;
   display: grid;
   place-items: center;
-  width: 54px;
-  height: 36px;
+  width: 52px;
+  height: 34px;
   border: 2.5px solid var(--close-rim);
-  border-radius: 18px 8px 18px 18px;
+  border-radius: 17px 7px 17px 17px;
   background: linear-gradient(180deg, var(--close-rim), var(--close-bg) 55%);
   color: var(--ink-black);
-  box-shadow: 0 0 0 3px var(--ink-black);
+  box-shadow: 0 0 0 2.5px var(--ink-black);
   transform: skewX(-12deg);
   cursor: pointer;
   transition:
@@ -1524,125 +1549,273 @@ button {
 }
 
 .dossier-close:focus-visible {
-  outline: 3px solid var(--ink-black);
+  outline: 3px solid var(--accent);
   outline-offset: 4px;
 }
 
-.dossier-code {
-  font: 600 11px/1 var(--font-mono);
-  letter-spacing: 0.2em;
-  padding-right: 72px;
+.dossier-body {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--strip-lo) transparent;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Giant angled ghost watermark behind modal content (#68, #69, #70) */
+.dossier-wm {
+  position: absolute;
+  right: -14px;
+  bottom: 18px;
+  z-index: 0;
+  font: 400 96px/0.85 var(--font-display);
+  letter-spacing: 0.02em;
+  color: var(--text);
+  opacity: 0.04;
+  transform: rotate(-10deg);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Stitched warm grey-cream dossier folder card (modeled directly on #74) */
+.dossier-folder {
+  position: relative;
+  z-index: 1;
+  border-radius: 18px 8px 18px 18px;
+  overflow: hidden;
+  border: 2.5px solid var(--ink-black);
+  box-shadow: 0 0 0 2px var(--line);
+  background: var(--paper);
+}
+
+/* Dark stitched top flap with dashed seam (#74 card top bar) */
+.dossier-flap {
+  position: relative;
+  padding: 14px 16px 14px;
+  background: linear-gradient(180deg, var(--bg-hover), var(--bg-raised));
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.65);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.dossier-kicker {
+  display: inline-block;
+  font: 400 12px/1 var(--font-display);
+  letter-spacing: 0.14em;
+  color: var(--accent-tag);
+  -webkit-text-stroke: 3px var(--ink-black);
+  paint-order: stroke fill;
+  transform: skewX(-10deg);
 }
 
 .dossier-bars {
+  position: absolute;
+  right: 16px;
+  top: 13px;
   display: flex;
   gap: 2px;
-  height: 22px;
-  margin: 10px 0 18px;
+  height: 16px;
+  opacity: 0.45;
 }
 
 .dossier-bars i {
-  background: var(--accent-ink);
+  background: var(--text);
 }
 
 .dossier-bars i.gap {
   background: transparent;
 }
 
-.dossier-kicker {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  font: 400 15px/1 var(--font-display);
-  letter-spacing: 0.1em;
+.dossier-name {
+  margin-top: 8px;
+  font: 800 20px/1.35 var(--font-body);
+  text-wrap: balance;
+  color: var(--text);
+  -webkit-text-stroke: 3px var(--ink-black);
+  paint-order: stroke fill;
 }
 
-.dossier-kicker i {
-  display: inline-block;
-  width: 24px;
-  height: 10px;
+/* Warm grey-cream paper body (#C4BFB0, screenshot #74) */
+.dossier-sheet {
+  padding: 14px 16px 16px;
+  color: var(--accent-ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.06) 1px, transparent 1.2px);
+  background-size: 7px 7px;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Vibrant black-outlined category pills (#74: ผ่อนคลาย / เนื้อเรื่อง / ต่อสู้) */
+.dossier-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.dossier-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 13px;
   border-radius: 9999px;
   background: var(--tone);
-  border: 1.5px solid var(--accent-ink);
+  color: var(--ink-card);
+  border: 2.5px solid var(--ink-black);
+  font: 700 11px/1.2 var(--font-sub);
+  letter-spacing: 0.06em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
-.dossier-name {
-  margin: 8px 0 18px;
-  font: 800 26px/1.35 var(--font-body);
+.dossier-badge-dark {
+  background: var(--bg-void);
+  color: var(--text);
+  box-shadow: none;
 }
 
-.dossier-grid {
+/* Recessed dark pill data strips inside the paper card (#74 / #05) */
+.dossier-pills {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 2px solid var(--accent-ink);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
 }
 
-.dossier-grid div {
-  padding: 10px 10px 10px 0;
-  border-bottom: 1px solid rgba(10, 10, 10, 0.25);
+.dossier-pills > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 9999px;
+  background: var(--bg-void);
+  border: 2px solid var(--ink-black);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.dossier-grid dt {
-  margin-bottom: 5px;
-  font: 600 9px/1 var(--font-mono);
-  letter-spacing: 0.18em;
-  color: var(--paper-muted);
+.dossier-pill-wide {
+  grid-column: 1 / -1;
 }
 
-.dossier-grid dd {
-  font: 600 15px/1.35 var(--font-body);
+.dossier-pills dt {
+  flex: none;
+  font: 700 10px/1 var(--font-sub);
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.dossier-pills dd {
+  min-width: 0;
+  text-align: right;
+  font: 700 13px/1.2 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+/* Dark recessed sessions rack (#68, #69, #70) */
+.dossier-rack {
+  position: relative;
+  z-index: 1;
+  padding: 12px;
+  border-radius: 18px 8px 18px 18px;
+  background: var(--bg-void);
+  border: 2px solid var(--line);
+  box-shadow: var(--trough-inset);
+}
+
+.dossier-rack-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 0 4px;
 }
 
 .dossier-sub {
-  margin: 22px 0 8px;
-  font: 400 18px/1 var(--font-display);
+  font: 400 17px/1 var(--font-display);
   letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.dossier-rack-head span {
+  font: 700 11px/1 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.dossier-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .dossier-sessions li {
   display: grid;
-  grid-template-columns: 52px 1fr auto;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
-  margin-bottom: 8px;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.55);
-  border: 2px solid var(--accent-ink);
-  border-radius: 16px 6px 16px 16px;
+  padding: 9px 12px;
+  background: var(--bg-raised);
+  border: 2px solid var(--ink-black);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .dossier-sessions b {
-  font: 400 20px/1 var(--font-display);
-  letter-spacing: 0.05em;
+  display: grid;
+  place-items: center;
+  padding: 5px 0 4px;
+  border-radius: 9999px;
+  background: var(--bg-void);
+  border: 1.5px solid var(--line-strong);
+  color: var(--accent);
+  font: 400 17px/1 var(--font-display);
+  letter-spacing: 0.06em;
 }
 
 .dossier-sessions span {
   display: block;
   font: 400 18px/1.1 var(--font-display);
   font-variant-numeric: tabular-nums;
-}
-
-.dossier-sessions small {
-  font: 600 10px/1.3 var(--font-mono);
-  letter-spacing: 0.06em;
-  color: var(--paper-muted);
-}
-
-.dossier-sessions em {
-  font: 700 9px/1 var(--font-mono);
-  font-style: normal;
-  letter-spacing: 0.12em;
-  padding: 5px 9px;
-  border-radius: 9999px;
-  background: var(--accent-ink);
   color: var(--text);
 }
 
+.dossier-sessions small {
+  display: block;
+  font: 600 11px/1.3 var(--font-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+
+.dossier-sessions em {
+  font: 700 10px/1 var(--font-sub);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  padding: 6px 11px;
+  border-radius: 9999px;
+  background: var(--bg-void);
+  border: 1.5px solid var(--line-strong);
+  color: var(--text);
+}
+
+.dossier-sessions em.is-lab {
+  border-color: var(--tone);
+  color: var(--tone);
+}
+
 .dossier-foot {
-  margin-top: 22px;
-  font: 600 9px/1.6 var(--font-mono);
-  letter-spacing: 0.14em;
-  color: var(--paper-muted);
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font: 600 10px/1.5 var(--font-sub);
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
 }
 
 /* ---------- responsive ---------- */
@@ -1693,6 +1866,42 @@ button {
 
   .app {
     padding-bottom: 96px;
+  }
+
+  .dossier {
+    top: 50%;
+    left: 14px;
+    right: 14px;
+    width: auto;
+    max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    transform: translateY(calc(-50% + 20px));
+    opacity: 0;
+    transition:
+      transform 0.18s var(--snap),
+      opacity 0.18s var(--snap),
+      visibility 0s linear 0.18s;
+  }
+
+  .dossier.is-open {
+    transform: translateY(-50%);
+    opacity: 1;
+    transition:
+      transform 0.18s var(--snap),
+      opacity 0.18s var(--snap),
+      visibility 0s;
+  }
+
+  .dossier-head {
+    padding: 12px 14px;
+  }
+
+  .dossier-body {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .dossier-name {
+    font-size: 19px;
   }
 }
 
