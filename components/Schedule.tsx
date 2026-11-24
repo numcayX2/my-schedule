@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import Dossier from "./Dossier";
 import MobileDays from "./MobileDays";
 import NowDeck from "./NowDeck";
 import WeekBoard from "./WeekBoard";
 import type { TypeFilter } from "./ClassCard";
-import { CLOCK_TICK_MS, DECODE } from "./motion-presets";
+import { CLOCK_TICK_MS, DECODE, SNAP, TRANSITION_MS } from "./motion-presets";
 import { CLASSES } from "./schedule-data";
 import { demoDate, durationHours, getNowState, isoWeek, pad2 } from "./schedule-time";
 import { DISPLAY_CHARSET, EncryptedText } from "./ui/encrypted-text";
@@ -46,6 +47,7 @@ export default function Schedule() {
   // so time-dependent output never causes a hydration mismatch.
   const tickMs = useSyncExternalStore(subscribeClock, readClock, () => null);
   const isDemo = useSyncExternalStore(subscribeHash, readDemoHash, () => false);
+  const reducedMotion = useReducedMotion();
   const [filter, setFilter] = useState<TypeFilter>("ALL");
   const [dossierCode, setDossierCode] = useState<string | null>(null);
   const [dossierOpen, setDossierOpen] = useState(false);
@@ -91,6 +93,36 @@ export default function Schedule() {
             {` // ${TERM}`}
           </span>
         </div>
+
+        <div className="hud-pills" aria-label="สรุปตารางเรียน">
+          <span className="hud-pill">
+            <span className="hud-icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="12" height="12">
+                <rect x="2" y="2" width="5" height="5" rx="1.2" fill="currentColor" />
+                <rect x="9" y="2" width="5" height="5" rx="1.2" fill="currentColor" />
+                <rect x="2" y="9" width="5" height="5" rx="1.2" fill="currentColor" />
+                <rect x="9" y="9" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.45" />
+              </svg>
+            </span>
+            <b>{pad2(COURSES.length)}</b>
+            <small>วิชา</small>
+          </span>
+          <span className="hud-pill">
+            <span className="hud-icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="12" height="12">
+                <rect x="2" y="3" width="12" height="2.6" rx="1.3" fill="currentColor" />
+                <rect x="2" y="7" width="9" height="2.6" rx="1.3" fill="currentColor" />
+                <rect x="2" y="11" width="11" height="2.6" rx="1.3" fill="currentColor" opacity="0.55" />
+              </svg>
+            </span>
+            <b>{pad2(CLASSES.length)}</b>
+            <small>คาบ</small>
+          </span>
+          <span className={`hud-pill hud-pill-status${now?.current ? " is-live" : ""}`}>
+            <i className="hud-dot" aria-hidden="true" />
+            <b>{now ? (now.current ? "IN CLASS" : "STANDBY") : "SYNC"}</b>
+          </span>
+        </div>
       </div>
 
       <header className="head">
@@ -130,17 +162,28 @@ export default function Schedule() {
       <main className="main">
         <div className="board-tools">
           <div className="filters trough-group" role="group" aria-label="กรองประเภทคาบ">
-            {FILTERS.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                className="pill"
-                aria-pressed={filter === f.id}
-                onClick={() => setFilter(f.id)}
-              >
-                <span>{f.label}</span>
-              </button>
-            ))}
+            {FILTERS.map((f) => {
+              const active = filter === f.id;
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  className="pill"
+                  aria-pressed={active}
+                  onClick={() => setFilter(f.id)}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId={reducedMotion ? undefined : "filter-active-pill"}
+                      className="pill-active-slot"
+                      transition={{ duration: TRANSITION_MS / 1000, ease: SNAP }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className="pill-label">{f.label}</span>
+                </button>
+              );
+            })}
           </div>
           <div className="count">
             <b>{pad2(hours)}</b>HRS / WEEK

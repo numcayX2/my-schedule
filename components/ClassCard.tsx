@@ -37,13 +37,34 @@ export default function ClassCard({
       aria-hidden={dimmed || undefined}
       aria-label={`${session.name} ${session.start} ถึง ${session.end} ห้อง ${session.room} กลุ่ม ${session.section} ${session.type}${isNow ? " กำลังเรียน" : ""}`}
     >
-      <span className={`chip${session.type === "LAB" ? " chip-lab" : ""}`}>{session.type}</span>
-      <span className="card-time">
-        {session.start}–{session.end}
+      <span className="card-top">
+        <span className="card-time">
+          {session.start}–{session.end}
+        </span>
+        <span className={`chip${session.type === "LAB" ? " chip-lab" : ""}`}>{session.type}</span>
+        {isNow && <span className="card-live">NOW</span>}
       </span>
+
       <span className="card-name">{session.name}</span>
+
       <span className="card-meta">
-        <span>{session.room}</span> <span>SEC {session.section}</span> <span>{session.code}</span>
+        <span className="meta-room">{session.room}</span>
+        <span className="meta-sub">
+          SEC {session.section} · {session.code}
+        </span>
+      </span>
+
+      <span className="card-go" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="12" height="12">
+          <path
+            d="M6 3.5L10.5 8 6 12.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </span>
     </button>
   );

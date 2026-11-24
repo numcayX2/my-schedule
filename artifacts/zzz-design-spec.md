@@ -74,12 +74,12 @@
 
 โครงสร้างกรอบตาราง (desktop): shell ดำลายทแยง ขอบ `--shell-border` มุมโค้งอสมมาตร (มุมขวาบนโค้งเล็กกว่า) > bezel โลหะเทามี noise, เส้นตะเข็บ dashed และ binding tab 3 อันโผล่ขอบขวา > viewport มืดมุมโค้ง > แถบหัวเวลาสีเทานูนในร่อง `--trough` ตัวเลขดำ ร่องแบ่งทุกชั่วโมง ขีดครึ่งชั่วโมง ชั่วโมงปัจจุบันสว่างขึ้นเป็น `--strip-now`
 แท็บวัน: pill มืดขอบเทา, วันนี้ = แท็บ active ของเกม (สี `--accent`, ขอบซ้ายเฉียง, ปลายขวามน)
-เส้นเวลาปัจจุบัน: pill `NOW hh:mm` ในร่องเหนือแถบหัว + เส้นยาวทุกแถวปลายเป็นจุด อยู่หลังการ์ดและหลังป้าย `NO CLASS` *(เกม `#28` ใช้สีแดง `--danger` `#DF261D` แต่ spec คงการใช้ `--accent` เพื่อให้ทั้งหน้ามีสีเน้นหลักสีเดียว)*
+เส้นเวลาปัจจุบัน: pill `NOW hh:mm` ในร่องเหนือแถบหัว + เส้นยาวทุกแถวปลายเป็นจุด อยู่หลังการ์ดวิชาแต่ลากทับช่อง `NO CLASS` *(เกม `#28` ใช้สีแดง `--danger` `#DF261D` แต่ spec คงการใช้ `--accent` เพื่อให้ทั้งหน้ามีสีเน้นหลักสีเดียว)*
 
 ### 2.3 Class card (ตามแถวกิจกรรมในเกม ภาพ `#28`)
 
-การ์ดวิชาใช้รูปแบบแถวกิจกรรมจากภาพ `#28`: สีประจำวิชาเป็นสีพื้นทั้งการ์ด (ไล่เฉด 135° เบา ๆ) มีขอบในเข้มขึ้น 2px และเส้นไฮไลต์บน 2px, ตัวอักษรดำ `#111111`, ปุ่มกลมดำบอกประเภท `LEC`/`LAB` มุมขวาบน (`LAB` ใช้ตัวอักษรสีวิชา), halftone จางเฉพาะมุมขวาล่างนอกพื้นที่ตัวอักษร
-มุมโค้ง 30px (ไม่ใช้ pill เต็มเพราะคาบ 1.5 ชม. กว้างเพียง ~140px) สถานะ `now` / `focus` = วงแหวนดำ 2px + วงแหวน `--accent` 3px นอกการ์ด
+การ์ดวิชาใช้รูปแบบแถวกิจกรรมจากภาพ `#28`: สีประจำวิชาสดอิ่มไล่เฉดซ้ายไปขวา (`96deg`), ขอบดำนอกสุด `2.5px` ซ้อนเส้นไฮไลต์สว่างรอบขอบในทั้งวง `2px`, ชื่อวิชา `Prompt 700` สีดำเข้ม, ป้ายแคปซูลดำบอกประเภท `LEC`/`LAB` คู่กับเวลา (`LAB` ใช้ตัวอักษรสีวิชา), ห้องเรียนอยู่ในแคปซูลจาง `.meta-room`, ปุ่มกลมดำมีวงแหวนเทาซ้อนด้านในพร้อมลูกศร `>` (`.card-go`, บนมือถือวางกึ่งกลางขวาเหมือน `#28` เป๊ะ) และ halftone จางเฉพาะมุมขวาล่างนอกพื้นที่ตัวอักษร
+มุมโค้ง `28px` สถานะ `now` / `focus` = วงแหวน `--accent` `3px` + ขอบดำนอก `2.5px` พร้อมป้าย `NOW` บนการ์ดที่กำลังเรียน
 
 **Subject colour tokens (ห้ามซ้ำ `--accent`, `--warn` หรือ `--info` และต้องอ่านตัวอักษร `#111111` ผ่าน AA 4.5:1):**
 
@@ -107,7 +107,7 @@
 | Display | Anton (หนามาก condensed ตัวพิมพ์ใหญ่ เอียงได้ `skewX(-8deg)`) | หัวหน้า, ชื่อวัน, `WEEKLY SCHEDULE` |
 | Numeral | หนา tabular (`font-variant-numeric: tabular-nums`) | เวลา, วันที่ `23/11 MON`, นับชั่วโมง |
 | Body | Prompt (sans-serif รองรับภาษาไทย) น้ำหนัก 400 / 600 / 800 | ชื่อวิชา, ห้อง, รายละเอียดใน Dossier |
-| Label / Sub-font | Bai Jamjuree (600 / 700, รองรับไทย+อังกฤษ, `tabular-nums`, letter-spacing กระชับ 0.02–0.1em — ห้ามใช้ monospace แบบ code editor) | `ROOM`, `SEC`, `10307121`, `วิทย์ 2205 (105)`, serial stamp |
+| Label / Sub-font | Kanit (500 / 600 / 700, ไม่มีหัว รองรับไทย+อังกฤษ, `tabular-nums`, letter-spacing กระชับ 0.02–0.1em — ห้ามใช้ monospace แบบ code editor) | `ROOM`, `SEC`, `10700252`, `สังคม 202 (102)`, serial stamp |
 | Watermark | display ขนาดยักษ์ opacity 4–8% (เอียงได้) วางหลังแผง | `WK47`, `DATA FILE`, `SCHEDULE` |
 
 กฎ: หัวข้อภาษาอังกฤษตัวพิมพ์ใหญ่เป็นกราฟิกคู่กับข้อความไทย ข้อความไทยใช้ Prompt ตรงเสมอ ห้ามเอียงเทียม (`skew`/`italic`) กับข้อความไทย และไม่ใช้ display font กับข้อความไทยยาว (ตรงกับวิธีแสดงภาษาไทยในเกมทั้ง 79 ภาพ)
@@ -145,11 +145,11 @@
 |---|---|
 | Inactive | ข้อความ `--text-muted`, พื้น `--bg-void` หรือ `--bg-panel`, ขอบ `--line` |
 | Hover | พื้น `--bg-hover`, ขอบสว่างขึ้นเป็น `--line-strong`, การ์ดขยับ `translate(-2px, -2px)` หรือเพิ่ม brightness เล็กน้อย |
-| Active / Focus | แท็บ/ปุ่มเติม `--accent` ตัวอักษร `--accent-ink`; การ์ด/ช่องโฟกัสใช้วงแหวนดำ + `--accent` 3px |
+| Active / Focus | แท็บ/ปุ่มเติม `--accent` ตัวอักษร `--accent-ink` (สไลด์เข้าล็อกข้ามช่องด้วย `motion` `layoutId`); การ์ด/แถวมีจังหวะยุบตัว `:active` (`scale(0.98)`) และวงแหวนโฟกัส `--accent` 3px |
 | Active-tab pulse | แท็บที่เลือกสามารถกระพริบช้า ๆ ระหว่าง `--accent-lime` (`#B8CC00`) ↔ `--accent-peak` (`#FCDD00`) เหมือนในเกม (`#27`–`#30`–`#74`–`#76`) และปิดอัตโนมัติเมื่อเปิด `prefers-reduced-motion` |
 | Today | แท็บวัน active สี `--accent` ขอบซ้ายเฉียง + ป้าย `TODAY` + เส้น `NOW` |
 | Transition | เร็วและคม `120–180ms`, easing แบบ snap (`cubic-bezier(.2, .9, .2, 1)`), ไม่ bounce นุ่ม |
-| Enter | slide เฉียงเข้า (`translate + skew`) แบบ stagger ทีละการ์ด (`40ms`) |
+| Enter / Modal | Pop-up คมชัด (`scale(0.9–0.92) -> scale(1)` + `opacity`, easing แบบ `--snap` ไม่ slide-up และไม่ bounce นุ่ม); การ์ดวิชา pop-up แบบ stagger ทีละใบ (`40ms`) |
 
 ต้องรองรับ `prefers-reduced-motion` ทุกแอนิเมชัน (รวมถึง `EncryptedText` และ active-tab pulse)
 
@@ -159,10 +159,10 @@
 
 | ส่วนของเว็บ | คอมโพเนนต์ | แนวทางตาม Spec v2 |
 |---|---|---|
-| Topbar | `Schedule.tsx` | แถบกรอบฮาร์ดแวร์มุมโค้งอสมมาตร โลโก้ pill `MY—SCHEDULE` + serial stamp (`EncryptedText`) |
+| Topbar | `Schedule.tsx` | แถบกรอบฮาร์ดแวร์มุมโค้งอสมมาตร โลโก้ pill `MY—SCHEDULE` + serial stamp (`EncryptedText`) ด้านซ้าย คู่กับแคปซูล HUD มุมขวาบน (`06 วิชา`, `11 คาบ`, สถานะ `IN CLASS`/`STANDBY` แบบ `#03`/`#74`) |
 | Page header | `Schedule.tsx` | Display เอียง (`WEEKLY SCHEDULE`) + นาฬิกา/วันที่ตัวเลขใหญ่ tabular + watermark ยักษ์จางด้านหลังบนพื้นลายทางทแยง |
-| NOW card (VHS/Deck) | `NowDeck.tsx` | กรอบฮาร์ดแวร์มุมโค้งอสมมาตร ขอบซ้อนชั้น สันแนวตั้ง `NOW PLAYING // SIDE A` + ป้ายสถานะ + แถบ progress ส้ม (§2.1) |
-| UP NEXT & COURSE FILES | `NowDeck.tsx` | กรอบมุมโค้งหนาซ้อนชั้น + แถบหัวลายจุดละเอียด (ไม่เป็นกล่องแบนเส้น 1px) แถวรายการในร่องมืด มีแถบสีวิชาและ hover highlight |
+| NOW card (VHS/Deck) | `NowDeck.tsx` | กรอบฮาร์ดแวร์มุมโค้งอสมมาตร ขอบซ้อนชั้น สันแนวตั้ง `SCHEDULE // SIDE A` พร้อมห่วงสันเหล็ก 3 ซี่ (`#03`) + ป้ายสถานะ + แถบ progress ส้ม (§2.1) |
+| UP NEXT & COURSE FILES | `NowDeck.tsx` | กรอบมุมโค้งหนาซ้อนชั้น + แถบหัวลายจุดละเอียด แถวรายการในร่องมืด มีแถบสีวิชาและปุ่มกลมลูกศร `>` ท้ายแถว (`#28`/`#30`) |
 | Board tools (Filters) | `Schedule.tsx` | ตัวกรอง `ทั้งหมด` / `LEC` / `LAB` อยู่ในร่อง pill รวมชุดเดียวกัน (active = แท็บเฉียงสี `--accent`) + ตัวเลข `HRS / WEEK` |
 | Week board frame | `WeekBoard.tsx` | กรอบ Event Calendar (§2.2): เปลือกดำลายทแยง > bezel โลหะเทามีตะเข็บและ binding tabs > viewport `--viewport` > แถบหัวเวลาเทานูน (ชั่วโมงปัจจุบัน `--strip-now`) > `NOW` pill + เส้นลากยาว |
 | Day tabs | `WeekBoard.tsx` / `MobileDays.tsx` | Desktop: แท็บมืดขอบเทา, วันนี้ = แท็บ active สี `--accent` ขอบซ้ายเฉียงปลายขวามน; Mobile dock: ร่องมืดด้านล่างพร้อมแท็บเฉียง |
@@ -196,8 +196,8 @@
 
 **ยืนยันแล้ว**
 - วัดพิกเซลยืนยันสีทั้งหมดจากภาพต้นฉบับ 79 ภาพ (`C:\Users\Acer\Pictures\ZZZ_finetune`) เรียบร้อยแล้ว
-- Display: **Anton** (Google Fonts), Body และภาษาไทย: **Prompt** (`400/600/800`), Sub-font / Metadata / Codes: **Bai Jamjuree** (`600/700`, ไทย+อังกฤษ, `tabular-nums` — ในเกม ZZZ ไม่ใช้ monospace แบบ terminal)
-- Font stack: `"Anton", "Prompt", sans-serif` สำหรับ display, `"Prompt", system-ui, sans-serif` สำหรับ body, `"Bai Jamjuree", "Prompt", sans-serif` สำหรับ sub-font/metadata
+- Display: **Anton** (Google Fonts), Body และภาษาไทย: **Prompt** (`400/600/800`), Sub-font / Metadata / Codes: **Kanit** (`500/600/700`, ไม่มีหัว ไทย+อังกฤษ, `tabular-nums` — ในเกม ZZZ ไม่ใช้ monospace แบบ terminal)
+- Font stack: `"Anton", "Prompt", sans-serif` สำหรับ display, `"Prompt", system-ui, sans-serif` สำหรับ body, `"Kanit", "Prompt", sans-serif` สำหรับ sub-font/metadata
 - Radix UI Themes: เอาออกแล้ว ใช้ token ของ ZZZ อย่างเดียว
 - Tailwind v4: ติดตั้งแบบไม่มี preflight ใช้เฉพาะ component ของ Aceternity ใน `components/ui`
 - Aceternity: ใช้ `EncryptedText` กับ `h1`, serial stamp และรหัสใน dossier (ไม่ใช้กับข้อความไทย)

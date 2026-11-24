@@ -33,9 +33,15 @@ export default function NowDeck({
   return (
     <aside className="deck" aria-label="สถานะตอนนี้">
       <section className="vhs" aria-labelledby="now-tag" aria-live="polite">
-        <div className="vhs-spine" aria-hidden="true">
-          <span>NOW PLAYING // SIDE A</span>
+        <div className={`vhs-spine${current ? " is-live" : ""}`} aria-hidden="true">
+          <b>SCHEDULE</b>
+          <small>SIDE A</small>
         </div>
+        <span className="vhs-rings" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
         <div className="vhs-label">
           <span id="now-tag" className={`tape${current ? "" : " tape-ghost"}`}>
             {now ? (current ? "NOW" : "FREE") : "SYNC"}
@@ -141,6 +147,18 @@ export default function NowDeck({
                 </small>
               </span>
               <span className="queue-time">{s.start}</span>
+              <span className="row-chev" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="11" height="11">
+                  <path
+                    d="M6 3.5L10.5 8 6 12.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
             </button>
           ))}
         </div>
@@ -161,8 +179,20 @@ export default function NowDeck({
               onClick={(e) => onOpen(c.code, e.currentTarget)}
             >
               <i aria-hidden="true" />
-              <span>{c.name}</span>
+              <span className="file-name">{c.name}</span>
               <code>{c.code}</code>
+              <span className="row-chev" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="11" height="11">
+                  <path
+                    d="M6 3.5L10.5 8 6 12.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
             </button>
           ))}
         </div>

@@ -79,7 +79,7 @@
 
   --font-display: var(--font-anton), var(--font-prompt), sans-serif;
   --font-body: var(--font-prompt), system-ui, sans-serif;
-  --font-sub: var(--font-bai-jamjuree), var(--font-prompt), sans-serif;
+  --font-sub: var(--font-kanit), var(--font-prompt), sans-serif;
 
   /* Mirrors components/motion-presets.ts */
   --snap: cubic-bezier(0.2, 0.9, 0.2, 1);
@@ -224,36 +224,51 @@ button {
     transform var(--t) var(--snap);
 }
 
-.pill span {
+.pill-label {
+  position: relative;
+  z-index: 1;
   display: inline-block;
 }
 
-.pill:hover {
+.pill:hover:not([aria-pressed="true"]) {
   background: var(--bg-raised);
   color: var(--text);
 }
 
-/* Active tab in trough: slanted capsule with lime <-> yellow pulse */
+.pill:active {
+  transform: scale(0.97);
+}
+
 .pill[aria-pressed="true"] {
-  background: var(--accent);
   color: var(--accent-ink);
   font-weight: 800;
+}
+
+/* Sliding active tab slot (animated by motion layoutId; ::before holds skew + pulse
+   so FLIP transforms never collide with CSS skewX). */
+.pill-active-slot {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.pill-active-slot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   border-radius: 14px;
   transform: skewX(-14deg);
+  background: var(--accent);
   box-shadow: 0 0 0 1px var(--ink-black);
   animation: zzz-pulse 2.8s ease-in-out infinite;
 }
 
-.pill[aria-pressed="true"] span {
-  transform: skewX(14deg);
-}
-
-/* Keep rounded outer caps on first/last active tab inside a trough */
-.trough-group .pill[aria-pressed="true"]:first-child {
+.trough-group .pill:first-child .pill-active-slot::before {
   border-radius: 9999px 10px 10px 9999px;
 }
 
-.trough-group .pill[aria-pressed="true"]:last-child {
+.trough-group .pill:last-child .pill-active-slot::before {
   border-radius: 10px 9999px 9999px 10px;
 }
 
@@ -279,7 +294,7 @@ button {
 /* Solid dark recessed empty slot with bold X (screenshots #05, #15, #34, spec 4) */
 .no-class {
   position: relative;
-  z-index: 1;
+  z-index: 0;
   margin: 10px 8px;
   border-radius: 18px 8px 18px 18px;
   background: var(--bg-void);
@@ -351,6 +366,80 @@ button {
   padding: 8px 18px;
   border-radius: 9999px;
   box-shadow: 0 0 0 2px var(--ink-black);
+}
+
+/* Top-right ZZZ HUD resource capsules (modeled on screenshots #03, #22, #74) */
+.hud-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px 4px 5px;
+  border-radius: 9999px;
+  background: var(--bg-void);
+  border: 2px solid var(--line);
+  box-shadow:
+    0 0 0 1.5px var(--ink-black),
+    var(--trough-inset);
+}
+
+.hud-icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 1.5px solid var(--line-strong);
+  color: var(--text);
+}
+
+.hud-pill b {
+  font: 400 16px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+.hud-pill small {
+  font: 600 11px/1 var(--font-body);
+  color: var(--text-muted);
+}
+
+.hud-pill-status {
+  padding: 6px 12px 6px 10px;
+}
+
+.hud-pill-status b {
+  font: 700 11px/1 var(--font-sub);
+  letter-spacing: 0.08em;
+}
+
+.hud-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 2px var(--ink-black);
+}
+
+.hud-pill-status.is-live {
+  border-color: var(--accent);
+}
+
+.hud-pill-status.is-live .hud-dot {
+  background: var(--accent);
+  animation: zzz-pulse 2.8s ease-in-out infinite;
+}
+
+.hud-pill-status.is-live b {
+  color: var(--accent);
 }
 
 /* ---------- header ---------- */
@@ -449,7 +538,7 @@ button {
   border: 2px solid var(--line);
   border-radius: 24px 10px 24px 24px;
   box-shadow: var(--casing-ring);
-  padding: 16px 18px 18px 48px;
+  padding: 16px 18px 18px 58px;
   overflow: hidden;
 }
 
@@ -457,7 +546,7 @@ button {
 .vhs::before {
   content: "";
   position: absolute;
-  left: 32px;
+  left: 44px;
   right: 0;
   top: 0;
   height: 52px;
@@ -483,26 +572,66 @@ button {
   mask-image: linear-gradient(315deg, #000 10%, transparent 70%);
 }
 
+/* Compendium SCHEDULE spine with 3 angled binder rings (modeled on screenshot #03) */
 .vhs-spine {
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 32px;
+  width: 44px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: var(--bg-void);
-  border-right: 2px solid var(--line);
+  justify-content: space-between;
+  padding: 64px 0 16px;
+  background: linear-gradient(180deg, var(--bg-raised), var(--bg-void) 70%);
+  border-right: 2px solid var(--ink-black);
+  box-shadow: inset -1px 0 0 var(--line-strong);
 }
 
-.vhs-spine span {
+.vhs-spine b {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font: 700 10px/1 var(--font-sub);
-  letter-spacing: 0.22em;
+  font: 400 22px/1 var(--font-display);
+  letter-spacing: 0.08em;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+.vhs-spine.is-live b {
+  color: var(--accent);
+}
+
+.vhs-spine small {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font: 700 9px/1 var(--font-sub);
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.vhs-rings {
+  position: absolute;
+  left: 31px;
+  top: 12px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.vhs-rings i {
+  display: block;
+  width: 22px;
+  height: 6px;
+  border-radius: 9999px;
+  transform: rotate(-28deg);
+  background: linear-gradient(180deg, var(--metal-hi), var(--metal-lo));
+  border: 1.5px solid var(--ink-black);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.7);
 }
 
 .vhs-label {
@@ -754,11 +883,11 @@ button {
 
 .queue-item {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 9px;
   align-items: center;
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px 11px 10px 12px;
   text-align: left;
   background: var(--bg-void);
   border: 1.5px solid var(--line);
@@ -776,18 +905,23 @@ button {
   transform: translateX(2px);
 }
 
+.queue-item:active {
+  transform: scale(0.985);
+}
+
 .queue-item:hover .queue-name {
   color: var(--accent);
 }
 
 .queue-day {
-  width: 36px;
+  width: 34px;
   font: 400 15px/1 var(--font-display);
   letter-spacing: 0.06em;
   color: var(--text-muted);
 }
 
 .queue-name {
+  min-width: 0;
   font: 600 13px/1.4 var(--font-body);
   transition: color var(--t) var(--snap);
 }
@@ -809,12 +943,40 @@ button {
   border: 1px solid var(--line);
 }
 
+/* Circular ZZZ action chevron button on interactive list rows (#28, #30) */
+.row-chev {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-panel);
+  border: 1.5px solid var(--line-strong);
+  color: var(--text-muted);
+  transition:
+    background-color var(--t) var(--snap),
+    border-color var(--t) var(--snap),
+    color var(--t) var(--snap),
+    transform var(--t) var(--snap);
+}
+
+.queue-item:hover .row-chev,
+.queue-item:focus-visible .row-chev,
+.file-item:hover .row-chev,
+.file-item:focus-visible .row-chev {
+  background: var(--accent);
+  border-color: var(--ink-black);
+  color: var(--accent-ink);
+  transform: translateX(2px);
+}
+
 .file-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   width: 100%;
-  padding: 7px 11px;
+  padding: 7px 10px 7px 11px;
   text-align: left;
   background: var(--bg-void);
   border: 1.5px solid var(--line);
@@ -832,6 +994,10 @@ button {
   transform: translateX(2px);
 }
 
+.file-item:active {
+  transform: scale(0.985);
+}
+
 .file-item i {
   width: 6px;
   align-self: stretch;
@@ -840,8 +1006,9 @@ button {
   background: var(--tone);
 }
 
-.file-item span {
+.file-name {
   flex: 1;
+  min-width: 0;
   font: 600 12px/1.35 var(--font-body);
   transition: color var(--t) var(--snap);
 }
@@ -853,7 +1020,7 @@ button {
   color: var(--text-muted);
 }
 
-.file-item:hover span {
+.file-item:hover .file-name {
   color: var(--accent);
 }
 
@@ -1133,9 +1300,11 @@ button {
   background-color: rgba(230, 214, 0, 0.035);
 }
 
-/* Current-time marker: pill in the trough above the header strip + stem + dot. */
+/* Current-time marker: pill in the trough above the header strip + stem + dot.
+   z-index 1 places it above .no-class (0) while keeping it behind .class-card (2). */
 .now-layer {
   position: relative;
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -1179,27 +1348,33 @@ button {
 }
 
 /* ---------- class card (spec 2.3) ----------
-   Modelled on screenshot #28 event rows: full-colour rounded bar, 2px darker
-   outline, 2px top highlight, black ink, black round type button. */
+   Modelled 1:1 on screenshot #28 event rows: saturated left-to-right subject
+   fill, 2.5px black outer casing + full-perimeter inner highlight bevel,
+   dark capsule LEC/LAB badge, bold Thai title, room pill, and hardware ">" ring button. */
 .class-card {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 3px;
   min-width: 0;
   overflow: hidden;
   margin: 9px 4px;
-  padding: 10px 14px 10px 18px;
+  padding: 10px 13px 12px 16px;
   text-align: left;
-  border: 0;
-  border-radius: 30px;
-  color: var(--ink-card);
+  border: 2.5px solid var(--ink-black);
+  border-radius: 22px;
+  color: var(--accent-ink);
   cursor: pointer;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--tone) 78%, #fff), var(--tone) 60%);
+  background: linear-gradient(
+    96deg,
+    color-mix(in srgb, var(--tone) 94%, #000) 0%,
+    var(--tone) 54%,
+    color-mix(in srgb, var(--tone) 82%, #fff) 100%
+  );
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.5),
-    inset 0 0 0 2px color-mix(in srgb, var(--tone) 55%, var(--ink-black));
+    inset 0 0 0 2px rgba(255, 255, 255, 0.38),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.16);
   transition:
     transform var(--t) var(--snap),
     filter var(--t) var(--snap),
@@ -1214,28 +1389,31 @@ button {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 56px;
-  height: 36px;
+  width: 84px;
+  height: 54px;
   pointer-events: none;
-  opacity: 0.22;
-  background-image: radial-gradient(circle, var(--ink-black) 1.2px, transparent 1.5px);
+  opacity: 0.18;
+  background-image: radial-gradient(circle, var(--ink-black) 1.15px, transparent 1.45px);
   background-size: 6px 6px;
-  mask-image: linear-gradient(315deg, #000, transparent 75%);
+  mask-image: linear-gradient(312deg, #000 6%, transparent 76%);
 }
 
 .class-card:hover {
   transform: translate(-2px, -2px);
-  filter: brightness(1.08);
+  filter: brightness(1.06);
+}
+
+.class-card:active {
+  transform: scale(0.98);
 }
 
 .class-card:focus-visible,
 .class-card.is-now {
   outline: none;
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.5),
-    inset 0 0 0 2px color-mix(in srgb, var(--tone) 55%, var(--ink-black)),
-    0 0 0 2px var(--ink-black),
-    0 0 0 5px var(--accent);
+    inset 0 0 0 2px rgba(255, 255, 255, 0.44),
+    0 0 0 3px var(--accent),
+    0 0 0 5.5px var(--ink-black);
 }
 
 .class-card.is-dim {
@@ -1243,36 +1421,57 @@ button {
   pointer-events: none;
 }
 
-/* Black round type button, like the game's chevron button. */
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+  padding-right: 28px;
+}
+
+.card-time {
+  font: 400 19.5px/1.08 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: var(--accent-ink);
+  white-space: nowrap;
+}
+
+/* Dark capsule type badge (#05 / #74 pill style) */
 .chip {
-  position: absolute;
-  right: 12px;
-  top: 8px;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 2.5px 7px 2px;
+  border-radius: 9999px;
   background: var(--ink-card);
   color: var(--text);
-  font: 700 9px/1 var(--font-sub);
-  letter-spacing: 0.02em;
+  font: 700 9.5px/1.1 var(--font-sub);
+  letter-spacing: 0.05em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 .chip-lab {
   color: var(--tone);
 }
 
-.card-time {
-  align-self: flex-start;
-  padding-right: 34px;
-  font: 400 21px/26px var(--font-display);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
+/* Shown on mobile cards; desktop WeekBoard already has the NOW pill + stem. */
+.card-live {
+  display: none;
+  align-items: center;
+  padding: 2.5px 7px 2px;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1.5px solid var(--ink-black);
+  font: 700 9.5px/1.1 var(--font-sub);
+  letter-spacing: 0.06em;
 }
 
 .card-name {
-  font: 600 13px/1.3 var(--font-body);
+  font: 700 13px/1.36 var(--font-body);
+  padding-block: 1px;
+  color: var(--accent-ink);
   flex-shrink: 0;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -1280,42 +1479,110 @@ button {
   overflow: hidden;
 }
 
-/* 1.5 h cards are only ~140px wide: tighter padding, one more name line. */
-.class-card.is-short {
-  padding: 9px 10px 9px 14px;
-}
-
-.class-card.is-short .card-time {
-  padding-right: 0;
-  font-size: 18px;
-  white-space: nowrap;
-}
-
-.class-card.is-short .card-name {
-  -webkit-line-clamp: 4;
-  font-size: 12px;
-  line-height: 1.25;
-}
-
 .card-meta {
   margin-top: auto;
-  padding-right: 28px;
-  font: 700 11px/1.35 var(--font-sub);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1px 7px;
+  padding-right: 4px;
+  font: 600 10.5px/1.28 var(--font-sub);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-  color: rgba(17, 17, 17, 0.86);
+  letter-spacing: 0.01em;
+  color: rgba(10, 10, 10, 0.78);
   text-transform: uppercase;
 }
 
-.card-meta span {
+.meta-room {
+  font-weight: 700;
+  color: var(--accent-ink);
   white-space: nowrap;
-  margin-right: 8px;
+}
+
+.meta-sub {
+  white-space: nowrap;
+}
+
+/* Circular ZZZ hardware button with dark inner bevel ring + ">" chevron (#28) */
+.card-go {
+  position: absolute;
+  right: 10px;
+  top: 9px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-ink);
+  color: #e4e4e7;
+  box-shadow:
+    inset 0 0 0 2.5px #323236,
+    0 1px 0 rgba(255, 255, 255, 0.35);
+  transition:
+    transform var(--t) var(--snap),
+    color var(--t) var(--snap),
+    box-shadow var(--t) var(--snap);
+}
+
+.class-card:hover .card-go {
+  color: var(--accent);
+  box-shadow:
+    inset 0 0 0 2.5px var(--line-strong),
+    0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: translateX(1.5px);
+}
+
+/* 1.5 h cards are ~150px wide: tighter padding, move ">" ring button to bottom-right. */
+.class-card.is-short {
+  padding: 9px 10px 11px 13px;
+  border-radius: 20px;
+}
+
+.class-card.is-short::after {
+  width: 48px;
+  height: 36px;
+}
+
+.class-card.is-short .card-top {
+  padding-right: 0;
+  gap: 5px;
+}
+
+.class-card.is-short .card-time {
+  font-size: 17.5px;
+  white-space: nowrap;
+}
+
+.class-card.is-short .chip {
+  padding: 2px 6px;
+  font-size: 9px;
+}
+
+.class-card.is-short .card-name {
+  -webkit-line-clamp: 3;
+  font-size: 12px;
+  line-height: 1.32;
+}
+
+.class-card.is-short .card-meta {
+  padding-right: 24px;
+  font-size: 10px;
+  gap: 1px 4px;
+}
+
+.class-card.is-short .card-go {
+  top: auto;
+  bottom: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  box-shadow: inset 0 0 0 2px #323236;
 }
 
 @keyframes card-enter {
   from {
     opacity: 0;
-    transform: translateX(-14px) skewX(-8deg);
+    transform: scale(0.92);
   }
   to {
     opacity: 1;
@@ -1346,42 +1613,72 @@ button {
 }
 
 .mobile-tabs button {
+  position: relative;
   flex: 1 1 0;
   max-width: 76px;
-  border: 2px solid var(--line);
-  border-radius: 12px;
-  padding: 9px 12px;
-  background: var(--bg-panel);
+  border: 0;
+  padding: 11px 12px;
+  background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  transform: skewX(-12deg);
   font: 400 18px/1 var(--font-display);
   letter-spacing: 0.06em;
   transition:
-    background-color var(--t) var(--snap),
     color var(--t) var(--snap),
-    border-color var(--t) var(--snap);
+    transform var(--t) var(--snap);
 }
 
-.mobile-tabs button span {
-  display: inline-block;
-  transform: skewX(12deg);
+.mobile-tabs button:active {
+  transform: scale(0.96);
 }
 
-.mobile-tabs button.is-today {
+/* Skewed inactive hardware tab shell (kept on ::before so FLIP layoutId stays axis-aligned) */
+.mobile-tabs button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--bg-panel);
+  transform: skewX(-12deg);
+  transition: border-color var(--t) var(--snap);
+}
+
+.mobile-tabs button.is-today::before {
   border-color: var(--accent);
 }
 
-.mobile-tabs button[aria-current="true"] {
-  background: var(--text);
-  border-color: var(--text);
-  color: var(--accent-ink);
+.mobile-tab-active {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.mobile-tabs button.is-today[aria-current="true"] {
+.mobile-tab-active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  transform: skewX(-12deg);
+  background: var(--text);
+  border: 2px solid var(--text);
+}
+
+.mobile-tabs button.is-today .mobile-tab-active::before {
   background: var(--accent);
   border-color: var(--accent);
   animation: zzz-pulse 2.8s ease-in-out infinite;
+}
+
+.mobile-tab-label {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+}
+
+.mobile-tabs button[aria-current="true"] {
+  color: var(--accent-ink);
 }
 
 /* Lets the last days scroll up to the reading line instead of the page end
@@ -1421,16 +1718,56 @@ button {
 }
 
 .mobile-day .class-card {
-  margin: 0;
-  min-height: 104px;
+  margin: 0 4px;
+  min-height: 108px;
+  padding: 13px 58px 13px 18px;
+  border-radius: 26px;
+}
+
+.mobile-day .card-top {
+  padding-right: 0;
+  gap: 8px;
+}
+
+.mobile-day .card-time {
+  font-size: 22px;
+}
+
+.mobile-day .chip {
+  padding: 3px 8px 2px;
+  font-size: 10px;
+}
+
+.mobile-day .card-live {
+  display: inline-flex;
 }
 
 .mobile-day .card-name {
   -webkit-line-clamp: unset;
+  font-size: 15px;
+  margin-top: 2px;
 }
 
 .mobile-day .card-meta {
   margin-top: 8px;
+  padding-right: 0;
+  font-size: 11.5px;
+}
+
+.mobile-day .card-go {
+  top: 50%;
+  bottom: auto;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  transform: translateY(-50%);
+  box-shadow:
+    inset 0 0 0 3px #323236,
+    0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.mobile-day .class-card:hover .card-go {
+  transform: translate(1.5px, -50%);
 }
 
 .mobile-day .no-class {
@@ -1457,11 +1794,11 @@ button {
 .dossier {
   position: fixed;
   top: 50%;
-  right: 24px;
+  left: 50%;
   z-index: 21;
   display: flex;
   flex-direction: column;
-  width: min(468px, calc(100% - 48px));
+  width: min(476px, calc(100% - 48px));
   max-height: calc(100dvh - 48px);
   overflow: hidden;
   background: var(--bg-panel);
@@ -1471,18 +1808,22 @@ button {
   box-shadow:
     0 0 0 3px var(--ink-black),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  transform: translate(calc(100% + 60px), -50%) skewX(-3deg);
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 0;
   visibility: hidden;
   transition:
-    transform 0.18s var(--snap),
-    visibility 0s linear 0.18s;
+    transform 0.16s var(--snap),
+    opacity 0.16s var(--snap),
+    visibility 0s linear 0.16s;
 }
 
 .dossier.is-open {
-  transform: translate(0, -50%);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
   visibility: visible;
   transition:
-    transform 0.18s var(--snap),
+    transform 0.16s var(--snap),
+    opacity 0.16s var(--snap),
     visibility 0s;
 }
 
@@ -1869,26 +2210,15 @@ button {
   }
 
   .dossier {
-    top: 50%;
     left: 14px;
     right: 14px;
     width: auto;
     max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    transform: translateY(calc(-50% + 20px));
-    opacity: 0;
-    transition:
-      transform 0.18s var(--snap),
-      opacity 0.18s var(--snap),
-      visibility 0s linear 0.18s;
+    transform: translateY(-50%) scale(0.9);
   }
 
   .dossier.is-open {
-    transform: translateY(-50%);
-    opacity: 1;
-    transition:
-      transform 0.18s var(--snap),
-      opacity 0.18s var(--snap),
-      visibility 0s;
+    transform: translateY(-50%) scale(1);
   }
 
   .dossier-head {

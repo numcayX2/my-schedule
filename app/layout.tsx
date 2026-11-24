@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Bai_Jamjuree, Prompt } from "next/font/google";
+import { Anton, Kanit, Prompt } from "next/font/google";
 import "./globals.css";
 import "../components/Schedule.css";
 
@@ -18,17 +18,17 @@ const anton = Anton({
 });
 
 const prompt = Prompt({
-  weight: ["400", "600", "800"],
+  weight: ["400", "600", "700", "800"],
   subsets: ["thai", "latin"],
   display: "swap",
   variable: "--font-prompt",
 });
 
-const baiJamjuree = Bai_Jamjuree({
-  weight: ["600", "700"],
+const kanit = Kanit({
+  weight: ["500", "600", "700"],
   subsets: ["thai", "latin"],
   display: "swap",
-  variable: "--font-bai-jamjuree",
+  variable: "--font-kanit",
 });
 
 export const metadata: Metadata = {
@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" className={`${anton.variable} ${prompt.variable} ${baiJamjuree.variable}`}>
+    <html lang="th" className={`${anton.variable} ${prompt.variable} ${kanit.variable}`}>
       <body>{children}</body>
     </html>
   );

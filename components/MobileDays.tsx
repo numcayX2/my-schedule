@@ -1,6 +1,8 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import ClassCard, { type TypeFilter } from "./ClassCard";
+import { SNAP, TRANSITION_MS } from "./motion-presets";
 import { CLASSES, DAYS, type DayId } from "./schedule-data";
 import type { NowState } from "./schedule-time";
 import useDayNavigation from "./useDayNavigation";
@@ -20,22 +22,34 @@ export default function MobileDays({
   onOpen: (code: string, trigger: HTMLElement) => void;
 }) {
   const { dayRefs, activeDay, scrollToDay } = useDayNavigation();
+  const reducedMotion = useReducedMotion();
   const todayIndex = now?.todayIndex ?? -1;
 
   return (
     <div className="mobile-days">
       <nav className="mobile-tabs" aria-label="เลือกวัน">
-        {DAYS.map((day, i) => (
-          <button
-            key={day.id}
-            type="button"
-            className={`${i === todayIndex ? "is-today" : ""}`}
-            aria-current={activeDay === day.id ? "true" : undefined}
-            onClick={() => scrollToDay(day.id as DayId)}
-          >
-            <span>{day.label.slice(0, 3)}</span>
-          </button>
-        ))}
+        {DAYS.map((day, i) => {
+          const active = activeDay === day.id;
+          return (
+            <button
+              key={day.id}
+              type="button"
+              className={i === todayIndex ? "is-today" : undefined}
+              aria-current={active ? "true" : undefined}
+              onClick={() => scrollToDay(day.id as DayId)}
+            >
+              {active && (
+                <motion.span
+                  layoutId={reducedMotion ? undefined : "mobile-day-pill"}
+                  className="mobile-tab-active"
+                  transition={{ duration: TRANSITION_MS / 1000, ease: SNAP }}
+                  aria-hidden="true"
+                />
+              )}
+              <span className="mobile-tab-label">{day.label.slice(0, 3)}</span>
+            </button>
+          );
+        })}
       </nav>
 
       {BY_DAY.map((day, i) => (
